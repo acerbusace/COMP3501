@@ -34,7 +34,7 @@ namespace game {
             glm::vec3 GetBackgroundColor(void) const;
             
             // Create a scene node from two resources
-            SceneNode *CreateNode(std::string node_name, Resource *geometry, Resource *material);
+            SceneNode *CreateNode(std::string node_name, Resource *geometry, Resource *material, Resource *texture = NULL);
             // Add an already-created node
             void AddNode(SceneNode *node);
             // Find a scene node with a specific name
@@ -48,6 +48,7 @@ namespace game {
 
             // Update entire scene
             void Update(void);
+			void SetMaterial(Resource*);
 
     }; // class SceneGraph
 

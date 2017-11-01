@@ -15,13 +15,15 @@ const std::string window_title_g = "Demo";
 const unsigned int window_width_g = 800;
 const unsigned int window_height_g = 600;
 const bool window_full_screen_g = false;
+const std::string SHINY_BLUE_MATERIAL = "ShinyBlueMaterial";
+const std::string SHINY_TEXTURE_MATERIAL = "ShinyTextureMaterial";
 
 // Viewport and camera settings
 float camera_near_clip_distance_g = 0.01;
 float camera_far_clip_distance_g = 1000.0;
 float camera_fov_g = 20.0; // Field-of-view of camera
-const glm::vec3 viewport_background_color_g(0.0, 0.0, 0.0);
-glm::vec3 camera_position_g(0.0, 0.0, 800.0);
+const glm::vec3 viewport_background_color_g(1.0, 1.0, 1.0);
+glm::vec3 camera_position_g(0.5, 0.5, 10.0);
 glm::vec3 camera_look_at_g(0.0, 0.0, 0.0);
 glm::vec3 camera_up_g(0.0, 1.0, 0.0);
 
@@ -44,6 +46,7 @@ void Game::Init(void){
 
     // Set variables
     animating_ = true;
+	material_ = true;
 }
 
        
@@ -110,12 +113,28 @@ void Game::InitEventHandlers(void){
 
 void Game::SetupResources(void){
 
-    // Create a simple sphere to represent the asteroids
-    resman_.CreateSphere("SimpleSphereMesh", 1.0, 10, 10);
+    // Create a torus
+    resman_.CreateSphere("SphereMesh");
+    resman_.CreateTorus("TorusMesh");
+    resman_.CreateCube("CubeMesh");
+    resman_.CreateCylinder("CylinderMesh");
 
-    // Load material to be applied to asteroids
-    std::string filename = std::string(MATERIAL_DIRECTORY) + std::string("/material");
-    resman_.LoadResource(Material, "ObjectMaterial", filename.c_str());
+	std::string filename;
+    // Load material to be applied to torus
+    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_blue");
+    resman_.LoadResource(Material, SHINY_BLUE_MATERIAL, filename.c_str());
+
+	// Load material to be applied to sphere
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_texture");
+	resman_.LoadResource(Material, SHINY_TEXTURE_MATERIAL, filename.c_str());
+
+	// Load window texture
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/window.jpg");
+	resman_.LoadResource(Texture, "Window", filename.c_str());
+
+	// Load metal texture
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/metal.jpg");
+	resman_.LoadResource(Texture, "Metal", filename.c_str());
 }
 
 
@@ -124,8 +143,55 @@ void Game::SetupScene(void){
     // Set background color for the scene
     scene_.SetBackgroundColor(viewport_background_color_g);
 
-    // Create asteroid field
-    CreateAsteroidField();
+    // Create an instance of the torus mesh
+    game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
+    //game::SceneNode *torus = CreateInstance("TorusInstance1", "CubeMesh", SHINY_Texture_MATERIAL, "Window");
+    // Scale the instance
+    torus->Scale(glm::vec3(0.75, 0.75, 0.75));
+    torus->Translate(glm::vec3(-1.0, 0, 0));
+
+
+    // Create an helicopter instance
+
+	// upper body
+    game::SceneNode *upper_body = CreateInstance("CubeInstance1", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
+    upper_body->Scale(glm::vec3(0.35, 0.35, 1.25));
+	upper_body->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(15.0, 0.0, 0.0)));
+    upper_body->Translate(glm::vec3(1.0, 0, 0));
+
+	// lower body
+    game::SceneNode *lower_body = CreateInstance("CubeInstance2", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
+    lower_body->Scale(glm::vec3(0.35, 0.35, 1.5));
+    lower_body->Translate(glm::vec3(0.0, -0.35, 0.125));
+
+	// upper joint (cylinder connecting body and upper rotor)
+    game::SceneNode *upper_joint = CreateInstance("CylinderInstance1", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
+    upper_joint->Scale(glm::vec3(0.45, 0.10, 0.45));
+    upper_joint->Translate(glm::vec3(0.0, 0.225, 0));
+
+	// upper rotor
+    game::SceneNode *upper_rotor = CreateInstance("CylinderInstance2", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
+    upper_rotor->Scale(glm::vec3(0.05, 1.0, 0.05));
+	upper_rotor->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(0.0, 0.0, 115.0)));
+
+	// back joint (cylinder connecting body and back rotor)
+    game::SceneNode *back_joint = CreateInstance("CylinderInstance3", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
+    back_joint->Scale(glm::vec3(0.35, 0.75, 0.35));
+	back_joint->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(115.0, 0.0, 0.0)));
+    back_joint->Translate(glm::vec3(0.0, 0.0, -1.0));
+
+	// back rotor
+    game::SceneNode *back_rotor = CreateInstance("CylinderInstance4", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
+    back_rotor->Scale(glm::vec3(0.05, 0.75, 0.05));
+	back_rotor->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(90.0, 0.0, 0.0)));
+    back_rotor->Translate(glm::vec3(0.10, -0.25, 0.0));
+
+	// creates helicopter hierarchy 
+	upper_body->addChild(lower_body);
+	upper_body->addChild(upper_joint);
+	upper_joint->addChild(upper_rotor);
+	upper_body->addChild(back_joint);
+	back_joint->addChild(back_rotor);
 }
 
 
@@ -137,8 +203,29 @@ void Game::MainLoop(void){
         if (animating_){
             static double last_time = 0;
             double current_time = glfwGetTime();
-            if ((current_time - last_time) > 0.05){
-                scene_.Update();
+            if ((current_time - last_time) > 0.01){
+                //scene_.Update();
+
+				SceneNode *node;
+				glm::quat rotation;
+
+                // Animate the torus and helicopter
+				rotation = glm::angleAxis(glm::pi<float>()/180.0f, glm::vec3(0.0, 1.0, 0.0));
+
+                node = scene_.GetNode("TorusInstance1");
+                node->Rotate(rotation);
+
+                node = scene_.GetNode("CubeInstance1");
+                node->Rotate(rotation);
+
+				// animate top and back rotor
+				rotation = glm::angleAxis((float) glm::radians(1.0), glm::vec3(2.0, 0.0, 0.0));
+
+                node = scene_.GetNode("CylinderInstance2");
+                node->Rotate(rotation);
+                node = scene_.GetNode("CylinderInstance4");
+                node->Rotate(rotation);
+
                 last_time = current_time;
             }
         }
@@ -268,6 +355,25 @@ void Game::CreateAsteroidField(int num_asteroids){
         ast->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
         ast->SetAngM(glm::normalize(glm::angleAxis(0.05f*glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
     }
+}
+
+
+SceneNode *Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name){
+
+    Resource *geom = resman_.GetResource(object_name);
+    if (!geom){
+        throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
+    }
+
+    Resource *mat = resman_.GetResource(material_name);
+    if (!mat){
+        throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
+    }
+
+    Resource *tex = resman_.GetResource(texture_name);
+
+    SceneNode *scn = scene_.CreateNode(entity_name, geom, mat, tex);
+    return scn;
 }
 
 } // namespace game

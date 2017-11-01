@@ -34,6 +34,9 @@ namespace game {
             // Create the geometry for a torus and add it to the list of resources
             void CreateTorus(std::string object_name, float loop_radius = 0.6, float circle_radius = 0.2, int num_loop_samples = 90, int num_circle_samples = 30);
             void CreateSphere(std::string object_name, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
+			void CreateCube(std::string object_name);
+            void CreateCylinder(std::string object_name, float radius = 0.25, int num_loop_samples = 30, float height = 1);
+			
 
         private:
             // List storing all resources
@@ -44,6 +47,8 @@ namespace game {
             void LoadMaterial(const std::string name, const char *prefix);
             // Load a text file into memory (could be source code)
             std::string LoadTextFile(const char *filename);
+			// Load a texture
+			void LoadTexture(const std::string name, const char *filename);
 
     }; // class ResourceManager
 

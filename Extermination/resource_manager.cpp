@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <SOIL/SOIL.h>
 
 #include "resource_manager.h"
 
@@ -42,7 +43,10 @@ void ResourceManager::LoadResource(ResourceType type, const std::string name, co
     // Call appropriate method depending on type of resource
     if (type == Material){
         LoadMaterial(name, filename);
-    } else {
+	}
+	else if (type == Texture) {
+		LoadTexture(name, filename);
+	} else {
         throw(std::invalid_argument(std::string("Invalid type of resource")));
     }
 }
@@ -352,6 +356,302 @@ void ResourceManager::CreateSphere(std::string object_name, float radius, int nu
 
     // Create resource
     AddResource(Mesh, object_name, vbo, ebo, face_num * face_att);
+}
+
+// Create the geometry for a cube centered at (0, 0, 0) with sides of length 1
+// Return the number of array elements that form the cube
+void ResourceManager::CreateCube(std::string object_name) {
+
+	// The construction does not use shared vertices, since we need to assign appropriate normals to each face 
+	// Each face of the cube is defined by four vertices (with the same normal) and two triangles
+
+	// Vertices used to build the cube
+	// 9 attributes per vertex: 3D position (3), 3D normal (3), RGB color (3), 2D Texture (2)
+	GLfloat vertex[] = {
+		// First cube face (two triangles)
+		-0.5, -0.5,  0.5,    0.0,  0.0,  1.0,    0.0, 0.0, 1.0,    0.0, 1.0,
+		0.5, -0.5,  0.5,    0.0,  0.0,  1.0,    1.0, 0.0, 1.0,    1.0, 1.0,
+		0.5,  0.5,  0.5,    0.0,  0.0,  1.0,    1.0, 1.0, 1.0,    1.0, 0.0,
+		0.5,  0.5,  0.5,    0.0,  0.0,  1.0,    1.0, 1.0, 1.0,    1.0, 0.0,
+		-0.5,  0.5,  0.5,    0.0,  0.0,  1.0,    0.0, 1.0, 0.0,    0.0, 0.0,
+		-0.5, -0.5,  0.5,    0.0,  0.0,  1.0,    0.0, 0.0, 1.0,    0.0, 1.0,
+		// Second cube face
+		0.5, -0.5,  0.5,    1.0,  0.0,  0.0,    1.0, 0.0, 1.0,    0.0, 1.0,
+		0.5, -0.5, -0.5,    1.0,  0.0,  0.0,    1.0, 0.0, 0.0,    1.0, 1.0,
+		0.5,  0.5, -0.5,    1.0,  0.0,  0.0,    1.0, 1.0, 0.0,    1.0, 0.0,
+		0.5,  0.5, -0.5,    1.0,  0.0,  0.0,    1.0, 1.0, 0.0,    1.0, 0.0,
+		0.5,  0.5,  0.5,    1.0,  0.0,  0.0,    1.0, 1.0, 1.0,    0.0, 0.0,
+		0.5, -0.5,  0.5,    1.0,  0.0,  0.0,    1.0, 0.0, 1.0,    0.0, 1.0,
+		// Third cube face
+		0.5, -0.5, -0.5,    0.0,  0.0, -1.0,    1.0, 0.0, 0.0,    0.0, 1.0,
+		-0.5, -0.5, -0.5,    0.0,  0.0, -1.0,    0.0, 0.0, 1.0,    1.0, 1.0,
+		-0.5,  0.5, -0.5,    0.0,  0.0, -1.0,    0.0, 1.0, 0.0,    1.0, 0.0,
+		-0.5,  0.5, -0.5,    0.0,  0.0, -1.0,    0.0, 1.0, 0.0,    1.0, 0.0,
+		0.5,  0.5, -0.5,    0.0,  0.0, -1.0,    1.0, 1.0, 0.0,    0.0, 0.0,
+		0.5, -0.5, -0.5,    0.0,  0.0, -1.0,    1.0, 0.0, 0.0,    0.0, 1.0,
+		// Fourth cube face
+		-0.5, -0.5, -0.5,   -1.0,  0.0,  0.0,    0.0, 0.0, 1.0,    0.0, 1.0,
+		-0.5, -0.5,  0.5,   -1.0,  0.0,  0.0,    0.0, 0.0, 1.0,    1.0, 1.0,
+		-0.5,  0.5,  0.5,   -1.0,  0.0,  0.0,    0.0, 1.0, 0.0,    1.0, 0.0,
+		-0.5,  0.5,  0.5,   -1.0,  0.0,  0.0,    0.0, 1.0, 0.0,    1.0, 0.0,
+		-0.5,  0.5, -0.5,   -1.0,  0.0,  0.0,    0.0, 1.0, 0.0,    0.0, 0.0,
+		-0.5, -0.5, -0.5,   -1.0,  0.0,  0.0,    0.0, 0.0, 1.0,    0.0, 1.0,
+		// Fifth cube face
+		-0.5,  0.5,  0.5,    0.0,  1.0,  0.0,    0.0, 1.0, 0.0,    0.0, 1.0,
+		0.5,  0.5,  0.5,    0.0,  1.0,  0.0,    1.0, 1.0, 1.0,    1.0, 1.0,
+		0.5,  0.5, -0.5,    0.0,  1.0,  0.0,    1.0, 1.0, 0.0,    1.0, 0.0,
+		0.5,  0.5, -0.5,    0.0,  1.0,  0.0,    1.0, 1.0, 0.0,    1.0, 0.0,
+		-0.5,  0.5, -0.5,    0.0,  1.0,  0.0,    0.0, 1.0, 0.0,    0.0, 0.0,
+		-0.5,  0.5,  0.5,    0.0,  1.0,  0.0,    0.0, 1.0, 0.0,    0.0, 1.0,
+		// Sixth cube face
+		0.5, -0.5,  0.5,    0.0, -1.0,  0.0,    1.0, 0.0, 1.0,    0.0, 1.0,
+		-0.5, -0.5,  0.5,    0.0, -1.0,  0.0,    0.0, 0.0, 1.0,    1.0, 1.0,
+		-0.5, -0.5, -0.5,    0.0, -1.0,  0.0,    0.0, 0.0, 1.0,    1.0, 0.0,
+		-0.5, -0.5, -0.5,    0.0, -1.0,  0.0,    0.0, 0.0, 1.0,    1.0, 0.0,
+		0.5, -0.5, -0.5,    0.0, -1.0,  0.0,    1.0, 0.0, 0.0,    0.0, 0.0,
+		0.5, -0.5,  0.5,    0.0, -1.0,  0.0,    1.0, 0.0, 1.0,    0.0, 1.0,
+	};
+
+	// Create OpenGL buffer for vertices
+	GLuint vbo;
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertex), vertex, GL_STATIC_DRAW);
+
+	// Create resource
+	AddResource(SingleMesh, object_name, vbo, sizeof(vertex) / (sizeof(GLfloat) * 11));
+}
+
+void ResourceManager::CreateCylinder(std::string object_name, float radius, int num_loop_samples, float height) {
+	// The cylinder is built by gathering the vertices in the top and bottom circle
+	// The vertices are connected to the top and bottoms circles centers respectively (cylinder end caps)
+	// The vertices are then connected to each other (cylinder body)
+
+	// Number of vertices and faces to be created
+	const GLuint vertex_num = num_loop_samples;
+
+	// Number of attributes for vertices and faces
+	const int vertex_att = 11;  // 9 attributes per vertex: 3D position (3), 3D normal (3), RGB color (3), 2D Texture (2)
+	// number of elements in array buffer
+	int size = vertex_num * vertex_att * 3 * 4;
+
+	GLfloat *vertex = NULL;
+	std::vector<glm::vec3> top_circle_vertex;
+	std::vector<glm::vec3> bottom_circle_vertex;
+
+	// Allocate memory for buffers
+	try {
+		vertex = new GLfloat[size];
+	}
+	catch (std::exception &e) {
+		throw e;
+	}
+
+	float theta; // Angle to calculate position for vertices on top and bottom circle
+	glm::vec3 top_center_position = glm::vec3(0, height / 2, 0);
+	glm::vec3 bottom_center_position = glm::vec3(0, -(height / 2), 0);
+
+	glm::vec3 top_vertex_position;
+	glm::vec3 top_vertex_normal;
+	glm::vec3 bottom_vertex_position;
+	glm::vec3 bottom_vertex_normal;
+
+	// gets the vertexes for the top and bottom circle
+	for (int i = 0; i < num_loop_samples; ++i) {
+		theta = 2.0*glm::pi<GLfloat>()*i / num_loop_samples;
+
+		top_circle_vertex.push_back(top_center_position + glm::vec3(sin(theta), 0, cos(theta))*radius);
+		bottom_circle_vertex.push_back(bottom_center_position + glm::vec3(sin(theta), 0, cos(theta))*radius);
+	}
+
+	unsigned int vertex_index = 0;
+	// creates the triangle mesh for the top circle
+	for (int i = 0; i < num_loop_samples; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = top_center_position[j];
+		}
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = 1.0;
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = top_circle_vertex[i][j];
+		}
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = 1.0;
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = top_circle_vertex[(i + 1) % num_loop_samples][j];
+		}
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = 1.0;
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+	}
+
+	// creates the triangle mesh for the bottom circle
+	for (int i = 0; i < num_loop_samples; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = bottom_center_position[j];
+		}
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = -1.0;
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = bottom_circle_vertex[i][j];
+		}
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = -1.0;
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = bottom_circle_vertex[(i + 1) % num_loop_samples][j];
+		}
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = -1.0;
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+	}
+
+	// creates the triangle mesh for the cylinder body (middle layer)
+	for (int i = 0; i < num_loop_samples; ++i) {
+		// used to calculate the normal
+		theta = 2.0*glm::pi<GLfloat>()*(i + 0.5) / num_loop_samples;
+
+		// ---|
+		// \  |
+		//  \ |
+		//   \|
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = top_circle_vertex[i][j];
+		}
+		vertex[vertex_index++] = sin(theta);
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = cos(theta);
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = 0.0f;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = top_circle_vertex[(i + 1) % num_loop_samples][j];
+		}
+		vertex[vertex_index++] = sin(theta);
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = cos(theta);
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) ((i + 1) % num_loop_samples) / (float) num_loop_samples;
+		vertex[vertex_index++] = 0.0f;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = bottom_circle_vertex[(i + 1) % num_loop_samples][j];
+		}
+		vertex[vertex_index++] = sin(theta);
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = cos(theta);
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) ((i + 1) % num_loop_samples) / (float) num_loop_samples;
+		vertex[vertex_index++] = 1.0f;
+
+		// |\
+		// | \
+		// |  \
+		// |---
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = top_circle_vertex[i][j];
+		}
+		vertex[vertex_index++] = sin(theta);
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = cos(theta);
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = 0.0f;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = bottom_circle_vertex[(i + 1) % num_loop_samples][j];
+		}
+		vertex[vertex_index++] = sin(theta);
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = cos(theta);
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) ((i + 1) % num_loop_samples) / (float) num_loop_samples;
+		vertex[vertex_index++] = 1.0f;
+
+		for (int j = 0; j < 3; ++j) {
+			vertex[vertex_index++] = bottom_circle_vertex[i][j];
+		}
+		vertex[vertex_index++] = sin(theta);
+		vertex[vertex_index++] = 0.0;
+		vertex[vertex_index++] = cos(theta);
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = (float) i / (float) num_loop_samples;
+		vertex[vertex_index++] = 1.0f;
+	}
+
+    // Create OpenGL buffers and copy data
+    GLuint vbo;
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * size, vertex, GL_STATIC_DRAW);
+
+    // Create resource
+	AddResource(SingleMesh, object_name, vbo, size);
+
+    // Free data buffers
+	delete[] vertex;
+}
+
+void ResourceManager::LoadTexture(const std::string name, const char *filename) {
+
+	// Load texture from file
+	GLuint texture = SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, 0);
+	if (!texture) {
+		throw(std::ios_base::failure(std::string("Error loading texture ") + std::string(filename) + std::string(": ") + std::string(SOIL_last_result())));
+	}
+
+	// Create resource
+	AddResource(Texture, name, texture, 0);
 }
 
 } // namespace game;

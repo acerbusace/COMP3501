@@ -49,7 +49,7 @@ void Camera::Translate(glm::vec3 trans){
 
 void Camera::Rotate(glm::quat rot){
 
-    orientation_ *= rot;
+    orientation_ = rot * orientation_;
 }
 
 
@@ -80,21 +80,21 @@ glm::vec3 Camera::GetUp(void) const {
 void Camera::Pitch(float angle){
 
     glm::quat rotation = glm::angleAxis(angle, GetSide());
-    orientation_ *= rotation;
+    orientation_ = rotation * orientation_;
 }
 
 
 void Camera::Yaw(float angle){
 
     glm::quat rotation = glm::angleAxis(angle, GetUp());
-    orientation_ *= rotation;
+    orientation_ = rotation * orientation_;
 }
 
 
 void Camera::Roll(float angle){
 
     glm::quat rotation = glm::angleAxis(angle, GetForward());
-    orientation_ *= rotation;
+    orientation_ = rotation * orientation_;
 }
 
 

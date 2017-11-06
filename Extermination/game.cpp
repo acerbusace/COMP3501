@@ -193,6 +193,8 @@ void Game::SetupScene(void){
     back_rotor->Translate(glm::vec3(0.10, -0.25, 0.0));
 
 	// creates helicopter hierarchy 
+	SceneNode* camera = new SceneNode(camera_);
+	upper_body->addChild(camera);
 	upper_body->addChild(lower_body);
 	upper_body->addChild(upper_joint);
 	upper_joint->addChild(upper_rotor);

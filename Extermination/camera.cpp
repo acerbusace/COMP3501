@@ -9,7 +9,7 @@
 
 namespace game {
 
-Camera::Camera(void){
+Camera::Camera(void): SceneNode("camera"){
 }
 
 
@@ -172,6 +172,10 @@ void Camera::SetupViewMatrix(void){
 
     // Combine translation and view matrix in proper order
     view_matrix_ *= trans;
+}
+
+void Camera::Draw(Camera* camera) {
+
 }
 
 } // namespace game

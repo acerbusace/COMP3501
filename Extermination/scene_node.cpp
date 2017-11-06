@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "scene_node.h"
+#include "camera.h"
 
 namespace game {
 
@@ -16,33 +17,36 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
 	parent = NULL;
 
     // Set geometry
-	geoType = geometry->GetType();
-    if (geoType == PointSet){
-        mode_ = GL_POINTS;
-    } else if (geoType == Mesh || geoType == SingleMesh){
-        mode_ = GL_TRIANGLES;
-    } else {
-        throw(std::invalid_argument(std::string("Invalid type of geometry")));
-    }
+	if (geometry) {
+		geoType = geometry->GetType();
+		if (geoType == PointSet) {
+			mode_ = GL_POINTS;
+		}
+		else if (geoType == Mesh || geoType == SingleMesh) {
+			mode_ = GL_TRIANGLES;
+		}
+		else {
+			throw(std::invalid_argument(std::string("Invalid type of geometry")));
+		}
 
-    array_buffer_ = geometry->GetArrayBuffer();
-    element_array_buffer_ = geometry->GetElementArrayBuffer();
-    size_ = geometry->GetSize();
+		array_buffer_ = geometry->GetArrayBuffer();
+		element_array_buffer_ = geometry->GetElementArrayBuffer();
+		size_ = geometry->GetSize();
+	}
 
-    // Set material (shader program)
-    if (material->GetType() != Material){
-        throw(std::invalid_argument(std::string("Invalid type of material")));
-    }
+	if (material) {
+		// Set material (shader program)
+		if (material->GetType() != Material) {
+			throw(std::invalid_argument(std::string("Invalid type of material")));
+		}
+		material_ = material->GetResource();
+	}
 
 	// Set texture
-	if (texture) {
+	if (texture)
 		texture_ = texture->GetResource();
-	}
-	else {
+	else
 		texture_ = 0;
-	}
-
-    material_ = material->GetResource();
 
     // Other attributes
     scale_ = glm::vec3(1.0, 1.0, 1.0);

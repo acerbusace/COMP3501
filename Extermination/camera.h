@@ -6,11 +6,13 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "scene_node.h"
+
 
 namespace game {
 
     // Abstraction of a camera
-    class Camera {
+    class Camera: public SceneNode{
 
         public:
             Camera(void);
@@ -47,6 +49,8 @@ namespace game {
             void SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GLfloat h);
             // Set all camera-related variables in shader program
             void SetupShader(GLuint program);
+
+			void Draw(Camera *camera);
 
         private:
             glm::vec3 position_; // Position of camera

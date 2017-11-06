@@ -11,16 +11,17 @@
 #include <vector>
 
 #include "resource.h"
-#include "camera.h"
+
 
 namespace game {
+	class Camera;
 
     // Class that manages one object in a scene 
     class SceneNode {
 
         public:
             // Create scene node from given resources
-            SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource *texture = NULL);
+            SceneNode(const std::string name, const Resource *geometry = NULL, const Resource *material = NULL, const Resource *texture = NULL);
 
             // Destructor
             ~SceneNode();

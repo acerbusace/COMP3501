@@ -91,10 +91,10 @@ void SceneGraph::Draw(Camera *camera){
 }
 
 
-void SceneGraph::Update(void){
+void SceneGraph::Update(double delta_time){
 
     for (int i = 0; i < node_.size(); i++){
-        node_[i]->Update();
+        node_[i]->Update(delta_time);
     }
 }
 

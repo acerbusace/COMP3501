@@ -47,6 +47,7 @@ void Game::Init(void){
     // Set variables
     animating_ = true;
 	material_ = true;
+	last_time = 0;
 }
 
        
@@ -163,7 +164,7 @@ void Game::SetupScene(void){
     game::SceneNode *upper_body = CreateInstance("CubeInstance1", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
     upper_body->Scale(glm::vec3(0.35, 0.35, 1.25));
 	upper_body->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(15.0, 0.0, 0.0)));
-    upper_body->Translate(glm::vec3(1.0, 0, 0));
+    //upper_body->Translate(glm::vec3(1.0, 0, 0));
 
 	// lower body
     game::SceneNode *lower_body = CreateInstance("CubeInstance2", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
@@ -193,32 +194,35 @@ void Game::SetupScene(void){
     back_rotor->Translate(glm::vec3(0.10, -0.25, 0.0));
 
 	// creates helicopter hierarchy 
-	SceneNode* camera = new SceneNode(camera_);
-	upper_body->addChild(camera);
 	upper_body->addChild(lower_body);
 	upper_body->addChild(upper_joint);
 	upper_joint->addChild(upper_rotor);
 	upper_body->addChild(back_joint);
 	back_joint->addChild(back_rotor);
+
+	CreateLand(glm::vec3(10, 1, 10), glm::vec3(0.0, -0.05, 0.0), glm::vec3(10.0, 0.10, 10.0));
 }
 
 
 void Game::MainLoop(void){
 
     // Loop while the user did not close the window
+	animating_ = true;
     while (!glfwWindowShouldClose(window_)){
         // Animate the scene
         if (animating_){
-            static double last_time = 0;
             double current_time = glfwGetTime();
-            if ((current_time - last_time) > 0.01){
+			double delta_time = current_time - last_time;
+            last_time = current_time;
+
+				std::cout << "time: " << current_time << " -> " << current_time - last_time << std::endl;
                 //scene_.Update();
 
 				SceneNode *node;
 				glm::quat rotation;
 
                 // Animate the torus and helicopter
-				rotation = glm::angleAxis(glm::pi<float>()/180.0f, glm::vec3(0.0, 1.0, 0.0));
+				rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
 
                 node = scene_.GetNode("TorusInstance1");
                 node->Rotate(rotation);
@@ -227,15 +231,12 @@ void Game::MainLoop(void){
                 node->Rotate(rotation);
 
 				// animate top and back rotor
-				rotation = glm::angleAxis((float) glm::radians(1.0), glm::vec3(2.0, 0.0, 0.0));
+				rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
 
                 node = scene_.GetNode("CylinderInstance2");
                 node->Rotate(rotation);
                 node = scene_.GetNode("CylinderInstance4");
                 node->Rotate(rotation);
-
-                last_time = current_time;
-            }
         }
 
         // Draw the scene
@@ -252,23 +253,30 @@ void Game::MainLoop(void){
 
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
 
-    // Get user data with a pointer to the game class
-    void* ptr = glfwGetWindowUserPointer(window);
-    Game *game = (Game *) ptr;
+	// Get user data with a pointer to the game class
+	void* ptr = glfwGetWindowUserPointer(window);
+	Game *game = (Game *)ptr;
 
-    // Quit game if 'q' is pressed
-    if (key == GLFW_KEY_Q && action == GLFW_PRESS){
-        glfwSetWindowShouldClose(window, true);
-    }
+	// Quit game if 'q' is pressed
+	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+	}
 
-    // Stop animation if space bar is pressed
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS){
-        game->animating_ = (game->animating_ == true) ? false : true;
-    }
+	// Stop animation if space bar is pressed
+	if (key == GLFW_KEY_P && action == GLFW_PRESS){
+	    game->animating_ = (game->animating_ == true) ? false : true;
+	}
 
-    // View control
-    float rot_factor(glm::pi<float>() / 180);
-    float trans_factor = 1.0;
+	double delta = glfwGetTime() - game->last_time;
+
+	SceneNode *node;
+	node = game->scene_.GetNode("CubeInstance1");
+
+	// View control
+	float rot_factor(glm::pi<float>() / 9 * delta);
+	float roll_factor(glm::pi<float>() / 2 * delta);
+	float trans_factor = 10.0 * delta;
+
     if (key == GLFW_KEY_UP){
         game->camera_.Pitch(rot_factor);
     }
@@ -288,23 +296,45 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
         game->camera_.Roll(rot_factor);
     }
     if (key == GLFW_KEY_A){
-        game->camera_.Translate(game->camera_.GetForward()*trans_factor);
+		game->camera_.Translate(glm::vec3(0, 0, -trans_factor));
     }
     if (key == GLFW_KEY_Z){
-        game->camera_.Translate(-game->camera_.GetForward()*trans_factor);
+		game->camera_.Translate(glm::vec3(0, 0, trans_factor));
     }
     if (key == GLFW_KEY_J){
-        game->camera_.Translate(-game->camera_.GetSide()*trans_factor);
+		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
     }
     if (key == GLFW_KEY_L){
-        game->camera_.Translate(game->camera_.GetSide()*trans_factor);
+		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
     }
-    if (key == GLFW_KEY_I){
-        game->camera_.Translate(game->camera_.GetUp()*trans_factor);
+    if (key == GLFW_KEY_SPACE){
+		game->camera_.Translate(glm::vec3(0, trans_factor, 0));
     }
-    if (key == GLFW_KEY_K){
-        game->camera_.Translate(-game->camera_.GetUp()*trans_factor);
+    if (key == GLFW_KEY_LEFT_CONTROL){
+		game->camera_.Translate(glm::vec3(0, -trans_factor, 0));
     }
+
+	if (key == GLFW_KEY_1) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
+	}
+	if (key == GLFW_KEY_2) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
+	}
+	if (key == GLFW_KEY_3) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0, 0)));
+	}
+	if (key == GLFW_KEY_4) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0, 0)));
+	}
+	if (key == GLFW_KEY_5) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, -roll_factor, 0)));
+	}
+	if (key == GLFW_KEY_6) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, roll_factor, 0)));
+	}
+	if (key == GLFW_KEY_V) {
+		game->camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+	}
 }
 
 
@@ -363,6 +393,20 @@ void Game::CreateAsteroidField(int num_asteroids){
         ast->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
         ast->SetAngM(glm::normalize(glm::angleAxis(0.05f*glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
     }
+}
+
+void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale){
+	game::SceneNode *node;
+    // Create a number of asteroid instances
+	for (int x = 0; x < size.x; ++x) {
+		for (int y = 0; y < size.y; ++y) {
+			for (int z = 0; z < size.z; ++z) {
+				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
+				node->Scale(scale);
+				node->Translate(pos + glm::vec3(scale.x*x, scale.y*y, scale.z*z));
+			}
+		}
+	}
 }
 
 

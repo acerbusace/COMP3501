@@ -47,7 +47,7 @@ namespace game {
             void Draw(Camera *camera);
 
             // Update entire scene
-            void Update(void);
+            void Update(double delta_time);
 			void SetMaterial(Resource*);
 
     }; // class SceneGraph

@@ -174,7 +174,7 @@ void SceneNode::Draw(Camera *camera){
 }
 
 
-void SceneNode::Update(void){
+void SceneNode::Update(double delta_time){
 
     // Do nothing for this generic type of scene node
 }

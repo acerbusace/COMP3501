@@ -52,7 +52,7 @@ namespace game {
             virtual void Draw(Camera *camera);
 
             // Update the node
-            virtual void Update(void);
+            virtual void Update(double delta_time);
 
             // OpenGL variables
             GLenum GetMode(void) const;

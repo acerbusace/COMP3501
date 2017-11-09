@@ -6,6 +6,7 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <map>
 
 #include "scene_graph.h"
 #include "resource_manager.h"
@@ -54,11 +55,16 @@ namespace game {
             // Camera abstraction
             Camera camera_;
 
+
             // Flag to turn animation on/off
-            bool animating_;
+            bool pause_;
 
 			bool material_;
 
+			// keys track of keys and their corresponding actions
+			std::map<int, int> key_;
+
+			// last time an update occured
 			double last_time;
 
             // Methods to initialize the game

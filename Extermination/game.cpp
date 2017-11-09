@@ -45,7 +45,7 @@ void Game::Init(void){
     InitEventHandlers();
 
     // Set variables
-    animating_ = true;
+    pause_ = true;
 	material_ = true;
 	last_time = 0;
 }
@@ -207,36 +207,71 @@ void Game::SetupScene(void){
 void Game::MainLoop(void){
 
     // Loop while the user did not close the window
-	animating_ = true;
+	pause_ = false;
     while (!glfwWindowShouldClose(window_)){
         // Animate the scene
-        if (animating_){
+        if (!pause_){
             double current_time = glfwGetTime();
 			double delta_time = current_time - last_time;
             last_time = current_time;
 
-				std::cout << "time: " << current_time << " -> " << current_time - last_time << std::endl;
-                //scene_.Update();
+			// View control
+			float rot_factor = glm::radians(40.0) * delta_time;
+			float roll_factor = glm::radians(100.0) * delta_time;
+			float trans_factor = 20.0 * delta_time;
 
-				SceneNode *node;
-				glm::quat rotation;
+			if (key_[GLFW_KEY_UP] == GLFW_PRESS || key_[GLFW_KEY_UP] == GLFW_REPEAT) {
+				camera_.Pitch(rot_factor);
+			}
+			if (key_[GLFW_KEY_DOWN] == GLFW_PRESS || key_[GLFW_KEY_DOWN] == GLFW_REPEAT) {
+				camera_.Pitch(-rot_factor);
+			}
+			if (key_[GLFW_KEY_LEFT] == GLFW_PRESS || key_[GLFW_KEY_LEFT] == GLFW_REPEAT) {
+				camera_.Yaw(rot_factor);
+			}
+			if (key_[GLFW_KEY_RIGHT] == GLFW_PRESS || key_[GLFW_KEY_RIGHT] == GLFW_REPEAT) {
+				camera_.Yaw(-rot_factor);
+			}
+			if (key_[GLFW_KEY_S] == GLFW_PRESS || key_[GLFW_KEY_S] == GLFW_REPEAT) {
+				camera_.Roll(-roll_factor);
+			}
+			if (key_[GLFW_KEY_X] == GLFW_PRESS || key_[GLFW_KEY_X] == GLFW_REPEAT) {
+				camera_.Roll(roll_factor);
+			}
+			if (key_[GLFW_KEY_A] == GLFW_PRESS || key_[GLFW_KEY_A] == GLFW_REPEAT) {
+				camera_.Translate(camera_.GetForward()*trans_factor);
+			}
+			if (key_[GLFW_KEY_Z] == GLFW_PRESS || key_[GLFW_KEY_Z] == GLFW_REPEAT) {
+				camera_.Translate(-camera_.GetForward()*trans_factor);
+			}
+			if (key_[GLFW_KEY_SPACE] == GLFW_PRESS || key_[GLFW_KEY_SPACE] == GLFW_REPEAT) {
+				camera_.Translate(glm::vec3(0, trans_factor, 0));
+			}
+			if (key_[GLFW_KEY_LEFT_CONTROL] == GLFW_PRESS || key_[GLFW_KEY_LEFT_CONTROL] == GLFW_REPEAT) {
+				camera_.Translate(glm::vec3(0, -trans_factor, 0));
+			}
 
-                // Animate the torus and helicopter
-				rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
+			//scene_.Update();
 
-                node = scene_.GetNode("TorusInstance1");
-                node->Rotate(rotation);
+			SceneNode *node;
+			glm::quat rotation;
 
-                node = scene_.GetNode("CubeInstance1");
-                node->Rotate(rotation);
+			// Animate the torus and helicopter
+			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
 
-				// animate top and back rotor
-				rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
+			node = scene_.GetNode("TorusInstance1");
+			node->Rotate(rotation);
 
-                node = scene_.GetNode("CylinderInstance2");
-                node->Rotate(rotation);
-                node = scene_.GetNode("CylinderInstance4");
-                node->Rotate(rotation);
+			node = scene_.GetNode("CubeInstance1");
+			node->Rotate(rotation);
+
+			// animate top and back rotor
+			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
+
+			node = scene_.GetNode("CylinderInstance2");
+			node->Rotate(rotation);
+			node = scene_.GetNode("CylinderInstance4");
+			node->Rotate(rotation);
         }
 
         // Draw the scene
@@ -257,83 +292,16 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	void* ptr = glfwGetWindowUserPointer(window);
 	Game *game = (Game *)ptr;
 
+	game->key_[key] = action;
+
 	// Quit game if 'q' is pressed
 	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
 
-	// Stop animation if space bar is pressed
+	// Stop animation if 'p' is pressed
 	if (key == GLFW_KEY_P && action == GLFW_PRESS){
-	    game->animating_ = (game->animating_ == true) ? false : true;
-	}
-
-	double delta = glfwGetTime() - game->last_time;
-
-	SceneNode *node;
-	node = game->scene_.GetNode("CubeInstance1");
-
-	// View control
-	float rot_factor(glm::pi<float>() / 9 * delta);
-	float roll_factor(glm::pi<float>() / 2 * delta);
-	float trans_factor = 10.0 * delta;
-
-    if (key == GLFW_KEY_UP){
-        game->camera_.Pitch(rot_factor);
-    }
-    if (key == GLFW_KEY_DOWN){
-        game->camera_.Pitch(-rot_factor);
-    }
-    if (key == GLFW_KEY_LEFT){
-        game->camera_.Yaw(rot_factor);
-    }
-    if (key == GLFW_KEY_RIGHT){
-        game->camera_.Yaw(-rot_factor);
-    }
-    if (key == GLFW_KEY_S){
-        game->camera_.Roll(-rot_factor);
-    }
-    if (key == GLFW_KEY_X){
-        game->camera_.Roll(rot_factor);
-    }
-    if (key == GLFW_KEY_A){
-		game->camera_.Translate(glm::vec3(0, 0, -trans_factor));
-    }
-    if (key == GLFW_KEY_Z){
-		game->camera_.Translate(glm::vec3(0, 0, trans_factor));
-    }
-    if (key == GLFW_KEY_J){
-		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
-    }
-    if (key == GLFW_KEY_L){
-		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
-    }
-    if (key == GLFW_KEY_SPACE){
-		game->camera_.Translate(glm::vec3(0, trans_factor, 0));
-    }
-    if (key == GLFW_KEY_LEFT_CONTROL){
-		game->camera_.Translate(glm::vec3(0, -trans_factor, 0));
-    }
-
-	if (key == GLFW_KEY_1) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
-	}
-	if (key == GLFW_KEY_2) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
-	}
-	if (key == GLFW_KEY_3) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0, 0)));
-	}
-	if (key == GLFW_KEY_4) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0, 0)));
-	}
-	if (key == GLFW_KEY_5) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, -roll_factor, 0)));
-	}
-	if (key == GLFW_KEY_6) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, roll_factor, 0)));
-	}
-	if (key == GLFW_KEY_V) {
-		game->camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+	    game->pause_ = (game->pause_ == true) ? false : true;
 	}
 }
 

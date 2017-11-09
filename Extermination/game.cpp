@@ -23,8 +23,9 @@ float camera_near_clip_distance_g = 0.01;
 float camera_far_clip_distance_g = 1000.0;
 float camera_fov_g = 20.0; // Field-of-view of camera
 const glm::vec3 viewport_background_color_g(1.0, 1.0, 1.0);
-glm::vec3 camera_position_g(0.5, 0.5, 10.0);
-glm::vec3 camera_look_at_g(0.0, 0.0, 0.0);
+//glm::vec3 camera_position_g(0.5, 0.5, 10.0);
+glm::vec3 camera_position_g(0.0, 0.0, 0.0);
+glm::vec3 camera_look_at_g(0.0, 0.0, -1.0);
 glm::vec3 camera_up_g(0.0, 1.0, 0.0);
 
 // Materials 
@@ -95,9 +96,10 @@ void Game::InitView(void){
 
     // Set up camera
     // Set current view
-    camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+	camera_ = new Camera();
+    camera_->SetView(camera_position_g, camera_look_at_g, camera_up_g);
     // Set projection
-    camera_.SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
+    camera_->SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
 }
 
 
@@ -153,7 +155,7 @@ void Game::SetupScene(void){
     //game::SceneNode *torus = CreateInstance("TorusInstance1", "CubeMesh", SHINY_Texture_MATERIAL, "Window");
     // Scale the instance
     torus->Scale(glm::vec3(0.75, 0.75, 0.75));
-    torus->Translate(glm::vec3(-1.0, 0, 0));
+    //torus->Translate(glm::vec3(-1.0, 0, 0));
 
 
 	//game::SceneNode *loadCube = CreateInstance("CubeIn1", "CubeMesh2", "SHINY_BLUE_MATERIAL");
@@ -194,6 +196,10 @@ void Game::SetupScene(void){
     back_rotor->Translate(glm::vec3(0.10, -0.25, 0.0));
 
 	// creates helicopter hierarchy 
+	camera_->Translate(glm::vec3(0.0, 0.0, 5.0));
+	SceneNode* camera = camera_;
+	torus->addChild(camera);
+	//upper_body->addChild(camera);
 	upper_body->addChild(lower_body);
 	upper_body->addChild(upper_joint);
 	upper_joint->addChild(upper_rotor);
@@ -207,7 +213,8 @@ void Game::SetupScene(void){
 void Game::MainLoop(void){
 
     // Loop while the user did not close the window
-	animating_ = true;
+	animating_ = false;
+	//animating_ = true;
     while (!glfwWindowShouldClose(window_)){
         // Animate the scene
         if (animating_){
@@ -240,7 +247,7 @@ void Game::MainLoop(void){
         }
 
         // Draw the scene
-        scene_.Draw(&camera_);
+        scene_.Draw(camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -270,48 +277,59 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	double delta = glfwGetTime() - game->last_time;
 
 	SceneNode *node;
-	node = game->scene_.GetNode("CubeInstance1");
+	node = game->scene_.GetNode("TorusInstance1");
 
 	// View control
-	float rot_factor(glm::pi<float>() / 9 * delta);
-	float roll_factor(glm::pi<float>() / 2 * delta);
-	float trans_factor = 10.0 * delta;
+	//float rot_factor(glm::pi<float>() / 25 * delta);
+	float rot_factor(glm::pi<float>() / 50);
+	//float roll_factor(glm::pi<float>() / 2 * delta);
+	float roll_factor(glm::pi<float>() / 2);
+	//float trans_factor = 0.25 * delta;
+	float trans_factor = 0.25;
 
     if (key == GLFW_KEY_UP){
-        game->camera_.Pitch(rot_factor);
+        game->camera_->Pitch(rot_factor);
     }
     if (key == GLFW_KEY_DOWN){
-        game->camera_.Pitch(-rot_factor);
+        game->camera_->Pitch(-rot_factor);
     }
     if (key == GLFW_KEY_LEFT){
-        game->camera_.Yaw(rot_factor);
+        node->Rotate(glm::angleAxis(rot_factor, glm::vec3(0.0, 1.0, 0.0)));
+        //game->camera_->Yaw(rot_factor);
     }
     if (key == GLFW_KEY_RIGHT){
-        game->camera_.Yaw(-rot_factor);
+        node->Rotate(glm::angleAxis(rot_factor, glm::vec3(0.0, -1.0, 0.0)));
+        //game->camera_->Yaw(-rot_factor);
     }
     if (key == GLFW_KEY_S){
-        game->camera_.Roll(-rot_factor);
+        game->camera_->Roll(-rot_factor);
     }
     if (key == GLFW_KEY_X){
-        game->camera_.Roll(rot_factor);
+        game->camera_->Roll(rot_factor);
     }
     if (key == GLFW_KEY_A){
-		game->camera_.Translate(glm::vec3(0, 0, -trans_factor));
+		node->Translate(glm::vec3(0, 0, -trans_factor));
+		//game->camera_->Translate(glm::vec3(0, 0, -trans_factor));
     }
     if (key == GLFW_KEY_Z){
-		game->camera_.Translate(glm::vec3(0, 0, trans_factor));
+		node->Translate(glm::vec3(0, 0, trans_factor));
+		//game->camera_->Translate(glm::vec3(0, 0, trans_factor));
     }
     if (key == GLFW_KEY_J){
-		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
+		node->Translate(glm::vec3(-trans_factor, 0, 0));
+		//game->camera_->Translate(glm::vec3(-trans_factor, 0, 0));
     }
     if (key == GLFW_KEY_L){
-		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
+		node->Translate(glm::vec3(trans_factor, 0, 0));
+		//game->camera_->Translate(glm::vec3(-trans_factor, 0, 0));
     }
     if (key == GLFW_KEY_SPACE){
-		game->camera_.Translate(glm::vec3(0, trans_factor, 0));
+		node->Translate(glm::vec3(0, trans_factor, 0));
+		//game->camera_->Translate(glm::vec3(0, trans_factor, 0));
     }
     if (key == GLFW_KEY_LEFT_CONTROL){
-		game->camera_.Translate(glm::vec3(0, -trans_factor, 0));
+		node->Translate(glm::vec3(0, -trans_factor, 0));
+		//game->camera_->Translate(glm::vec3(0, -trans_factor, 0));
     }
 
 	if (key == GLFW_KEY_1) {
@@ -333,7 +351,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, roll_factor, 0)));
 	}
 	if (key == GLFW_KEY_V) {
-		game->camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+		game->camera_->SetView(camera_position_g, camera_look_at_g, camera_up_g);
 	}
 }
 
@@ -344,7 +362,7 @@ void Game::ResizeCallback(GLFWwindow* window, int width, int height){
     glViewport(0, 0, width, height);
     void* ptr = glfwGetWindowUserPointer(window);
     Game *game = (Game *) ptr;
-    game->camera_.SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
+    game->camera_->SetProjection(camera_fov_g, camera_near_clip_distance_g, camera_far_clip_distance_g, width, height);
 }
 
 

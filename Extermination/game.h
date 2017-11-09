@@ -52,7 +52,7 @@ namespace game {
             ResourceManager resman_;
 
             // Camera abstraction
-            Camera camera_;
+            Camera* camera_;
 
             // Flag to turn animation on/off
             bool animating_;

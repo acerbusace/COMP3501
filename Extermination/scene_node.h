@@ -60,8 +60,9 @@ namespace game {
             GLuint GetElementArrayBuffer(void) const;
             GLsizei GetSize(void) const;
             GLuint GetMaterial(void) const;
+			virtual glm::mat4 getTransf(bool negate = false);
 
-        private:
+        protected:
             std::string name_; // Name of the scene node
             GLuint array_buffer_; // References to geometry: vertex and array buffers
             GLuint element_array_buffer_;
@@ -76,7 +77,6 @@ namespace game {
 
             // Set matrices that transform the node in a shader program
             void SetupShader(GLuint program);
-			glm::mat4 getTransf();
 
 			SceneNode *parent;
 			std::vector<SceneNode*> children;

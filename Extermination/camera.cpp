@@ -171,11 +171,23 @@ void Camera::SetupViewMatrix(void){
     glm::mat4 trans = glm::translate(glm::mat4(1.0), -position_);
 
     // Combine translation and view matrix in proper order
-    view_matrix_ *= trans;
+    //view_matrix_ *= trans;
+    //view_matrix_ = getTransf() * view_matrix_ * trans;
+    view_matrix_ = view_matrix_ * trans * getTransf();
 }
 
 void Camera::Draw(Camera* camera) {
 
+}
+
+glm::mat4 Camera::getTransf(bool negate) {
+    // World transformation
+	glm::mat4 transf;
+
+	if (parent)
+		transf = parent->getTransf(true);
+
+	return transf;
 }
 
 } // namespace game

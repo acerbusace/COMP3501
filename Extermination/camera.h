@@ -62,6 +62,7 @@ namespace game {
 
             // Create view matrix from current camera parameters
             void SetupViewMatrix(void);
+			glm::mat4 getTransf(bool negate = false);
 
     }; // class Camera
 

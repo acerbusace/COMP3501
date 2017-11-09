@@ -179,11 +179,19 @@ void SceneNode::Update(double delta_time){
     // Do nothing for this generic type of scene node
 }
 
-glm::mat4 SceneNode::getTransf() {
+glm::mat4 SceneNode::getTransf(bool negate) {
     // World transformation
 	orientation_ = glm::normalize(orientation_);
-    glm::mat4 rotation = glm::mat4_cast(orientation_);
-    glm::mat4 translation = glm::translate(glm::mat4(1.0), position_);
+	glm::mat4 rotation;
+	glm::mat4 translation;
+	if (negate) {
+		rotation = glm::mat4_cast(-orientation_);
+		translation = glm::translate(glm::mat4(1.0), -position_);
+	}
+	else {
+		rotation = glm::mat4_cast(orientation_);
+		translation = glm::translate(glm::mat4(1.0), position_);
+	}
 
 	glm::mat4 transf = translation * rotation;
 

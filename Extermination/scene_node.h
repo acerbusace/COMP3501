@@ -53,6 +53,7 @@ namespace game {
 
             // Update the node
             virtual void Update(double delta_time);
+			virtual glm::mat4 getTransf();
 
             // OpenGL variables
             GLenum GetMode(void) const;
@@ -61,7 +62,7 @@ namespace game {
             GLsizei GetSize(void) const;
             GLuint GetMaterial(void) const;
 
-        private:
+        protected:
             std::string name_; // Name of the scene node
             GLuint array_buffer_; // References to geometry: vertex and array buffers
             GLuint element_array_buffer_;
@@ -76,7 +77,6 @@ namespace game {
 
             // Set matrices that transform the node in a shader program
             void SetupShader(GLuint program);
-			glm::mat4 getTransf();
 
 			SceneNode *parent;
 			std::vector<SceneNode*> children;

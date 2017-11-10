@@ -140,6 +140,10 @@ void Game::SetupResources(void){
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_.LoadResource(Mesh, "OtherMesh", filename.c_str());
+
+	// Load a cube from a file
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
+	resman_.LoadResource(Mesh, "LaserMesh", filename.c_str());
 }
 
 
@@ -149,7 +153,8 @@ void Game::SetupScene(void){
     scene_.SetBackgroundColor(viewport_background_color_g);
 
     // Create an instance of the torus mesh
-    game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
+    //game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
+    game::SceneNode *torus = CreateInstance("TorusInstance1", "OtherMesh", SHINY_BLUE_MATERIAL);
     //game::SceneNode *torus = CreateInstance("TorusInstance1", "CubeMesh", SHINY_Texture_MATERIAL, "Window");
     // Scale the instance
     torus->Scale(glm::vec3(0.75, 0.75, 0.75));
@@ -200,7 +205,13 @@ void Game::SetupScene(void){
 	upper_body->addChild(back_joint);
 	back_joint->addChild(back_rotor);
 
-	CreateLand(glm::vec3(10, 1, 10), glm::vec3(0.0, -0.05, 0.0), glm::vec3(10.0, 0.10, 10.0));
+	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0), "Metal");
+	CreateLand(glm::vec3(1, 5, 10), glm::vec3(-550.0 - 0.05, -250.0, -500.0), glm::vec3(0.10, 100.0, 100.0), "Metal");
+
+	Laser *test = CreateLaserInstance("Laser1", "OtherMesh", SHINY_TEXTURE_MATERIAL, "Window");
+	test->SetInitPos(camera_.GetPosition());
+	test->SetOrientation(camera_.GetOrientation());
+	test->SetSpeed(10.0);
 }
 
 
@@ -251,7 +262,7 @@ void Game::MainLoop(void){
 				camera_.Translate(glm::vec3(0, -trans_factor, 0));
 			}
 
-			//scene_.Update();
+			scene_.Update(delta_time);
 
 			SceneNode *node;
 			glm::quat rotation;
@@ -363,13 +374,13 @@ void Game::CreateAsteroidField(int num_asteroids){
     }
 }
 
-void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale){
+void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale, std::string texture_name){
 	game::SceneNode *node;
     // Create a number of asteroid instances
 	for (int x = 0; x < size.x; ++x) {
 		for (int y = 0; y < size.y; ++y) {
 			for (int z = 0; z < size.z; ++z) {
-				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
+				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, texture_name);
 				node->Scale(scale);
 				node->Translate(pos + glm::vec3(scale.x*x, scale.y*y, scale.z*z));
 			}
@@ -394,6 +405,26 @@ SceneNode *Game::CreateInstance(std::string entity_name, std::string object_name
 
     SceneNode *scn = scene_.CreateNode(entity_name, geom, mat, tex);
     return scn;
+}
+
+Laser *Game::CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name){
+
+    Resource *geom = resman_.GetResource(object_name);
+    if (!geom){
+        throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
+    }
+
+    Resource *mat = resman_.GetResource(material_name);
+    if (!mat){
+        throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
+    }
+
+    Resource *tex = resman_.GetResource(texture_name);
+
+    Laser *lsr = new Laser(entity_name, geom, mat, tex);
+	lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
+	scene_.AddNode(lsr);
+	return lsr;
 }
 
 } // namespace game

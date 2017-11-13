@@ -23,7 +23,7 @@ float camera_near_clip_distance_g = 0.01;
 float camera_far_clip_distance_g = 1000.0;
 float camera_fov_g = 20.0; // Field-of-view of camera
 const glm::vec3 viewport_background_color_g(1.0, 1.0, 1.0);
-glm::vec3 camera_position_g(0.5, 0.5, 10.0);
+glm::vec3 camera_position_g(0.0, 0.0, 10.0);
 glm::vec3 camera_look_at_g(0.0, 0.0, 0.0);
 glm::vec3 camera_up_g(0.0, 1.0, 0.0);
 
@@ -138,8 +138,8 @@ void Game::SetupResources(void){
 	resman_.LoadResource(Texture, "Metal", filename.c_str());
 
 	// Load a cube from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_.LoadResource(Mesh, "OtherMesh", filename.c_str());
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/SHIP.obj");
+	resman_.LoadResource(Mesh, "PlayerMesh", filename.c_str());
 }
 
 
@@ -150,13 +150,13 @@ void Game::SetupScene(void){
 
     // Create an instance of the torus mesh
     game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
-    //game::SceneNode *torus = CreateInstance("TorusInstance1", "CubeMesh", SHINY_Texture_MATERIAL, "Window");
     // Scale the instance
     torus->Scale(glm::vec3(0.75, 0.75, 0.75));
     torus->Translate(glm::vec3(-1.0, 0, 0));
 
+	//game::SceneNode *player = CreateInstance("PlayerInstance", "TorusMesh", SHINY_BLUE_MATERIAL);
+	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
-	//game::SceneNode *loadCube = CreateInstance("CubeIn1", "CubeMesh2", "SHINY_BLUE_MATERIAL");
 
     // Create an helicopter instance
 
@@ -164,7 +164,7 @@ void Game::SetupScene(void){
     game::SceneNode *upper_body = CreateInstance("CubeInstance1", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
     upper_body->Scale(glm::vec3(0.35, 0.35, 1.25));
 	upper_body->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(15.0, 0.0, 0.0)));
-    //upper_body->Translate(glm::vec3(1.0, 0, 0));
+    upper_body->Translate(glm::vec3(1.0, 0, 0));
 
 	// lower body
     game::SceneNode *lower_body = CreateInstance("CubeInstance2", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
@@ -215,28 +215,35 @@ void Game::MainLoop(void){
 			double delta_time = current_time - last_time;
             last_time = current_time;
 
-				std::cout << "time: " << current_time << " -> " << current_time - last_time << std::endl;
-                //scene_.Update();
+			SceneNode *node;
+			node = scene_.GetNode("PlayerInstance");
 
-				SceneNode *node;
-				glm::quat rotation;
+			Movement(node, delta_time);
 
-                // Animate the torus and helicopter
-				rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
 
-                node = scene_.GetNode("TorusInstance1");
-                node->Rotate(rotation);
 
-                node = scene_.GetNode("CubeInstance1");
-                node->Rotate(rotation);
+			//std::cout << "time: " << current_time << " -> " << current_time - last_time << std::endl;
+            //scene_.Update();
+			std::cout << glm::to_string(camera_.GetForward());
 
-				// animate top and back rotor
-				rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
+			glm::quat rotation;
 
-                node = scene_.GetNode("CylinderInstance2");
-                node->Rotate(rotation);
-                node = scene_.GetNode("CylinderInstance4");
-                node->Rotate(rotation);
+            // Animate the torus and helicopter
+			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
+
+            node = scene_.GetNode("TorusInstance1");
+            node->Rotate(rotation);
+
+            node = scene_.GetNode("CubeInstance1");
+            node->Rotate(rotation);
+
+			// animate top and back rotor
+			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
+
+            node = scene_.GetNode("CylinderInstance2");
+            node->Rotate(rotation);
+            node = scene_.GetNode("CylinderInstance4");
+            node->Rotate(rotation);
         }
 
         // Draw the scene
@@ -251,11 +258,81 @@ void Game::MainLoop(void){
 }
 
 
+void Game::Movement(SceneNode* node, double delta_time) {
+	float rot_factor = glm::radians(40.0) * delta_time;
+	float roll_factor = glm::radians(2000.0) * delta_time;
+	float trans_factor = 5.0 * delta_time;
+
+	//Move Forward
+	if (key_[GLFW_KEY_UP] == GLFW_PRESS || key_[GLFW_KEY_UP] == GLFW_REPEAT) {
+		node->Translate(camera_.GetForward() * trans_factor);
+		camera_.Translate(camera_.GetForward() * trans_factor);
+	}
+	//Move Backward
+	if (key_[GLFW_KEY_DOWN] == GLFW_PRESS || key_[GLFW_KEY_DOWN] == GLFW_REPEAT) {
+		node->Translate(camera_.GetForward() * -trans_factor);
+		camera_.Translate(camera_.GetForward() * -trans_factor);
+	}
+	//Move Left
+	if (key_[GLFW_KEY_LEFT] == GLFW_PRESS || key_[GLFW_KEY_LEFT] == GLFW_REPEAT) {
+		node->Translate(camera_.GetSide() * -trans_factor);
+		camera_.Translate(camera_.GetSide() * -trans_factor);
+	}
+	//Move Right
+	if (key_[GLFW_KEY_RIGHT] == GLFW_PRESS || key_[GLFW_KEY_RIGHT] == GLFW_REPEAT) {
+		node->Translate(camera_.GetSide() * trans_factor);
+		camera_.Translate(camera_.GetSide() * trans_factor);
+	}
+	//Move Upwards
+	if (key_[GLFW_KEY_W] == GLFW_PRESS || key_[GLFW_KEY_W] == GLFW_REPEAT) {
+		node->Translate(camera_.GetUp() * trans_factor);
+		camera_.Translate(camera_.GetUp() * trans_factor);
+	}
+	//Move Downwards
+	if (key_[GLFW_KEY_E] == GLFW_PRESS || key_[GLFW_KEY_E] == GLFW_REPEAT) {
+		node->Translate(camera_.GetUp() * -trans_factor);
+		camera_.Translate(camera_.GetUp() * -trans_factor);
+	}
+	//Roll Left
+	if (key_[GLFW_KEY_1] == GLFW_PRESS || key_[GLFW_KEY_1] == GLFW_REPEAT) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
+		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
+	}
+	//Roll Right
+	if (key_[GLFW_KEY_2] == GLFW_PRESS || key_[GLFW_KEY_2] == GLFW_REPEAT) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
+		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
+	}
+	//Roll Forward
+	if (key_[GLFW_KEY_3] == GLFW_PRESS || key_[GLFW_KEY_3] == GLFW_REPEAT) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
+		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
+	}
+	//Roll Back
+	if (key_[GLFW_KEY_4] == GLFW_PRESS || key_[GLFW_KEY_4] == GLFW_REPEAT) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
+		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
+	}
+	//Turn Left
+	if (key_[GLFW_KEY_5] == GLFW_PRESS || key_[GLFW_KEY_5] == GLFW_REPEAT) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
+		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
+	}
+	//Turn Right
+	if (key_[GLFW_KEY_6] == GLFW_PRESS || key_[GLFW_KEY_6] == GLFW_REPEAT) {
+		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
+		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
+	}
+}
+
+
 void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
 
 	// Get user data with a pointer to the game class
 	void* ptr = glfwGetWindowUserPointer(window);
 	Game *game = (Game *)ptr;
+
+	game->key_[key] = action;
 
 	// Quit game if 'q' is pressed
 	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
@@ -278,18 +355,18 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	float trans_factor = 10.0 * delta;
 
     if (key == GLFW_KEY_UP){
-        game->camera_.Pitch(rot_factor);
+        //game->camera_.Pitch(rot_factor);
     }
     if (key == GLFW_KEY_DOWN){
-        game->camera_.Pitch(-rot_factor);
+        //game->camera_.Pitch(-rot_factor);
     }
     if (key == GLFW_KEY_LEFT){
-        game->camera_.Yaw(rot_factor);
+        //game->camera_.Yaw(rot_factor);
     }
     if (key == GLFW_KEY_RIGHT){
-        game->camera_.Yaw(-rot_factor);
+        //game->camera_.Yaw(-rot_factor);
     }
-    if (key == GLFW_KEY_S){
+    /*if (key == GLFW_KEY_S){
         game->camera_.Roll(-rot_factor);
     }
     if (key == GLFW_KEY_X){
@@ -312,28 +389,28 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
     }
     if (key == GLFW_KEY_LEFT_CONTROL){
 		game->camera_.Translate(glm::vec3(0, -trans_factor, 0));
-    }
+    }*/
 
 	if (key == GLFW_KEY_1) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
+		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
 	}
 	if (key == GLFW_KEY_2) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
+		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
 	}
 	if (key == GLFW_KEY_3) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0, 0)));
+		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0, 0)));
 	}
 	if (key == GLFW_KEY_4) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0, 0)));
+		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0, 0)));
 	}
 	if (key == GLFW_KEY_5) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, -roll_factor, 0)));
+		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, -roll_factor, 0)));
 	}
 	if (key == GLFW_KEY_6) {
-		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, roll_factor, 0)));
+		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, roll_factor, 0)));
 	}
 	if (key == GLFW_KEY_V) {
-		game->camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+		//game->camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
 	}
 }
 
@@ -354,7 +431,7 @@ Game::~Game(){
 }
 
 
-Asteroid *Game::CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name){
+Player *Game::CreatePlayerInstance(std::string entity_name, std::string object_name, std::string material_name){
 
     // Get resources
     Resource *geom = resman_.GetResource(object_name);
@@ -368,32 +445,11 @@ Asteroid *Game::CreateAsteroidInstance(std::string entity_name, std::string obje
     }
 
     // Create asteroid instance
-    Asteroid *ast = new Asteroid(entity_name, geom, mat);
-    scene_.AddNode(ast);
-    return ast;
+    Player *player = new Player(entity_name, geom, mat);
+    scene_.AddNode(player);
+    return player;
 }
 
-
-void Game::CreateAsteroidField(int num_asteroids){
-
-    // Create a number of asteroid instances
-    for (int i = 0; i < num_asteroids; i++){
-        // Create instance name
-        std::stringstream ss;
-        ss << i;
-        std::string index = ss.str();
-        std::string name = "AsteroidInstance" + index;
-
-        // Create asteroid instance
-        Asteroid *ast = CreateAsteroidInstance(name, "SimpleSphereMesh", "ObjectMaterial");
-
-        // Set attributes of asteroid: random position, orientation, and
-        // angular momentum
-        ast->SetPosition(glm::vec3(-300.0 + 600.0*((float) rand() / RAND_MAX), -300.0 + 600.0*((float) rand() / RAND_MAX), 600.0*((float) rand() / RAND_MAX)));
-        ast->SetOrientation(glm::normalize(glm::angleAxis(glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
-        ast->SetAngM(glm::normalize(glm::angleAxis(0.05f*glm::pi<float>()*((float) rand() / RAND_MAX), glm::vec3(((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX), ((float) rand() / RAND_MAX)))));
-    }
-}
 
 void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale){
 	game::SceneNode *node;

@@ -6,11 +6,13 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <map>
 
+#include "glm/ext.hpp"
 #include "scene_graph.h"
 #include "resource_manager.h"
 #include "camera.h"
-#include "asteroid.h"
+#include "player.h"
 
 namespace game {
 
@@ -39,7 +41,7 @@ namespace game {
             // Set up initial scene
             void SetupScene(void);
             // Run the game: keep the application active
-            void MainLoop(void); 
+            void MainLoop(void);
 
         private:
             // GLFW window
@@ -59,6 +61,8 @@ namespace game {
 
 			bool material_;
 
+			std::map<int, int> key_;
+
 			double last_time;
 
             // Methods to initialize the game
@@ -67,14 +71,14 @@ namespace game {
             void InitEventHandlers(void);
  
             // Methods to handle events
+			void Movement(SceneNode * node, double delta_time);
             static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
             static void ResizeCallback(GLFWwindow* window, int width, int height);
 
-            // Asteroid field
-            // Create instance of one asteroid
-            Asteroid *CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name);
-            // Create entire random asteroid field
-            void CreateAsteroidField(int num_asteroids = 1500);
+            // Create player
+            Player *CreatePlayerInstance(std::string entity_name, std::string object_name, std::string material_name);
+
+			// Create land
 			void Game::CreateLand(glm::vec3 size, glm::vec3 pos = glm::vec3(0.0, -0.5, 0.0), glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0));
 
             // Create an instance of an object stored in the resource manager

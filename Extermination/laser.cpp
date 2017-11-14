@@ -8,7 +8,7 @@
 
 namespace game {
 
-Laser::Laser(const std::string name, const Resource *geometry, const Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
+Laser::Laser(std::string name, Resource *geometry, Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
 	speed_ = 0;
 }
 

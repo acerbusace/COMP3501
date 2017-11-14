@@ -19,7 +19,7 @@ namespace game {
 
         public:
             // Create laser from given resources
-            Laser(const std::string name, const Resource *geometry, const Resource *material, Resource *texture = 0);
+            Laser(std::string name, Resource *geometry, Resource *material, Resource *texture = 0);
 
             // Destructor
             ~Laser();

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <exception>
+#include <time.h>
 #include "game.h"
 
 // Macro for printing exceptions
@@ -8,6 +9,7 @@
 
 // Main function that builds and runs the game
 int main(void){
+	srand(time(NULL));
     game::Game app; // Game application
 
     try {

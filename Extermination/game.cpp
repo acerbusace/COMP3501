@@ -30,7 +30,6 @@ glm::vec3 camera_up_g(0.0, 1.0, 0.0);
 // Materials 
 const std::string material_directory_g = MATERIAL_DIRECTORY;
 
-
 Game::Game(void){
 
     // Don't do work in the constructor, leave it for the Init() function
@@ -48,6 +47,9 @@ void Game::Init(void){
     pause_ = true;
 	material_ = true;
 	last_time = 0;
+
+	resman_ = new ResourceManager();
+	tower_control_ = new TowerControl(resman_);
 }
 
        
@@ -115,35 +117,35 @@ void Game::InitEventHandlers(void){
 void Game::SetupResources(void){
 
     // Create a torus
-    resman_.CreateSphere("SphereMesh");
-    resman_.CreateTorus("TorusMesh");
-    resman_.CreateCube("CubeMesh");
-    resman_.CreateCylinder("CylinderMesh");
+    resman_->CreateSphere("SphereMesh");
+    resman_->CreateTorus("TorusMesh");
+    resman_->CreateCube("CubeMesh");
+    resman_->CreateCylinder("CylinderMesh");
 
 	std::string filename;
     // Load material to be applied to torus
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_blue");
-    resman_.LoadResource(Material, SHINY_BLUE_MATERIAL, filename.c_str());
+    resman_->LoadResource(Material, SHINY_BLUE_MATERIAL, filename.c_str());
 
 	// Load material to be applied to sphere
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_texture");
-	resman_.LoadResource(Material, SHINY_TEXTURE_MATERIAL, filename.c_str());
+	resman_->LoadResource(Material, SHINY_TEXTURE_MATERIAL, filename.c_str());
 
 	// Load window texture
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/window.jpg");
-	resman_.LoadResource(Texture, "Window", filename.c_str());
+	resman_->LoadResource(Texture, "Window", filename.c_str());
 
 	// Load metal texture
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/metal.jpg");
-	resman_.LoadResource(Texture, "Metal", filename.c_str());
+	resman_->LoadResource(Texture, "Metal", filename.c_str());
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_.LoadResource(Mesh, "OtherMesh", filename.c_str());
+	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_.LoadResource(Mesh, "LaserMesh", filename.c_str());
+	resman_->LoadResource(Mesh, "LaserMesh", filename.c_str());
 }
 
 
@@ -212,6 +214,8 @@ void Game::SetupScene(void){
 	test->SetInitPos(camera_.GetPosition());
 	test->SetOrientation(camera_.GetOrientation());
 	test->SetSpeed(10.0);
+
+	tower_control_->init();
 }
 
 
@@ -226,43 +230,8 @@ void Game::MainLoop(void){
 			double delta_time = current_time - last_time;
             last_time = current_time;
 
-			// View control
-			float rot_factor = glm::radians(40.0) * delta_time;
-			float roll_factor = glm::radians(100.0) * delta_time;
-			float trans_factor = 20.0 * delta_time;
-
-			if (key_[GLFW_KEY_UP] == GLFW_PRESS || key_[GLFW_KEY_UP] == GLFW_REPEAT) {
-				camera_.Pitch(rot_factor);
-			}
-			if (key_[GLFW_KEY_DOWN] == GLFW_PRESS || key_[GLFW_KEY_DOWN] == GLFW_REPEAT) {
-				camera_.Pitch(-rot_factor);
-			}
-			if (key_[GLFW_KEY_LEFT] == GLFW_PRESS || key_[GLFW_KEY_LEFT] == GLFW_REPEAT) {
-				camera_.Yaw(rot_factor);
-			}
-			if (key_[GLFW_KEY_RIGHT] == GLFW_PRESS || key_[GLFW_KEY_RIGHT] == GLFW_REPEAT) {
-				camera_.Yaw(-rot_factor);
-			}
-			if (key_[GLFW_KEY_S] == GLFW_PRESS || key_[GLFW_KEY_S] == GLFW_REPEAT) {
-				camera_.Roll(-roll_factor);
-			}
-			if (key_[GLFW_KEY_X] == GLFW_PRESS || key_[GLFW_KEY_X] == GLFW_REPEAT) {
-				camera_.Roll(roll_factor);
-			}
-			if (key_[GLFW_KEY_A] == GLFW_PRESS || key_[GLFW_KEY_A] == GLFW_REPEAT) {
-				camera_.Translate(camera_.GetForward()*trans_factor);
-			}
-			if (key_[GLFW_KEY_Z] == GLFW_PRESS || key_[GLFW_KEY_Z] == GLFW_REPEAT) {
-				camera_.Translate(-camera_.GetForward()*trans_factor);
-			}
-			if (key_[GLFW_KEY_SPACE] == GLFW_PRESS || key_[GLFW_KEY_SPACE] == GLFW_REPEAT) {
-				camera_.Translate(glm::vec3(0, trans_factor, 0));
-			}
-			if (key_[GLFW_KEY_LEFT_CONTROL] == GLFW_PRESS || key_[GLFW_KEY_LEFT_CONTROL] == GLFW_REPEAT) {
-				camera_.Translate(glm::vec3(0, -trans_factor, 0));
-			}
-
-			scene_.Update(delta_time);
+			
+			update(delta_time);
 
 			SceneNode *node;
 			glm::quat rotation;
@@ -287,6 +256,7 @@ void Game::MainLoop(void){
 
         // Draw the scene
         scene_.Draw(&camera_);
+		tower_control_->draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -294,6 +264,51 @@ void Game::MainLoop(void){
         // Update other events like input handling
         glfwPollEvents();
     }
+}
+
+void Game::update(double delta_time) {
+	input(delta_time);
+
+	scene_.Update(delta_time);
+	tower_control_->update(delta_time, camera_.GetPosition());
+}
+
+void Game::input(double delta_time) {
+	// View control
+	float rot_factor = glm::radians(40.0) * delta_time;
+	float roll_factor = glm::radians(100.0) * delta_time;
+	float trans_factor = 20.0 * delta_time;
+
+	if (key_[GLFW_KEY_UP] == GLFW_PRESS || key_[GLFW_KEY_UP] == GLFW_REPEAT) {
+		camera_.Pitch(rot_factor);
+	}
+	if (key_[GLFW_KEY_DOWN] == GLFW_PRESS || key_[GLFW_KEY_DOWN] == GLFW_REPEAT) {
+		camera_.Pitch(-rot_factor);
+	}
+	if (key_[GLFW_KEY_LEFT] == GLFW_PRESS || key_[GLFW_KEY_LEFT] == GLFW_REPEAT) {
+		camera_.Yaw(rot_factor);
+	}
+	if (key_[GLFW_KEY_RIGHT] == GLFW_PRESS || key_[GLFW_KEY_RIGHT] == GLFW_REPEAT) {
+		camera_.Yaw(-rot_factor);
+	}
+	if (key_[GLFW_KEY_S] == GLFW_PRESS || key_[GLFW_KEY_S] == GLFW_REPEAT) {
+		camera_.Roll(-roll_factor);
+	}
+	if (key_[GLFW_KEY_X] == GLFW_PRESS || key_[GLFW_KEY_X] == GLFW_REPEAT) {
+		camera_.Roll(roll_factor);
+	}
+	if (key_[GLFW_KEY_A] == GLFW_PRESS || key_[GLFW_KEY_A] == GLFW_REPEAT) {
+		camera_.Translate(camera_.GetForward()*trans_factor);
+	}
+	if (key_[GLFW_KEY_Z] == GLFW_PRESS || key_[GLFW_KEY_Z] == GLFW_REPEAT) {
+		camera_.Translate(-camera_.GetForward()*trans_factor);
+	}
+	if (key_[GLFW_KEY_SPACE] == GLFW_PRESS || key_[GLFW_KEY_SPACE] == GLFW_REPEAT) {
+		camera_.Translate(glm::vec3(0, trans_factor, 0));
+	}
+	if (key_[GLFW_KEY_LEFT_CONTROL] == GLFW_PRESS || key_[GLFW_KEY_LEFT_CONTROL] == GLFW_REPEAT) {
+		camera_.Translate(glm::vec3(0, -trans_factor, 0));
+	}
 }
 
 
@@ -336,12 +351,12 @@ Game::~Game(){
 Asteroid *Game::CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name){
 
     // Get resources
-    Resource *geom = resman_.GetResource(object_name);
+    Resource *geom = resman_->GetResource(object_name);
     if (!geom){
         throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
     }
 
-    Resource *mat = resman_.GetResource(material_name);
+    Resource *mat = resman_->GetResource(material_name);
     if (!mat){
         throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
     }
@@ -381,6 +396,7 @@ void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale, std::strin
 		for (int y = 0; y < size.y; ++y) {
 			for (int z = 0; z < size.z; ++z) {
 				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, texture_name);
+				scene_.AddNode(node);
 				node->Scale(scale);
 				node->Translate(pos + glm::vec3(scale.x*x, scale.y*y, scale.z*z));
 			}
@@ -391,35 +407,36 @@ void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale, std::strin
 
 SceneNode *Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name){
 
-    Resource *geom = resman_.GetResource(object_name);
+    Resource *geom = resman_->GetResource(object_name);
     if (!geom){
         throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
     }
 
-    Resource *mat = resman_.GetResource(material_name);
+    Resource *mat = resman_->GetResource(material_name);
     if (!mat){
         throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
     }
 
-    Resource *tex = resman_.GetResource(texture_name);
+    Resource *tex = resman_->GetResource(texture_name);
 
     SceneNode *scn = scene_.CreateNode(entity_name, geom, mat, tex);
+	scene_.AddNode(scn);
     return scn;
 }
 
 Laser *Game::CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name){
 
-    Resource *geom = resman_.GetResource(object_name);
+    Resource *geom = resman_->GetResource(object_name);
     if (!geom){
         throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
     }
 
-    Resource *mat = resman_.GetResource(material_name);
+    Resource *mat = resman_->GetResource(material_name);
     if (!mat){
         throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
     }
 
-    Resource *tex = resman_.GetResource(texture_name);
+    Resource *tex = resman_->GetResource(texture_name);
 
     Laser *lsr = new Laser(entity_name, geom, mat, tex);
 	lsr->Scale(glm::vec3(0.15, 0.15, 1.0));

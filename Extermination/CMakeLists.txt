@@ -5,11 +5,10 @@ project(Extermination)
 
 # Specify project files: header files and source files
 set(HDRS
-    asteroid.h camera.h game.h resource.h resource_manager.h scene_graph.h scene_node.h
-)
+    asteroid.h camera.h game.h resource.h resource_manager.h scene_graph.h scene_node.h laser.h orb.h tower.h tower_control.h misc.h)
 
 set(SRCS
-    asteroid.cpp camera.cpp game.cpp main.cpp resource.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp material_vp.glsl material_fp.glsl shiny_blue_fp.glsl  shiny_blue_vp.glsl shiny_texture_fp.glsl shiny_texture_vp.glsl
+    asteroid.cpp camera.cpp game.cpp main.cpp resource.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp laser.cpp orb.cpp tower.cpp tower_control.cpp material_vp.glsl material_fp.glsl shiny_blue_fp.glsl  shiny_blue_vp.glsl shiny_texture_fp.glsl shiny_texture_vp.glsl
 )
 
 # Add path name to configuration file

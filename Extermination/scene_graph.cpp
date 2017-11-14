@@ -38,7 +38,7 @@ SceneNode *SceneGraph::CreateNode(std::string node_name, Resource *geometry, Res
     SceneNode *scn = new SceneNode(node_name, geometry, material, texture);
 
     // Add node to the scene
-    node_.push_back(scn);
+    //node_.push_back(scn);
 
     return scn;
 
@@ -100,7 +100,7 @@ void SceneGraph::Update(double delta_time){
 
 void SceneGraph::SetMaterial(Resource* material) {
 	for each(SceneNode *node in node_)
-		node->SetMaterial(material);
+		node->setMaterial(material);
 }
 
 } // namespace game

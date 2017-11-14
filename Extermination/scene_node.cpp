@@ -10,13 +10,52 @@
 
 namespace game {
 
-SceneNode::SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource *texture){
+SceneNode::SceneNode(std::string name, Resource *geometry, Resource *material, Resource *texture) {
 
     // Set name of scene node
-    name_ = name;
+	setName(name);
 	parent = NULL;
 
     // Set geometry
+	setGeometry(geometry);
+
+	setMaterial(material);
+
+	// Set texture
+	setTexture(texture);
+
+    // Other attributes
+    scale_ = glm::vec3(1.0, 1.0, 1.0);
+}
+
+
+SceneNode::~SceneNode(){
+}
+
+bool SceneNode::setMaterial(Resource *material) {
+	if (material) {
+		// Set material (shader program)
+		if (material->GetType() != Material) {
+			throw(std::invalid_argument(std::string("Invalid type of material")));
+		}
+		material_ = material->GetResource();
+		return true;
+	}
+	return false;
+}
+
+bool SceneNode::setTexture(Resource *texture) {
+	// Set texture
+	if (texture) {
+		texture_ = texture->GetResource();
+		return true;
+	}
+	texture_ = 0;
+	return false;
+}
+
+bool SceneNode::setGeometry(Resource *geometry) {
+	// Set geometry
 	if (geometry) {
 		geoType = geometry->GetType();
 		if (geoType == PointSet) {
@@ -32,38 +71,19 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
 		array_buffer_ = geometry->GetArrayBuffer();
 		element_array_buffer_ = geometry->GetElementArrayBuffer();
 		size_ = geometry->GetSize();
+		return true;
 	}
-
-	if (material) {
-		// Set material (shader program)
-		if (material->GetType() != Material) {
-			throw(std::invalid_argument(std::string("Invalid type of material")));
-		}
-		material_ = material->GetResource();
-	}
-
-	// Set texture
-	if (texture)
-		texture_ = texture->GetResource();
-	else
-		texture_ = 0;
-
-    // Other attributes
-    scale_ = glm::vec3(1.0, 1.0, 1.0);
-}
-
-
-SceneNode::~SceneNode(){
-}
-
-void SceneNode::SetMaterial(Resource *material) {
-    material_ = material->GetResource();
+	return false;
 }
 
 
 const std::string SceneNode::GetName(void) const {
 
     return name_;
+}
+
+void SceneNode::setName(std::string name) {
+	name_ = name;
 }
 
 
@@ -171,6 +191,14 @@ void SceneNode::Draw(Camera *camera){
 		glDrawElements(mode_, size_, GL_UNSIGNED_INT, 0);
 	else
 		glDrawArrays(mode_, 0, size_);
+
+	for each (SceneNode *child in children) {
+		child->Draw(camera);
+	}
+}
+
+glm::vec3 SceneNode::getPos() {
+	return glm::vec3 (getTransf() * glm::vec4(0.0, 0.0, 0.0, 1.0));
 }
 
 

@@ -21,13 +21,14 @@ namespace game {
 
         public:
             // Create scene node from given resources
-            SceneNode(const std::string name, const Resource *geometry = NULL, const Resource *material = NULL, const Resource *texture = NULL);
+            SceneNode(std::string name = std::string(""), Resource *geometry = NULL, Resource *material = NULL, Resource *texture = NULL);
 
             // Destructor
             ~SceneNode();
             
             // Get name of node
             const std::string GetName(void) const;
+			void setName(std::string);
 
             // Get node attributes
             glm::vec3 GetPosition(void) const;
@@ -45,7 +46,10 @@ namespace game {
             void Scale(glm::vec3 scale);
 			void addChild(SceneNode*);
 			void setParent(SceneNode*);
-			void SetMaterial(Resource*);
+			bool setMaterial(Resource*);
+			bool setGeometry(Resource*);
+			bool setTexture(Resource*);
+			glm::vec3 getPos();
 
             // Draw the node according to scene parameters in 'camera'
             // variable
@@ -61,6 +65,7 @@ namespace game {
             GLuint GetElementArrayBuffer(void) const;
             GLsizei GetSize(void) const;
             GLuint GetMaterial(void) const;
+
 
         protected:
             std::string name_; // Name of the scene node

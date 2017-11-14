@@ -9,10 +9,10 @@
 #include <map>
 
 #include "scene_graph.h"
-#include "resource_manager.h"
 #include "camera.h"
 #include "asteroid.h"
 #include "laser.h"
+#include "tower_control.h"
 
 namespace game {
 
@@ -51,16 +51,20 @@ namespace game {
             SceneGraph scene_;
 
             // Resources available to the game
-            ResourceManager resman_;
+            ResourceManager *resman_;
 
             // Camera abstraction
             Camera camera_;
-
 
             // Flag to turn animation on/off
             bool pause_;
 
 			bool material_;
+
+			TowerControl *tower_control_;
+
+			void input(double delta_time);
+			void update(double delta_time);
 
 			// keys track of keys and their corresponding actions
 			std::map<int, int> key_;

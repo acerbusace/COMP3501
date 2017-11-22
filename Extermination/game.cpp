@@ -262,6 +262,7 @@ void Game::Movement(SceneNode* node, double delta_time) {
 	float rot_factor = glm::radians(40.0) * delta_time;
 	float roll_factor = glm::radians(2000.0) * delta_time;
 	float trans_factor = 5.0 * delta_time;
+	float camera_factor = 10.0;
 
 	//Move Forward
 	if (key_[GLFW_KEY_UP] == GLFW_PRESS || key_[GLFW_KEY_UP] == GLFW_REPEAT) {
@@ -296,32 +297,44 @@ void Game::Movement(SceneNode* node, double delta_time) {
 	//Roll Left
 	if (key_[GLFW_KEY_1] == GLFW_PRESS || key_[GLFW_KEY_1] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
-		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
+		camera_.Translate(camera_.GetForward() * camera_factor);
+		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
+		camera_.Translate(camera_.GetForward() * -camera_factor);
 	}
 	//Roll Right
 	if (key_[GLFW_KEY_2] == GLFW_PRESS || key_[GLFW_KEY_2] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
-		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
+		camera_.Translate(camera_.GetForward() * camera_factor);
+		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
+		camera_.Translate(camera_.GetForward() * -camera_factor);
 	}
 	//Roll Forward
 	if (key_[GLFW_KEY_3] == GLFW_PRESS || key_[GLFW_KEY_3] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
-		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
+		camera_.Translate(camera_.GetForward() * camera_factor);
+		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
+		camera_.Translate(camera_.GetForward() * -camera_factor);
 	}
 	//Roll Back
 	if (key_[GLFW_KEY_4] == GLFW_PRESS || key_[GLFW_KEY_4] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
-		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
+		camera_.Translate(camera_.GetForward() * camera_factor);
+		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
+		camera_.Translate(camera_.GetForward() * -camera_factor);
 	}
 	//Turn Left
 	if (key_[GLFW_KEY_5] == GLFW_PRESS || key_[GLFW_KEY_5] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
-		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
+		camera_.Translate(camera_.GetForward() * camera_factor);
+		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
+		camera_.Translate(camera_.GetForward() * -camera_factor);
 	}
 	//Turn Right
 	if (key_[GLFW_KEY_6] == GLFW_PRESS || key_[GLFW_KEY_6] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
-		//camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
+		camera_.Translate(camera_.GetForward() * camera_factor);
+		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
+		camera_.Translate(camera_.GetForward() * -camera_factor);
 	}
 }
 

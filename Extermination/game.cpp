@@ -224,7 +224,7 @@ void Game::MainLoop(void){
 
 			//std::cout << "time: " << current_time << " -> " << current_time - last_time << std::endl;
             //scene_.Update();
-			std::cout << glm::to_string(camera_.GetForward());
+			//std::cout << glm::to_string(camera_.GetForward());
 
 			glm::quat rotation;
 

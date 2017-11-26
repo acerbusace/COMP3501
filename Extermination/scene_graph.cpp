@@ -100,7 +100,7 @@ void SceneGraph::Update(double delta_time){
 
 void SceneGraph::SetMaterial(Resource* material) {
 	for each(SceneNode *node in node_)
-		node->SetMaterial(material);
+		node->setMaterial(material);
 }
 
 } // namespace game

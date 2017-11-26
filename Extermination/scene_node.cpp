@@ -10,37 +10,17 @@
 
 namespace game {
 
-SceneNode::SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource *texture){
+SceneNode::SceneNode(std::string name, Resource *geometry, Resource *material, Resource *texture) {
 
     // Set name of scene node
-    name_ = name;
+	setName(name);
 	parent = NULL;
 
     // Set geometry
-	if (geometry) {
-		geoType = geometry->GetType();
-		if (geoType == PointSet) {
-			mode_ = GL_POINTS;
-		}
-		else if (geoType == Mesh || geoType == SingleMesh) {
-			mode_ = GL_TRIANGLES;
-		}
-		else {
-			throw(std::invalid_argument(std::string("Invalid type of geometry")));
-		}
+	setGeometry(geometry);
 
-		array_buffer_ = geometry->GetArrayBuffer();
-		element_array_buffer_ = geometry->GetElementArrayBuffer();
-		size_ = geometry->GetSize();
-	}
-
-	if (material) {
-		// Set material (shader program)
-		if (material->GetType() != Material) {
-			throw(std::invalid_argument(std::string("Invalid type of material")));
-		}
-		material_ = material->GetResource();
-	}
+	// Set material
+	setMaterial(material);
 
 	// Set texture
 	if (texture)
@@ -56,14 +36,58 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
 SceneNode::~SceneNode(){
 }
 
-void SceneNode::SetMaterial(Resource *material) {
-    material_ = material->GetResource();
+bool SceneNode::setGeometry(Resource *geometry) {
+	// Set geometry
+	if (geometry) {
+		geoType = geometry->GetType();
+		if (geoType == PointSet) {
+			mode_ = GL_POINTS;
+		}
+		else if (geoType == Mesh || geoType == SingleMesh) {
+			mode_ = GL_TRIANGLES;
+		}
+		else {
+			throw(std::invalid_argument(std::string("Invalid type of geometry")));
+		}
+
+		array_buffer_ = geometry->GetArrayBuffer();
+		element_array_buffer_ = geometry->GetElementArrayBuffer();
+		size_ = geometry->GetSize();
+		return true;
+	}
+	return false;
 }
 
+bool SceneNode::setMaterial(Resource *material) {
+	if (material) {
+		// Set material (shader program)
+		if (material->GetType() != Material) {
+			throw(std::invalid_argument(std::string("Invalid type of material")));
+		}
+		material_ = material->GetResource();
+		return true;
+	}
+	return false;
+}
+
+bool SceneNode::setTexture(Resource *texture) {
+	// Set texture
+	if (texture) {
+		texture_ = texture->GetResource();
+		return true;
+	}
+	texture_ = 0;
+	return false;
+}
 
 const std::string SceneNode::GetName(void) const {
 
     return name_;
+}
+
+void SceneNode::setName(std::string name) {
+
+	name_ = name;
 }
 
 
@@ -150,6 +174,11 @@ GLuint SceneNode::GetMaterial(void) const {
     return material_;
 }
 
+SceneNode * SceneNode::GetParent(void)
+{
+	return parent;
+}
+
 
 void SceneNode::Draw(Camera *camera){
 
@@ -171,8 +200,15 @@ void SceneNode::Draw(Camera *camera){
 		glDrawElements(mode_, size_, GL_UNSIGNED_INT, 0);
 	else
 		glDrawArrays(mode_, 0, size_);
+
+	for each (SceneNode *child in children) {
+		child->Draw(camera);
+	}
 }
 
+glm::vec3 SceneNode::getPos() {
+	return glm::vec3(getTransf() * glm::vec4(0.0, 0.0, 0.0, 1.0));
+}
 
 void SceneNode::Update(double delta_time){
 
@@ -187,7 +223,7 @@ glm::mat4 SceneNode::getTransf() {
 
 	glm::mat4 transf = translation * rotation;
 
-	if (parent)
+	if (GetParent())
 		transf = parent->getTransf() * transf;
 
 	return transf;

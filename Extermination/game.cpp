@@ -48,6 +48,9 @@ void Game::Init(void){
     animating_ = true;
 	material_ = true;
 	last_time = 0;
+
+	resman_ = new ResourceManager();
+	tower_control_ = new TowerControl(resman_);
 }
 
        
@@ -115,31 +118,39 @@ void Game::InitEventHandlers(void){
 void Game::SetupResources(void){
 
     // Create a torus
-    resman_.CreateSphere("SphereMesh");
-    resman_.CreateTorus("TorusMesh");
-    resman_.CreateCube("CubeMesh");
-    resman_.CreateCylinder("CylinderMesh");
+    resman_->CreateSphere("SphereMesh");
+    resman_->CreateTorus("TorusMesh");
+    resman_->CreateCube("CubeMesh");
+    resman_->CreateCylinder("CylinderMesh");
 
 	std::string filename;
     // Load material to be applied to torus
     filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_blue");
-    resman_.LoadResource(Material, SHINY_BLUE_MATERIAL, filename.c_str());
+    resman_->LoadResource(Material, SHINY_BLUE_MATERIAL, filename.c_str());
 
 	// Load material to be applied to sphere
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_texture");
-	resman_.LoadResource(Material, SHINY_TEXTURE_MATERIAL, filename.c_str());
+	resman_->LoadResource(Material, SHINY_TEXTURE_MATERIAL, filename.c_str());
 
 	// Load window texture
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/window.jpg");
-	resman_.LoadResource(Texture, "Window", filename.c_str());
+	resman_->LoadResource(Texture, "Window", filename.c_str());
 
 	// Load metal texture
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/metal.jpg");
-	resman_.LoadResource(Texture, "Metal", filename.c_str());
+	resman_->LoadResource(Texture, "Metal", filename.c_str());
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/SHIP.obj");
-	resman_.LoadResource(Mesh, "PlayerMesh", filename.c_str());
+	resman_->LoadResource(Mesh, "PlayerMesh", filename.c_str());
+
+	// Load a cube from a file
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
+	resman_->LoadResource(Mesh, "LaserMesh", filename.c_str());
+
+	// Load a cube from a file
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
+	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 }
 
 
@@ -200,7 +211,14 @@ void Game::SetupScene(void){
 	upper_body->addChild(back_joint);
 	back_joint->addChild(back_rotor);
 
-	CreateLand(glm::vec3(10, 1, 10), glm::vec3(0.0, -0.05, 0.0), glm::vec3(10.0, 0.10, 10.0));
+	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
+
+	Laser *test = CreateLaserInstance("Laser1", "OtherMesh", SHINY_TEXTURE_MATERIAL, "Window");
+	test->SetInitPos(camera_.GetPosition());
+	test->SetOrientation(camera_.GetOrientation());
+	test->SetSpeed(10.0);
+
+	tower_control_->init();
 }
 
 
@@ -218,14 +236,7 @@ void Game::MainLoop(void){
 			SceneNode *node;
 			node = scene_.GetNode("PlayerInstance");
 
-			Movement(node, delta_time);
-
-
-
-			//std::cout << "time: " << current_time << " -> " << current_time - last_time << std::endl;
-            //scene_.Update();
-			//std::cout << glm::to_string(camera_.GetForward());
-
+			update(node, delta_time);
 			glm::quat rotation;
 
             // Animate the torus and helicopter
@@ -248,6 +259,7 @@ void Game::MainLoop(void){
 
         // Draw the scene
         scene_.Draw(&camera_);
+		tower_control_->draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -257,8 +269,15 @@ void Game::MainLoop(void){
     }
 }
 
+void Game::update(SceneNode* node, double delta_time) {
+	input(node, delta_time);
 
-void Game::Movement(SceneNode* node, double delta_time) {
+	scene_.Update(delta_time);
+	tower_control_->update(delta_time, camera_.GetPosition());
+}
+
+
+void Game::input(SceneNode* node, double delta_time) {
 	float rot_factor = glm::radians(40.0) * delta_time;
 	float roll_factor = glm::radians(2000.0) * delta_time;
 	float trans_factor = 5.0 * delta_time;
@@ -447,12 +466,12 @@ Game::~Game(){
 Player *Game::CreatePlayerInstance(std::string entity_name, std::string object_name, std::string material_name){
 
     // Get resources
-    Resource *geom = resman_.GetResource(object_name);
+    Resource *geom = resman_->GetResource(object_name);
     if (!geom){
         throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
     }
 
-    Resource *mat = resman_.GetResource(material_name);
+    Resource *mat = resman_->GetResource(material_name);
     if (!mat){
         throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
     }
@@ -481,20 +500,40 @@ void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale){
 
 SceneNode *Game::CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name){
 
-    Resource *geom = resman_.GetResource(object_name);
+    Resource *geom = resman_->GetResource(object_name);
     if (!geom){
         throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
     }
 
-    Resource *mat = resman_.GetResource(material_name);
+    Resource *mat = resman_->GetResource(material_name);
     if (!mat){
         throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
     }
 
-    Resource *tex = resman_.GetResource(texture_name);
+    Resource *tex = resman_->GetResource(texture_name);
 
     SceneNode *scn = scene_.CreateNode(entity_name, geom, mat, tex);
     return scn;
+}
+
+Laser *Game::CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
+
+	Resource *geom = resman_->GetResource(object_name);
+	if (!geom) {
+		throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
+	}
+
+	Resource *mat = resman_->GetResource(material_name);
+	if (!mat) {
+		throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+	}
+
+	Resource *tex = resman_->GetResource(texture_name);
+
+	Laser *lsr = new Laser(entity_name, geom, mat, tex);
+	lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
+	scene_.AddNode(lsr);
+	return lsr;
 }
 
 } // namespace game

@@ -13,6 +13,8 @@
 #include "resource_manager.h"
 #include "camera.h"
 #include "player.h"
+#include "laser.h"
+#include "tower_control.h"
 
 namespace game {
 
@@ -45,16 +47,19 @@ namespace game {
 
         private:
             // GLFW window
-            GLFWwindow* window_;
+            GLFWwindow *window_;
 
             // Scene graph containing all nodes to render
             SceneGraph scene_;
 
             // Resources available to the game
-            ResourceManager resman_;
+            ResourceManager *resman_;
 
             // Camera abstraction
             Camera camera_;
+
+			// Tower Control
+			TowerControl *tower_control_;
 
             // Flag to turn animation on/off
             bool animating_;
@@ -71,7 +76,8 @@ namespace game {
             void InitEventHandlers(void);
  
             // Methods to handle events
-			void Movement(SceneNode * node, double delta_time);
+			void input(SceneNode * node, double delta_time);
+			void update(SceneNode * node, double delta_time);
             static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
             static void ResizeCallback(GLFWwindow* window, int width, int height);
 
@@ -83,6 +89,9 @@ namespace game {
 
             // Create an instance of an object stored in the resource manager
             SceneNode *CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
+			// Create an instance of a laser
+			Laser *CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
 
     }; // class Game
 

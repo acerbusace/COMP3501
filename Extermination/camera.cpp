@@ -50,6 +50,7 @@ void Camera::Translate(glm::vec3 trans){
 void Camera::Rotate(glm::quat rot){
 
 	orientation_ *= rot;
+	orientation_ = glm::normalize(orientation_);
 }
 
 

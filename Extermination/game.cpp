@@ -50,6 +50,7 @@ void Game::Init(void){
 	last_time = 0;
 
 	resman_ = new ResourceManager();
+	scene_ = new SceneGraph();
 	tower_control_ = new TowerControl(resman_);
 }
 
@@ -157,7 +158,7 @@ void Game::SetupResources(void){
 void Game::SetupScene(void){
 
     // Set background color for the scene
-    scene_.SetBackgroundColor(viewport_background_color_g);
+    scene_->SetBackgroundColor(viewport_background_color_g);
 
     // Create an instance of the torus mesh
     game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
@@ -234,7 +235,7 @@ void Game::MainLoop(void){
             last_time = current_time;
 
 			SceneNode *node;
-			node = scene_.GetNode("PlayerInstance");
+			node = scene_->GetNode("PlayerInstance");
 
 			update(node, delta_time);
 			glm::quat rotation;
@@ -242,23 +243,23 @@ void Game::MainLoop(void){
             // Animate the torus and helicopter
 			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
 
-            node = scene_.GetNode("TorusInstance1");
+            node = scene_->GetNode("TorusInstance1");
             node->Rotate(rotation);
 
-            node = scene_.GetNode("CubeInstance1");
+            node = scene_->GetNode("CubeInstance1");
             node->Rotate(rotation);
 
 			// animate top and back rotor
 			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
 
-            node = scene_.GetNode("CylinderInstance2");
+            node = scene_->GetNode("CylinderInstance2");
             node->Rotate(rotation);
-            node = scene_.GetNode("CylinderInstance4");
+            node = scene_->GetNode("CylinderInstance4");
             node->Rotate(rotation);
         }
 
         // Draw the scene
-        scene_.Draw(&camera_);
+        scene_->Draw(&camera_);
 		tower_control_->draw(&camera_);
 
         // Push buffer drawn in the background onto the display
@@ -272,7 +273,7 @@ void Game::MainLoop(void){
 void Game::update(SceneNode* node, double delta_time) {
 	input(node, delta_time);
 
-	scene_.Update(delta_time);
+	scene_->Update(delta_time);
 	tower_control_->update(delta_time, camera_.GetPosition());
 }
 
@@ -379,7 +380,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	double delta = glfwGetTime() - game->last_time;
 
 	SceneNode *node;
-	node = game->scene_.GetNode("CubeInstance1");
+	node = game->scene_->GetNode("CubeInstance1");
 
 	// View control
 	float rot_factor(glm::pi<float>() / 9 * delta);
@@ -478,7 +479,7 @@ Player *Game::CreatePlayerInstance(std::string entity_name, std::string object_n
 
     // Create asteroid instance
     Player *player = new Player(entity_name, geom, mat);
-    scene_.AddNode(player);
+    scene_->AddNode(player);
     return player;
 }
 
@@ -512,7 +513,7 @@ SceneNode *Game::CreateInstance(std::string entity_name, std::string object_name
 
     Resource *tex = resman_->GetResource(texture_name);
 
-    SceneNode *scn = scene_.CreateNode(entity_name, geom, mat, tex);
+    SceneNode *scn = scene_->CreateNode(entity_name, geom, mat, tex);
     return scn;
 }
 
@@ -532,7 +533,7 @@ Laser *Game::CreateLaserInstance(std::string entity_name, std::string object_nam
 
 	Laser *lsr = new Laser(entity_name, geom, mat, tex);
 	lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
-	scene_.AddNode(lsr);
+	scene_->AddNode(lsr);
 	return lsr;
 }
 

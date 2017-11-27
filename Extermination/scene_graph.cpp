@@ -50,6 +50,11 @@ void SceneGraph::AddNode(SceneNode *node){
     node_.push_back(node);
 }
 
+void SceneGraph::AddPlayer(Player * player)
+{
+	player_ = player;
+}
+
 
 SceneNode *SceneGraph::GetNode(std::string node_name) const {
 
@@ -61,6 +66,11 @@ SceneNode *SceneGraph::GetNode(std::string node_name) const {
     }
     return NULL;
 
+}
+
+Player * SceneGraph::GetPlayer() const
+{
+	return player_;
 }
 
 

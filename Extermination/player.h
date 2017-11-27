@@ -24,8 +24,13 @@ namespace game {
             // Destructor
             ~Player();
             
-            
+			void Draw(Camera *camera);
+
+			bool get_first_person();
+			void toggle_first_person();
+
         private:
+			bool first_person_;
     }; // class Player
 
 } // namespace game

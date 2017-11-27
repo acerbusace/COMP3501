@@ -166,7 +166,6 @@ void Game::SetupScene(void){
     torus->Scale(glm::vec3(0.75, 0.75, 0.75));
     torus->Translate(glm::vec3(-1.0, 0, 0));
 
-	//game::SceneNode *player = CreateInstance("PlayerInstance", "TorusMesh", SHINY_BLUE_MATERIAL);
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
 
@@ -279,7 +278,6 @@ void Game::update(SceneNode* node, double delta_time) {
 
 
 void Game::input(SceneNode* node, double delta_time) {
-	float rot_factor = glm::radians(40.0) * delta_time;
 	float roll_factor = glm::radians(2000.0) * delta_time;
 	float trans_factor = 5.0 * delta_time;
 	float camera_factor = 10.0;
@@ -317,44 +315,68 @@ void Game::input(SceneNode* node, double delta_time) {
 	//Roll Left
 	if (key_[GLFW_KEY_1] == GLFW_PRESS || key_[GLFW_KEY_1] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
-		camera_.Translate(camera_.GetForward() * camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * camera_factor);
+		}
 		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
-		camera_.Translate(camera_.GetForward() * -camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * -camera_factor);
+		}
 	}
 	//Roll Right
 	if (key_[GLFW_KEY_2] == GLFW_PRESS || key_[GLFW_KEY_2] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
-		camera_.Translate(camera_.GetForward() * camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * camera_factor);
+		}
 		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
-		camera_.Translate(camera_.GetForward() * -camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * -camera_factor);
+		}
 	}
 	//Roll Forward
 	if (key_[GLFW_KEY_3] == GLFW_PRESS || key_[GLFW_KEY_3] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
-		camera_.Translate(camera_.GetForward() * camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * camera_factor);
+		}
 		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
-		camera_.Translate(camera_.GetForward() * -camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * -camera_factor);
+		}
 	}
 	//Roll Back
 	if (key_[GLFW_KEY_4] == GLFW_PRESS || key_[GLFW_KEY_4] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
-		camera_.Translate(camera_.GetForward() * camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * camera_factor);
+		}
 		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
-		camera_.Translate(camera_.GetForward() * -camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * -camera_factor);
+		}
 	}
 	//Turn Left
 	if (key_[GLFW_KEY_5] == GLFW_PRESS || key_[GLFW_KEY_5] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
-		camera_.Translate(camera_.GetForward() * camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * camera_factor);
+		}
 		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
-		camera_.Translate(camera_.GetForward() * -camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * -camera_factor);
+		}
 	}
 	//Turn Right
 	if (key_[GLFW_KEY_6] == GLFW_PRESS || key_[GLFW_KEY_6] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
-		camera_.Translate(camera_.GetForward() * camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * camera_factor);
+		}
 		camera_.Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
-		camera_.Translate(camera_.GetForward() * -camera_factor);
+		if (scene_->GetPlayer()->get_first_person() == false) {
+			camera_.Translate(camera_.GetForward() * -camera_factor);
+		}
 	}
 }
 
@@ -367,6 +389,8 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 	game->key_[key] = action;
 
+	float camera_factor = 10.0;
+
 	// Quit game if 'q' is pressed
 	if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
@@ -376,74 +400,15 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_P && action == GLFW_PRESS){
 	    game->animating_ = (game->animating_ == true) ? false : true;
 	}
-
-	double delta = glfwGetTime() - game->last_time;
-
-	SceneNode *node;
-	node = game->scene_->GetNode("CubeInstance1");
-
-	// View control
-	float rot_factor(glm::pi<float>() / 9 * delta);
-	float roll_factor(glm::pi<float>() / 2 * delta);
-	float trans_factor = 10.0 * delta;
-
-    if (key == GLFW_KEY_UP){
-        //game->camera_.Pitch(rot_factor);
-    }
-    if (key == GLFW_KEY_DOWN){
-        //game->camera_.Pitch(-rot_factor);
-    }
-    if (key == GLFW_KEY_LEFT){
-        //game->camera_.Yaw(rot_factor);
-    }
-    if (key == GLFW_KEY_RIGHT){
-        //game->camera_.Yaw(-rot_factor);
-    }
-    /*if (key == GLFW_KEY_S){
-        game->camera_.Roll(-rot_factor);
-    }
-    if (key == GLFW_KEY_X){
-        game->camera_.Roll(rot_factor);
-    }
-    if (key == GLFW_KEY_A){
-		game->camera_.Translate(glm::vec3(0, 0, -trans_factor));
-    }
-    if (key == GLFW_KEY_Z){
-		game->camera_.Translate(glm::vec3(0, 0, trans_factor));
-    }
-    if (key == GLFW_KEY_J){
-		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
-    }
-    if (key == GLFW_KEY_L){
-		game->camera_.Translate(glm::vec3(-trans_factor, 0, 0));
-    }
-    if (key == GLFW_KEY_SPACE){
-		game->camera_.Translate(glm::vec3(0, trans_factor, 0));
-    }
-    if (key == GLFW_KEY_LEFT_CONTROL){
-		game->camera_.Translate(glm::vec3(0, -trans_factor, 0));
-    }*/
-
-	if (key == GLFW_KEY_1) {
-		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
-	}
-	if (key == GLFW_KEY_2) {
-		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
-	}
-	if (key == GLFW_KEY_3) {
-		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0, 0)));
-	}
-	if (key == GLFW_KEY_4) {
-		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0, 0)));
-	}
-	if (key == GLFW_KEY_5) {
-		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, -roll_factor, 0)));
-	}
-	if (key == GLFW_KEY_6) {
-		//node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0, roll_factor, 0)));
-	}
-	if (key == GLFW_KEY_V) {
-		//game->camera_.SetView(camera_position_g, camera_look_at_g, camera_up_g);
+	
+	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
+		game->scene_->GetPlayer()->toggle_first_person();
+		if (game->scene_->GetPlayer()->get_first_person() == true) {
+			game->camera_.Translate(game->camera_.GetForward() * camera_factor);
+		}
+		else {
+			game->camera_.Translate(game->camera_.GetForward() * -camera_factor);
+		}
 	}
 }
 
@@ -480,6 +445,7 @@ Player *Game::CreatePlayerInstance(std::string entity_name, std::string object_n
     // Create asteroid instance
     Player *player = new Player(entity_name, geom, mat);
     scene_->AddNode(player);
+	scene_->AddPlayer(player);
     return player;
 }
 

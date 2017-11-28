@@ -15,6 +15,7 @@
 #include "player.h"
 #include "laser.h"
 #include "tower_control.h"
+#include "tank_control.h"
 
 namespace game {
 
@@ -60,6 +61,7 @@ namespace game {
 
 			// Tower Control
 			TowerControl *tower_control_;
+			TankControl *tank_control_;
 
             // Flag to turn animation on/off
             bool animating_;

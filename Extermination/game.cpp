@@ -52,6 +52,7 @@ void Game::Init(void){
 	resman_ = new ResourceManager();
 	scene_ = new SceneGraph();
 	tower_control_ = new TowerControl(resman_);
+	tank_control_ = new TankControl(resman_);
 }
 
        
@@ -146,16 +147,12 @@ void Game::SetupResources(void){
 	resman_->LoadResource(Mesh, "PlayerMesh", filename.c_str());
 
 	// Load a cube from a file
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/SHIP.obj");
+	resman_->LoadResource(Mesh, "TowerMesh", filename.c_str());
+
+	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "LaserMesh", filename.c_str());
-
-	// Load a cube from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
-
-	// Load a cube from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
@@ -172,7 +169,7 @@ void Game::SetupScene(void){
     game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
     // Scale the instance
     torus->Scale(glm::vec3(0.75, 0.75, 0.75));
-    torus->Translate(glm::vec3(-1.0, 0, 0));
+    torus->Translate(glm::vec3(-1.0, 0, 15));
 
 	//game::SceneNode *player = CreateInstance("PlayerInstance", "TorusMesh", SHINY_BLUE_MATERIAL);
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
@@ -228,6 +225,7 @@ void Game::SetupScene(void){
 	test->SetSpeed(10.0);
 
 	tower_control_->init();
+	tank_control_->init();
 }
 
 
@@ -269,6 +267,7 @@ void Game::MainLoop(void){
         // Draw the scene
         scene_->Draw(&camera_);
 		tower_control_->draw(&camera_);
+		tank_control_->draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -283,6 +282,7 @@ void Game::update(SceneNode* node, double delta_time) {
 
 	scene_->Update(delta_time);
 	tower_control_->update(delta_time, camera_.GetPosition());
+	tank_control_->update(delta_time, camera_.GetPosition());
 }
 
 

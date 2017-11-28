@@ -17,7 +17,7 @@ Tank::Tank(std::string name, Resource *geometry, Resource *material, Resource *t
 	laser_speed_ = 5.0;
 	fire_speed_ = 10.0;
 
-	move_speed_ = 2.5;
+	move_speed_ = 10;
 	move_error_ = 20;
 
 	curr_angle_ = 0;
@@ -34,9 +34,9 @@ Tank::~Tank(){
 void Tank::Update(double delta_time){
 	fire_cooldown_ -= delta_time;
 
-	//std::cout << "pos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
+	std::cout << "pos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
 	position_ += velocity * (float) delta_time;
-	//std::cout << "\tpos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
+	std::cout << "\tpos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
 	//position_ += velocity;
 
 	float turning_speed = turning_speed_ * delta_time;

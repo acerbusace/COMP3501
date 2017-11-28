@@ -5,11 +5,11 @@ project(Extermination)
 
 # Specify project files: header files and source files
 set(HDRS
-    camera.h game.h laser.h misc.h orb.h player.h resource.h resource_manager.h scene_graph.h scene_node.h tower.h tower_control.h tank_control.h
+    camera.h game.h laser.h misc.h orb.h player.h resource.h resource_manager.h scene_graph.h scene_node.h tower.h tower_control.h tank.h tank_control.h
 )
 
 set(SRCS
-    camera.cpp game.cpp laser.cpp misc.cpp main.cpp orb.cpp player.cpp resource.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp tower.cpp tower_control.cpp tank_control.cpp material_vp.glsl material_fp.glsl shiny_blue_fp.glsl  shiny_blue_vp.glsl shiny_texture_fp.glsl shiny_texture_vp.glsl
+    camera.cpp game.cpp laser.cpp misc.cpp main.cpp orb.cpp player.cpp resource.cpp resource_manager.cpp scene_graph.cpp scene_node.cpp tower.cpp tower_control.cpp tank.cpp tank_control.cpp material_vp.glsl material_fp.glsl shiny_blue_fp.glsl  shiny_blue_vp.glsl shiny_texture_fp.glsl shiny_texture_vp.glsl
 )
 
 # Add path name to configuration file

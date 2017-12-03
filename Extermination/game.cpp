@@ -52,6 +52,7 @@ void Game::Init(void){
 	resman_ = new ResourceManager();
 	scene_ = new SceneGraph();
 	tower_control_ = new TowerControl(resman_);
+	tank_control_ = new TankControl(resman_);
 }
 
        
@@ -246,6 +247,7 @@ void Game::SetupScene(void){
 	test2->Translate(glm::vec3(0.0, 1.0, 0.0));
 
 	tower_control_->init();
+	tank_control_->init();
 }
 
 
@@ -287,6 +289,7 @@ void Game::MainLoop(void){
         // Draw the scene
         scene_->Draw(&camera_);
 		tower_control_->draw(&camera_);
+		tank_control_->draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -301,6 +304,7 @@ void Game::update(SceneNode* node, double delta_time) {
 
 	scene_->Update(delta_time);
 	tower_control_->update(delta_time, camera_.GetPosition());
+	tank_control_->update(delta_time, camera_.GetPosition());
 }
 
 

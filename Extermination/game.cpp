@@ -242,9 +242,8 @@ void Game::SetupScene(void){
 	test->SetOrientation(camera_.GetOrientation());
 	test->SetSpeed(10.0);
 
-	Bomb *test2 = CreateBombInstance("Bomb1", "PlayerMesh", SHINY_TEXTURE_MATERIAL, "Window");
-	test2->SetInitPos(camera_.GetPosition());
-	test2->SetOrientation(camera_.GetOrientation());
+	Bomb *test2 = CreateBombInstance("Bomb1", "SphereMesh", SHINY_TEXTURE_MATERIAL, "Window");
+	//test2->SetPosition(glm::vec3()
 	test2->SetSpeed(1.0);
 	test2->SetTimer(20.0);
 	test2->Translate(glm::vec3(0.0, 1.0, 0.0));
@@ -544,7 +543,7 @@ Bomb *Game::CreateBombInstance(std::string entity_name, std::string object_name,
 	Resource *tex = resman_->GetResource(texture_name);
 
 	Bomb *bmb = new Bomb(entity_name, geom, mat, tex);
-	bmb->Scale(glm::vec3(0.15, 0.15, 1.0));
+	bmb->Scale(glm::vec3(0.15, 0.15, 0.15));
 	scene_->AddNode(bmb);
 	return bmb;
 }

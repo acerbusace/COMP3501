@@ -23,7 +23,7 @@ namespace game {
 	}
 
 	Laser *createLaserInstance(ResourceManager *resman) {
-		Resource *geom = getResource(resman, "CubeMesh");
+		Resource *geom = getResource(resman, "LaserMesh");
 		Resource *mat = getResource(resman, "ShinyTextureMaterial");
 		Resource *tex = resman->GetResource("window");
 

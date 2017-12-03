@@ -146,7 +146,7 @@ void Game::SetupResources(void){
 	resman_->LoadResource(Mesh, "PlayerMesh", filename.c_str());
 
 	// Load a laser from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/missile.obj");
 	resman_->LoadResource(Mesh, "LaserMesh", filename.c_str());
 
 	// Load a cube from a file
@@ -233,7 +233,7 @@ void Game::SetupScene(void){
 
 	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
 
-	Laser *test = CreateLaserInstance("Laser1", "OtherMesh", SHINY_TEXTURE_MATERIAL, "Window");
+	Laser *test = CreateLaserInstance("Laser1", "LaserMesh", SHINY_TEXTURE_MATERIAL, "Window");
 	test->SetInitPos(camera_.GetPosition());
 	test->SetOrientation(camera_.GetOrientation());
 	test->SetSpeed(10.0);

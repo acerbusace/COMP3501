@@ -59,21 +59,21 @@ void TowerControl::draw(Camera *camera) {
 }
 
 Tower *TowerControl::createTowerInstance(glm::vec3 pos) {
-	Resource *geom = getResource(resman_, "CubeMesh");
-	Resource *mat = getResource(resman_, "ShinyTextureMaterial");
+	Resource *geom = getResource(resman_, "TowerMesh");
+	Resource *mat = getResource(resman_, "ShinyBlueMaterial");
 	Resource *tex = resman_->GetResource("");
 
 	Tower *twr = new Tower("Tower", geom, mat, tex);
-	twr->Scale(glm::vec3(1.0, 1.0, 1.0));
-	twr->Translate(pos + glm::vec3(0.0, 0.5, 0.0));
+	twr->Scale(glm::vec3(1.5, 3.0, 1.5));
+	twr->Translate(pos + glm::vec3(0.0, 0.0, 0.0));
 
 	geom = getResource(resman_, "SphereMesh");
 	mat = getResource(resman_, "ShinyTextureMaterial");
 	tex = resman_->GetResource("");
 
 	Orb *orb = new Orb("Orb", geom, mat, tex);
-	orb->Scale(glm::vec3(1.0, 1.0, 1.0));
-	orb->Translate(glm::vec3(0.0, 1.0, 0.0));
+	orb->Scale(glm::vec3(1.75, 1.75, 1.75));
+	orb->Translate(glm::vec3(0.0, 8.5, 0.0));
 	orb->setLaserSpeed(rand() % 5 + 5);
 	orb->setFireError(25);
 	orb->setFireSpeed(10);

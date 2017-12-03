@@ -74,13 +74,13 @@ void TankControl::draw(Camera *camera) {
 }
 
 Tank *TankControl::createTankInstance(glm::vec3 pos) {
-	Resource *geom = getResource(resman_, "CubeMesh");
-	Resource *mat = getResource(resman_, "ShinyTextureMaterial");
+	Resource *geom = getResource(resman_, "TankMesh");
+	Resource *mat = getResource(resman_, "ShinyBlueMaterial");
 	Resource *tex = resman_->GetResource("");
 
 	Tank *tank = new Tank("Tank", geom, mat, tex);
 	tank->Scale(glm::vec3(1.0, 1.0, 1.0));
-	tank->Translate(pos + glm::vec3(0.0, 0.5, 0.0));
+	tank->Translate(pos + glm::vec3(0.0, 1.68, 0.0));
 	tank->setLaserSpeed(rand() % 5 + 5);
 	tank->setFireError(25);
 	tank->setFireSpeed(10);

@@ -167,10 +167,6 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
-	// Load a cube from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
-
 }
 
 

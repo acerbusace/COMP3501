@@ -141,17 +141,27 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/metal.jpg");
 	resman_->LoadResource(Texture, "Metal", filename.c_str());
 
-	// Load a cube from a file
+	// Load a player model from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/SHIP.obj");
 	resman_->LoadResource(Mesh, "PlayerMesh", filename.c_str());
 
-	// Load a cube from a file
+	// Load a laser from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "LaserMesh", filename.c_str());
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
+
+	// Load spline material from a file
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/spline");
+	resman_->LoadResource(Material, "SplineMaterial", filename.c_str());
+
+	// Load Sphere Particles
+	resman_->CreateSphereParticles("SphereParticles");
+
+	// Create Control Points
+	resman_->CreateControlPoints("ControlPoints1", 51);
 }
 
 
@@ -168,6 +178,11 @@ void Game::SetupScene(void){
 
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
+	game::SceneNode *particles = CreateInstance("ParticleInstance1", "SphereParticles", "SplineMaterial");
+	//->Translate(glm::vec3(0.0, 1.0, 0.0));
+
+	Resource *cp = resman_->GetResource("ControlPoints1");
+	//particles->AddShaderAttribute("control_point", Vec3Type, cp->GetSize(), cp->GetData());
 
     // Create an helicopter instance
 
@@ -217,6 +232,13 @@ void Game::SetupScene(void){
 	test->SetInitPos(camera_.GetPosition());
 	test->SetOrientation(camera_.GetOrientation());
 	test->SetSpeed(10.0);
+
+	Bomb *test2 = CreateBombInstance("Bomb1", "PlayerMesh", SHINY_TEXTURE_MATERIAL, "Window");
+	test2->SetInitPos(camera_.GetPosition());
+	test2->SetOrientation(camera_.GetOrientation());
+	test2->SetSpeed(1.0);
+	test2->SetTimer(20.0);
+	test2->Translate(glm::vec3(0.0, 1.0, 0.0));
 
 	tower_control_->init();
 }
@@ -501,6 +523,26 @@ Laser *Game::CreateLaserInstance(std::string entity_name, std::string object_nam
 	lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
 	scene_->AddNode(lsr);
 	return lsr;
+}
+
+Bomb *Game::CreateBombInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
+
+	Resource *geom = resman_->GetResource(object_name);
+	if (!geom) {
+		throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
+	}
+
+	Resource *mat = resman_->GetResource(material_name);
+	if (!mat) {
+		throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
+	}
+
+	Resource *tex = resman_->GetResource(texture_name);
+
+	Bomb *bmb = new Bomb(entity_name, geom, mat, tex);
+	bmb->Scale(glm::vec3(0.15, 0.15, 1.0));
+	scene_->AddNode(bmb);
+	return bmb;
 }
 
 } // namespace game

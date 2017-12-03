@@ -14,6 +14,7 @@
 #include "camera.h"
 #include "player.h"
 #include "laser.h"
+#include "bomb.h"
 #include "tower_control.h"
 
 namespace game {
@@ -92,6 +93,10 @@ namespace game {
 
 			// Create an instance of a laser
 			Laser *CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
+			// Create an instance of a bomb
+			Bomb *CreateBombInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
 
     }; // class Game
 

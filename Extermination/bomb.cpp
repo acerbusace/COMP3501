@@ -10,6 +10,7 @@ namespace game {
 
 Bomb::Bomb(std::string name, Resource *geometry, Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
 	speed_ = 0;
+	explode_ = false;
 }
 
 
@@ -17,9 +18,14 @@ Bomb::~Bomb(){
 }
 
 void Bomb::Update(double delta_time){
-	Translate(glm::vec3(0.0, 0.0, -speed_ * delta_time));
-	timer_ -= delta_time;
-    //Rotate(angm_);
+	if (explode_ == false) {
+		Translate(glm::vec3(0.0, 0.0, -speed_ * delta_time));
+		timer_ -= delta_time;
+		if (timer_ < 0) {
+			explode_ = true;
+		}
+		//Rotate(angm_);
+	}
 }
 
 void Bomb::SetSpeed(float speed) {
@@ -33,6 +39,11 @@ void Bomb::SetInitPos(glm::vec3 pos) {
 void Bomb::SetTimer(float timer)
 {
 	timer_ = timer;
+}
+
+void Bomb::Explode()
+{
+	//Bomb explosion
 }
 
 glm::mat4 Bomb::getTransf() {

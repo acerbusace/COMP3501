@@ -1,11 +1,18 @@
-#ifndef MISC_H_
-#define MISC_H_
+#include <exception>
+#include <string>
+#define GLEW_STATIC
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <map>
 
+#include "scene_graph.h"
 #include "laser.h"
+#include "bin/path_config.h"
 #include "resource_manager.h"
 
+#include "misc.h"
+
 namespace game {
-<<<<<<< HEAD
 	Resource *getResource(ResourceManager *resman, std::string name) {
 		Resource *res = resman->GetResource(name);
 		if (!res) {
@@ -15,14 +22,12 @@ namespace game {
 	}
 
 	Laser *createLaserInstance(ResourceManager *resman) {
-		Resource *geom = getResource(resman, "LaserMesh");
+		Resource *geom = getResource(resman, "CubeMesh");
 		Resource *mat = getResource(resman, "ShinyTextureMaterial");
 		Resource *tex = resman->GetResource("window");
-=======
-	Resource *getResource(ResourceManager *resman, std::string name);
->>>>>>> dev-v2
 
-	Laser *createLaserInstance(ResourceManager *resman);
-}
-
-#endif
+		Laser *lsr = new Laser("Laser", geom, mat, tex);
+		lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
+		return lsr;
+	}
+} // namespace game

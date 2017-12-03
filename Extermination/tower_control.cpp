@@ -28,7 +28,7 @@ void TowerControl::update(double delta_time, glm::vec3 player_pos){
 }
 
 void TowerControl::shoot(Orb *orb, glm::vec3 player_pos) {
-	std::cout << "fired a shot!!!" << std::endl;
+	//std::cout << "fired a shot!!!" << std::endl;
 	glm::vec3 firing_error = glm::vec3(orb->fireError(), orb->fireError(), orb->fireError());
 	//std::cout << "pos: " << firing_error.x << ", " << firing_error.y << ", " << firing_error.z << std::endl;
 

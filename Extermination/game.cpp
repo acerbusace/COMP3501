@@ -52,6 +52,7 @@ void Game::Init(void){
 	resman_ = new ResourceManager();
 	scene_ = new SceneGraph();
 	tower_control_ = new TowerControl(resman_);
+	tank_control_ = new TankControl(resman_);
 }
 
        
@@ -146,8 +147,14 @@ void Game::SetupResources(void){
 	resman_->LoadResource(Mesh, "PlayerMesh", filename.c_str());
 
 	// Load a laser from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/missile.obj");
 	resman_->LoadResource(Mesh, "LaserMesh", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/groundTank.obj");
+	resman_->LoadResource(Mesh, "TankMesh", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/towerBase.obj");
+	resman_->LoadResource(Mesh, "TowerMesh", filename.c_str());
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
@@ -162,10 +169,6 @@ void Game::SetupResources(void){
 
 	// Create Control Points
 	resman_->CreateControlPoints("ControlPoints1", 51);
-
-	// Load a cube from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
@@ -237,7 +240,7 @@ void Game::SetupScene(void){
 
 	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
 
-	Laser *test = CreateLaserInstance("Laser1", "OtherMesh", SHINY_TEXTURE_MATERIAL, "Window");
+	Laser *test = CreateLaserInstance("Laser1", "LaserMesh", SHINY_TEXTURE_MATERIAL, "Window");
 	test->SetInitPos(camera_.GetPosition());
 	test->SetOrientation(camera_.GetOrientation());
 	test->SetSpeed(10.0);
@@ -249,6 +252,7 @@ void Game::SetupScene(void){
 	test2->Translate(glm::vec3(0.0, 1.0, 0.0));
 
 	tower_control_->init();
+	tank_control_->init();
 }
 
 
@@ -290,6 +294,7 @@ void Game::MainLoop(void){
         // Draw the scene
         scene_->Draw(&camera_);
 		tower_control_->draw(&camera_);
+		tank_control_->draw(&camera_);
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -304,12 +309,13 @@ void Game::update(SceneNode* node, double delta_time) {
 
 	scene_->Update(delta_time);
 	tower_control_->update(delta_time, camera_.GetPosition());
+	tank_control_->update(delta_time, camera_.GetPosition());
 }
 
 
 void Game::input(SceneNode* node, double delta_time) {
 	float roll_factor = glm::radians(2000.0) * delta_time;
-	float trans_factor = 5.0 * delta_time;
+	float trans_factor = 50.0 * delta_time;
 	float camera_factor = 10.0;
 
 	//Move Forward

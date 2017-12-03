@@ -67,7 +67,7 @@ namespace game {
             GLuint GetMaterial(void) const;
 			SceneNode *GetParent(void);
 
-        private:
+        protected:
             std::string name_; // Name of the scene node
             GLuint array_buffer_; // References to geometry: vertex and array buffers
             GLuint element_array_buffer_;

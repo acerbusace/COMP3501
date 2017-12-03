@@ -4,6 +4,7 @@ namespace game {
 
 Player::Player(std::string name, Resource *geometry, Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
 	first_person_ = false;
+	health_ = 10;
 }
 
 

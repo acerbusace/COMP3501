@@ -31,6 +31,7 @@ namespace game {
 
         private:
 			bool first_person_;
+			int health_;
     }; // class Player
 
 } // namespace game

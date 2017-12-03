@@ -153,6 +153,7 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
+<<<<<<< HEAD
 	// Load spline material from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/spline");
 	resman_->LoadResource(Material, "SplineMaterial", filename.c_str());
@@ -162,6 +163,15 @@ void Game::SetupResources(void){
 
 	// Create Control Points
 	resman_->CreateControlPoints("ControlPoints1", 51);
+=======
+	// Load a cube from a file
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
+	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
+
+	// Load a cube from a file
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
+	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
+>>>>>>> 6acc310fd723937b9c32adaaea5558a6e5f06831
 }
 
 
@@ -305,37 +315,37 @@ void Game::input(SceneNode* node, double delta_time) {
 	float camera_factor = 10.0;
 
 	//Move Forward
-	if (key_[GLFW_KEY_UP] == GLFW_PRESS || key_[GLFW_KEY_UP] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_A] == GLFW_PRESS || key_[GLFW_KEY_A] == GLFW_REPEAT) {
 		node->Translate(camera_.GetForward() * trans_factor);
 		camera_.Translate(camera_.GetForward() * trans_factor);
 	}
 	//Move Backward
-	if (key_[GLFW_KEY_DOWN] == GLFW_PRESS || key_[GLFW_KEY_DOWN] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_Z] == GLFW_PRESS || key_[GLFW_KEY_Z] == GLFW_REPEAT) {
 		node->Translate(camera_.GetForward() * -trans_factor);
 		camera_.Translate(camera_.GetForward() * -trans_factor);
 	}
 	//Move Left
-	if (key_[GLFW_KEY_LEFT] == GLFW_PRESS || key_[GLFW_KEY_LEFT] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_K] == GLFW_PRESS || key_[GLFW_KEY_K] == GLFW_REPEAT) {
 		node->Translate(camera_.GetSide() * -trans_factor);
 		camera_.Translate(camera_.GetSide() * -trans_factor);
 	}
 	//Move Right
-	if (key_[GLFW_KEY_RIGHT] == GLFW_PRESS || key_[GLFW_KEY_RIGHT] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_H] == GLFW_PRESS || key_[GLFW_KEY_H] == GLFW_REPEAT) {
 		node->Translate(camera_.GetSide() * trans_factor);
 		camera_.Translate(camera_.GetSide() * trans_factor);
 	}
 	//Move Upwards
-	if (key_[GLFW_KEY_W] == GLFW_PRESS || key_[GLFW_KEY_W] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_SPACE] == GLFW_PRESS || key_[GLFW_KEY_SPACE] == GLFW_REPEAT) {
 		node->Translate(camera_.GetUp() * trans_factor);
 		camera_.Translate(camera_.GetUp() * trans_factor);
 	}
 	//Move Downwards
-	if (key_[GLFW_KEY_E] == GLFW_PRESS || key_[GLFW_KEY_E] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_LEFT_CONTROL] == GLFW_PRESS || key_[GLFW_KEY_LEFT_CONTROL] == GLFW_REPEAT) {
 		node->Translate(camera_.GetUp() * -trans_factor);
 		camera_.Translate(camera_.GetUp() * -trans_factor);
 	}
 	//Roll Left
-	if (key_[GLFW_KEY_1] == GLFW_PRESS || key_[GLFW_KEY_1] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_S] == GLFW_PRESS || key_[GLFW_KEY_S] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, roll_factor)));
 		if (scene_->GetPlayer()->get_first_person() == false) {
 			camera_.Translate(camera_.GetForward() * camera_factor);
@@ -346,7 +356,7 @@ void Game::input(SceneNode* node, double delta_time) {
 		}
 	}
 	//Roll Right
-	if (key_[GLFW_KEY_2] == GLFW_PRESS || key_[GLFW_KEY_2] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_X] == GLFW_PRESS || key_[GLFW_KEY_X] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, 0.0, -roll_factor)));
 		if (scene_->GetPlayer()->get_first_person() == false) {
 			camera_.Translate(camera_.GetForward() * camera_factor);
@@ -357,7 +367,7 @@ void Game::input(SceneNode* node, double delta_time) {
 		}
 	}
 	//Roll Forward
-	if (key_[GLFW_KEY_3] == GLFW_PRESS || key_[GLFW_KEY_3] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_DOWN] == GLFW_PRESS || key_[GLFW_KEY_DOWN] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(-roll_factor, 0.0, 0.0)));
 		if (scene_->GetPlayer()->get_first_person() == false) {
 			camera_.Translate(camera_.GetForward() * camera_factor);
@@ -368,7 +378,7 @@ void Game::input(SceneNode* node, double delta_time) {
 		}
 	}
 	//Roll Back
-	if (key_[GLFW_KEY_4] == GLFW_PRESS || key_[GLFW_KEY_4] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_UP] == GLFW_PRESS || key_[GLFW_KEY_UP] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(roll_factor, 0.0, 0.0)));
 		if (scene_->GetPlayer()->get_first_person() == false) {
 			camera_.Translate(camera_.GetForward() * camera_factor);
@@ -379,7 +389,7 @@ void Game::input(SceneNode* node, double delta_time) {
 		}
 	}
 	//Turn Left
-	if (key_[GLFW_KEY_5] == GLFW_PRESS || key_[GLFW_KEY_5] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_LEFT] == GLFW_PRESS || key_[GLFW_KEY_LEFT] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, roll_factor, 0.0)));
 		if (scene_->GetPlayer()->get_first_person() == false) {
 			camera_.Translate(camera_.GetForward() * camera_factor);
@@ -390,7 +400,7 @@ void Game::input(SceneNode* node, double delta_time) {
 		}
 	}
 	//Turn Right
-	if (key_[GLFW_KEY_6] == GLFW_PRESS || key_[GLFW_KEY_6] == GLFW_REPEAT) {
+	if (key_[GLFW_KEY_RIGHT] == GLFW_PRESS || key_[GLFW_KEY_RIGHT] == GLFW_REPEAT) {
 		node->Rotate(glm::angleAxis((float)glm::radians(1.0), glm::vec3(0.0, -roll_factor, 0.0)));
 		if (scene_->GetPlayer()->get_first_person() == false) {
 			camera_.Translate(camera_.GetForward() * camera_factor);

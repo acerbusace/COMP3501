@@ -5,7 +5,7 @@ namespace game {
 
 Player::Player(std::string name, Resource *geometry, Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
 	first_person_ = false;
-	health_ = 10;
+	health_ = 1000;
 }
 
 
@@ -22,6 +22,14 @@ void Player::Draw(Camera *camera)
 	}
 }
 
+bool Player::takeDamage(float damage) {
+	health_ -= damage;
+	std::cout << "Player Health: " << health_ << std::endl;
+
+	if (health_ <= 0)
+		return true;
+	return false;
+}
 
 bool Player::get_first_person()
 {

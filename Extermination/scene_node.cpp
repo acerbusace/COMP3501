@@ -4,9 +4,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <time.h>
+#include <algorithm>
 
 #include "scene_node.h"
 #include "camera.h"
+#include "misc.h"
 
 namespace game {
 
@@ -34,12 +36,17 @@ SceneNode::SceneNode(std::string name, Resource *geometry, Resource *material, R
     start_time_ = glfwGetTime();
 	curr_time_ = start_time_;
 	color_ = glm::vec3((float) rand() / RAND_MAX, (float) rand() / RAND_MAX, (float) rand() / RAND_MAX);
+	rad_ = 0;
 }
 
 void SceneNode::SetReset(float reset) {
 	reset_ = reset;
     start_time_ = glfwGetTime();
 	curr_time_ = start_time_;
+}
+
+float SceneNode::GetRad() {
+	return SPEHRE_PARTICLE_SPEED * curr_time_;
 }
 
 void SceneNode::SetColor(glm::vec3 color){
@@ -151,6 +158,14 @@ void SceneNode::Translate(glm::vec3 trans){
 void SceneNode::Rotate(glm::quat rot){
 
     orientation_ *= rot;
+}
+
+void SceneNode::SetExpDamage(float damage) {
+	expDamage_ = damage;
+}
+
+float SceneNode::GetExpDamage() {
+	return expDamage_;
 }
 
 
@@ -314,6 +329,10 @@ void SceneNode::setParent(SceneNode *prt) {
 void SceneNode::addChild(SceneNode *child) {
 	child->setParent(this);
 	children.push_back(child);
+}
+
+float SceneNode::GetRadius() {
+	return fmax(fmax(scale_.x/2, scale_.y/2), scale_.z/2);
 }
 
 } // namespace game;

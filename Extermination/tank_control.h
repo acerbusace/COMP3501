@@ -15,6 +15,7 @@
 #include "tank.h"
 #include "camera.h"
 #include "bomb.h"
+#include "player.h"
 
 namespace game {
 
@@ -29,7 +30,8 @@ namespace game {
             ~TankControl();
 
             // Update geometry configuration
-            void update(double, glm::vec3 player_pos);
+            //void update(double, glm::vec3 player_pos);
+            void update(double, Player*);
 			// Update geometry configuration
 			void draw(Camera*);
             

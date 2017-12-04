@@ -35,7 +35,7 @@ void TankControl::update(double delta_time, glm::vec3 player_pos){
 
 void TankControl::move(Tank *tank, glm::vec3 player_pos) {
 	if (glm::length(glm::vec3(tank->GetPosition().x, 0, tank->GetPosition().z) - glm::vec3(player_pos.x, 0, player_pos.z)) > pow(tank->getMoveError(), 2)) {
-		std::cout << "tank moveing!!!" << std::endl;
+		//std::cout << "tank moveing!!!" << std::endl;
 		//std::cout << "pos: " << firing_error.x << ", " << firing_error.y << ", " << firing_error.z << std::endl;
 
 		tank->setDestination(glm::vec2(player_pos.x + tank->moveError(), player_pos.z + tank->moveError()));

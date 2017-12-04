@@ -165,10 +165,10 @@ void Game::SetupResources(void){
 	resman_->LoadResource(Material, "SplineMaterial", filename.c_str());
 
 	// Load Sphere Particles
-	resman_->CreateSphereParticles("SphereParticles");
+	//resman_->CreateSphereParticles("SphereParticles");
 
 	// Create Control Points
-	resman_->CreateControlPoints("ControlPoints1", 51);
+	//resman_->CreateControlPoints("ControlPoints1", 51);
 
 	// Load a cube from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
@@ -190,10 +190,10 @@ void Game::SetupScene(void){
 
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
-	game::SceneNode *particles = CreateInstance("ParticleInstance1", "SphereParticles", "SplineMaterial");
+	//game::SceneNode *particles = CreateInstance("ParticleInstance1", "SphereParticles", "SplineMaterial");
 	//->Translate(glm::vec3(0.0, 1.0, 0.0));
 
-	Resource *cp = resman_->GetResource("ControlPoints1");
+	//Resource *cp = resman_->GetResource("ControlPoints1");
 	//particles->AddShaderAttribute("control_point", Vec3Type, cp->GetSize(), cp->GetData());
 
     // Create an helicopter instance
@@ -443,10 +443,19 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 		}
 	}
 
+
+	//Fire Laser
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		Laser *test = game->CreateLaserInstance("Laser1", "LaserMesh", SHINY_TEXTURE_MATERIAL, "Window");
+		test->SetInitPos(game->scene_->GetPlayer()->GetPosition());
+		test->SetOrientation(game->camera_.GetOrientation());
+		test->SetSpeed(10.0);
+	}
+
 	//Fire Bomb
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 		Bomb *test2 = game->CreateBombInstance("Bomb1", "PlayerMesh", SHINY_TEXTURE_MATERIAL, "Window");
-		test2->SetInitPos(game->camera_.GetPosition());
+		test2->SetInitPos(game->scene_->GetPlayer()->GetPosition());
 		test2->SetOrientation(game->camera_.GetOrientation());
 		test2->SetSpeed(1.0);
 		test2->SetTimer(20.0);

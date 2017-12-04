@@ -23,12 +23,26 @@ Tank::Tank(std::string name, Resource *geometry, Resource *material, Resource *t
 	curr_angle_ = 0;
 	dest_angle_ = curr_angle_;
 	turning_speed_ = 0.1;
+	bomb_damage_ = 5;
+	body_damage_ = 25;
 
 	move_ = true;
 }
 
 
 Tank::~Tank(){
+}
+
+void Tank::SetBombDamage(float damage) {
+	bomb_damage_ = damage;
+}
+
+float Tank::GetBombDamage() {
+	return bomb_damage_;
+}
+
+float Tank::GetBodyDamage() {
+	return body_damage_;
 }
 
 void Tank::Update(double delta_time){

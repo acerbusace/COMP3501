@@ -29,10 +29,11 @@ namespace game {
 
 			bool get_first_person();
 			void toggle_first_person();
+			bool takeDamage(float);
 
         private:
 			bool first_person_;
-			int health_;
+			float health_;
     }; // class Player
 
 } // namespace game

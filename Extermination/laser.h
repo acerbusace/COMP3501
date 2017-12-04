@@ -28,11 +28,13 @@ namespace game {
             void Update(double);
 			void SetSpeed(float);
 			void SetInitPos(glm::vec3);
+			bool done();
             
         private:
 			glm::mat4 getTransf();
 			glm::vec3 init_pos_;
 			float speed_;
+			float dist_;
     };
 
 } // namespace game

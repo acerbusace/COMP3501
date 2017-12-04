@@ -10,6 +10,7 @@ namespace game {
 
 Laser::Laser(std::string name, Resource *geometry, Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
 	speed_ = 0;
+	dist_ = 250;
 }
 
 
@@ -18,7 +19,14 @@ Laser::~Laser(){
 
 void Laser::Update(double delta_time){
 	Translate(glm::vec3(0.0, 0.0, -speed_ * delta_time));
+	dist_ -= speed_ * delta_time;
     //Rotate(angm_);
+}
+
+bool Laser::done() {
+	if (dist_ < 0)
+		return true;
+	return false;
 }
 
 void Laser::SetSpeed(float speed) {

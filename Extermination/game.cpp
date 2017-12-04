@@ -190,65 +190,7 @@ void Game::SetupScene(void){
     // Set background color for the scene
     scene_->SetBackgroundColor(viewport_background_color_g);
 
-    // Create an instance of the torus mesh
-    game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
-    // Scale the instance
-    torus->Scale(glm::vec3(0.75, 0.75, 0.75));
-    torus->Translate(glm::vec3(-1.0, 0, 0));
-
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
-
-	//game::SceneNode *particles = CreateInstance("ParticleInstance1", "SphereParticles", "SplineMaterial");
-	//->Translate(glm::vec3(0.0, 1.0, 0.0));
-
-	//Resource *cp = resman_->GetResource("ControlPoints1");
-	//particles->AddShaderAttribute("control_point", Vec3Type, cp->GetSize(), cp->GetData());
-
-    // Create an helicopter instance
-
-	// upper body
-    game::SceneNode *upper_body = CreateInstance("CubeInstance1", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
-    upper_body->Scale(glm::vec3(0.35, 0.35, 1.25));
-	upper_body->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(15.0, 0.0, 0.0)));
-    upper_body->Translate(glm::vec3(1.0, 0, 0));
-
-	// lower body
-    game::SceneNode *lower_body = CreateInstance("CubeInstance2", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
-    lower_body->Scale(glm::vec3(0.35, 0.35, 1.5));
-    lower_body->Translate(glm::vec3(0.0, -0.35, 0.125));
-
-	// upper joint (cylinder connecting body and upper rotor)
-    game::SceneNode *upper_joint = CreateInstance("CylinderInstance1", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    upper_joint->Scale(glm::vec3(0.45, 0.10, 0.45));
-    upper_joint->Translate(glm::vec3(0.0, 0.225, 0));
-
-	// upper rotor
-    game::SceneNode *upper_rotor = CreateInstance("CylinderInstance2", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    upper_rotor->Scale(glm::vec3(0.05, 1.0, 0.05));
-	upper_rotor->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(0.0, 0.0, 115.0)));
-
-	// back joint (cylinder connecting body and back rotor)
-    game::SceneNode *back_joint = CreateInstance("CylinderInstance3", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    back_joint->Scale(glm::vec3(0.35, 0.75, 0.35));
-	back_joint->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(115.0, 0.0, 0.0)));
-    back_joint->Translate(glm::vec3(0.0, 0.0, -1.0));
-
-	// back rotor
-    game::SceneNode *back_rotor = CreateInstance("CylinderInstance4", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    back_rotor->Scale(glm::vec3(0.05, 0.75, 0.05));
-	back_rotor->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(90.0, 0.0, 0.0)));
-    back_rotor->Translate(glm::vec3(0.10, -0.25, 0.0));
-
-	// Create particles
-	game::SceneNode *particles = CreateParticleInstanceV("SphereParticles", "ParticleMaterial");
-	particles->SetColor(glm::vec3(1.0, 0, 0));
-
-	// creates helicopter hierarchy 
-	upper_body->addChild(lower_body);
-	upper_body->addChild(upper_joint);
-	upper_joint->addChild(upper_rotor);
-	upper_body->addChild(back_joint);
-	back_joint->addChild(back_rotor);
 
 	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
 
@@ -256,12 +198,6 @@ void Game::SetupScene(void){
 	test->SetInitPos(camera_.GetPosition());
 	test->SetOrientation(camera_.GetOrientation());
 	test->SetSpeed(10.0);
-
-	//Bomb *test2 = CreateBombInstance("Bomb1", "SphereMesh", SHINY_BLUE_MATERIAL, "Window");
-	//test2->SetOrientation(camera_.GetOrientation());
-	//test2->SetSpeed(0.25);
-	//test2->SetTimer(20.0);
-	//test2->Translate(glm::vec3(-1.0, 0.0, 0.0));
 
 	tower_control_->init();
 	tank_control_->init();
@@ -283,24 +219,6 @@ void Game::MainLoop(void){
 			node = scene_->GetNode("PlayerInstance");
 
 			update(node, delta_time);
-			glm::quat rotation;
-
-            // Animate the torus and helicopter
-			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
-
-            node = scene_->GetNode("TorusInstance1");
-            node->Rotate(rotation);
-
-            node = scene_->GetNode("CubeInstance1");
-            node->Rotate(rotation);
-
-			// animate top and back rotor
-			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
-
-            node = scene_->GetNode("CylinderInstance2");
-            node->Rotate(rotation);
-            node = scene_->GetNode("CylinderInstance4");
-            node->Rotate(rotation);
         }
 
         // Draw the scene
@@ -332,7 +250,7 @@ void Game::update(SceneNode* node, double delta_time) {
 
 	scene_->Update(delta_time);
 	tower_control_->update(delta_time, camera_.GetPosition());
-	tank_control_->update(delta_time, camera_.GetPosition());
+	tank_control_->update(delta_time, scene_->GetPlayer());
 
 	for (int i = 0; i < bomb_particles_.size(); ++i) {
 		bomb_particles_[i]->Update(delta_time);

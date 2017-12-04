@@ -3,6 +3,7 @@
 
 #include "laser.h"
 #include "bomb.h"
+#include "orb.h"
 #include "resource_manager.h"
 
 namespace game {
@@ -12,6 +13,13 @@ namespace game {
 	Laser *createLaserInstance(ResourceManager *resman);
 	Bomb *createBombInstance(ResourceManager *resman);
 	SceneNode *createParticleInstance(ResourceManager *resman, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
+	bool collision(Bomb*, SceneNode*);
+	bool collision(SceneNode*, SceneNode*);
+
+	void printVec3(glm::vec3);
+
+	static const float SPEHRE_PARTICLE_SPEED = 0.283197;
 }
 
 #endif

@@ -22,8 +22,14 @@ void TowerControl::update(double delta_time, glm::vec3 player_pos){
 			shoot(orb, player_pos);
 	}
 
-	for each (Laser *lsr in lasers_) {
-		lsr->Update(delta_time);
+	//for each (Laser *lsr in lasers_) {
+	for (int i = 0; i < lasers_.size(); ++i) {
+		lasers_[i]->Update(delta_time);
+
+		if (lasers_[i]->done()) {
+			lasers_.erase(lasers_.begin() + i);
+			//std::cout << "deleting laser" << std::endl;
+		}
 	}
 }
 

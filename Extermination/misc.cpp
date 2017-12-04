@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <map>
+#include <iostream>
 
 #include "scene_graph.h"
 #include "laser.h"
@@ -49,6 +50,28 @@ namespace game {
 
 		SceneNode *scn = new SceneNode("Particle", geom, mat, tex);
 		return scn;
+	}
+
+	bool collision(Bomb* bomb, SceneNode* node) {
+		float dist = glm::length(bomb->getPos() - node->getPos());
+		if (dist < bomb->GetRadius() + node->GetRadius()) {
+			//std::cout << "collision!!!" << std::endl;
+			return true;
+		}
+		return false;
+	}
+
+	bool collision(SceneNode* particle, SceneNode* node) {
+		float dist = glm::length(particle->getPos() - node->getPos());
+		if (dist < particle->GetRad() + node->GetRadius()) {
+			//std::cout << "collision!!!" << std::endl;
+			return true;
+		}
+		return false;
+	}
+
+	void printVec3(glm::vec3 v) {
+		std::cout << "x: " << v.x << ", " << v.y << ", " << v.z << std::endl;
 	}
 
 } // namespace game

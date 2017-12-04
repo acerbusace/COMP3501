@@ -1,5 +1,4 @@
 #include "player.h"
-#include <iostream>
 
 namespace game {
 
@@ -33,12 +32,7 @@ void Player::toggle_first_person()
 	first_person_ = (first_person_ == true) ? false : true;
 }
 
-void Player::Update(double delta_time){
-	SceneNode *rotor = children[0];
 
-	rotor->Rotate(glm::angleAxis((float) glm::radians(10.0), glm::vec3(0.0, 1.0, 0.0)));
-	//std::cout << "hello world!!!" << std::endl;
-}
 
 
             

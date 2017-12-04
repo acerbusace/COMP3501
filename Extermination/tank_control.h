@@ -14,7 +14,7 @@
 #include "scene_node.h"
 #include "tank.h"
 #include "camera.h"
-#include "bomb.h"
+#include "laser.h"
 
 namespace game {
 
@@ -37,9 +37,7 @@ namespace game {
 			ResourceManager *resman_;
 
 			std::vector<Tank*> tanks_;
-			//std::vector<Laser*> lasers_;
-			std::vector<Bomb*> bombs_;
-			std::vector<SceneNode*> bomb_particles_;
+			std::vector<Laser*> lasers_;
 
 			Tank *createTankInstance(glm::vec3);
 			void shoot(Tank*, glm::vec3);

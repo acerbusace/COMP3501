@@ -31,15 +31,18 @@ namespace game {
 			float getFireSpeed();
 			bool shoot();
 			void fireCoolDown();
-			void Orb::setLaserSpeed(float);
-			void Orb::setFireSpeed(float);
-			void Orb::setFireError(float);
+			void setLaserSpeed(float);
+			void setFireSpeed(float);
+			void setFireError(float);
+			float GetLaserDamage();
+			void SetLaserDamage(float);
             
         private:
 			float fire_error_;
 			float laser_speed_;
 			float fire_speed_;
 			float fire_cooldown_;
+			float laser_damage_;
     };
 
 } // namespace game

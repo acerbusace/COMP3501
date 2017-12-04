@@ -16,6 +16,7 @@ namespace game {
 
 	bool collision(Bomb*, SceneNode*);
 	bool collision(SceneNode*, SceneNode*);
+	bool collision(Laser*, SceneNode*);
 
 	void printVec3(glm::vec3);
 

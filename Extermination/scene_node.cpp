@@ -332,7 +332,7 @@ void SceneNode::addChild(SceneNode *child) {
 }
 
 float SceneNode::GetRadius() {
-	return fmax(fmax(scale_.x, scale_.y), scale_.z);
+	return fmax(fmax(scale_.x/2, scale_.y/2), scale_.z/2);
 }
 
 } // namespace game;

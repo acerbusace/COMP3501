@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/quaternion.hpp>
+#include <vector>
 
 #include "resource.h"
 #include "scene_node.h"
@@ -29,12 +30,16 @@ namespace game {
 			void SetSpeed(float);
 			void SetInitPos(glm::vec3);
 			bool done();
+			std::vector<glm::vec3> GetLaserPoints();
+			void SetDamage(float);
+			float GetDamage();
             
         private:
 			glm::mat4 getTransf();
 			glm::vec3 init_pos_;
 			float speed_;
 			float dist_;
+			float damage_;
     };
 
 } // namespace game

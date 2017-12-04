@@ -70,6 +70,18 @@ namespace game {
 		return false;
 	}
 
+	bool collision(Laser* laser, SceneNode* node) {
+		std::vector<glm::vec3> points = laser->GetLaserPoints();
+		for each (glm::vec3 point in points) {
+			float dist = glm::length(point - node->getPos());
+			if (dist < node->GetRadius()) {
+				//std::cout << "collision!!!" << std::endl;
+				return true;
+			}
+		}
+		return false;
+	}
+
 	void printVec3(glm::vec3 v) {
 		std::cout << "x: " << v.x << ", " << v.y << ", " << v.z << std::endl;
 	}

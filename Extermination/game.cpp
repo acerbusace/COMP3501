@@ -3,6 +3,7 @@
 #include <sstream>
 
 #include "game.h"
+#include "misc.h"
 #include "bin/path_config.h"
 
 namespace game {
@@ -160,12 +161,16 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shipBlade.obj");
+	resman_->LoadResource(Mesh, "shipBlade", filename.c_str());
+
 	// Load spline material from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/spline");
 	resman_->LoadResource(Material, "SplineMaterial", filename.c_str());
 
 	// Load Sphere Particles
 	//resman_->CreateSphereParticles("SphereParticles");
+
 
 	// Create Control Points
 	//resman_->CreateControlPoints("ControlPoints1", 51);
@@ -174,6 +179,9 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
+	// Load material to be applied to particles
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/particle");
+	resman_->LoadResource(Material, "ParticleMaterial", filename.c_str());
 }
 
 
@@ -231,6 +239,10 @@ void Game::SetupScene(void){
 	back_rotor->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(90.0, 0.0, 0.0)));
     back_rotor->Translate(glm::vec3(0.10, -0.25, 0.0));
 
+	// Create particles
+	game::SceneNode *particles = CreateParticleInstanceV("SphereParticles", "ParticleMaterial");
+	particles->SetColor(glm::vec3(1.0, 0, 0));
+
 	// creates helicopter hierarchy 
 	upper_body->addChild(lower_body);
 	upper_body->addChild(upper_joint);
@@ -245,12 +257,11 @@ void Game::SetupScene(void){
 	test->SetOrientation(camera_.GetOrientation());
 	test->SetSpeed(10.0);
 
-	Bomb *test2 = CreateBombInstance("Bomb1", "PlayerMesh", SHINY_TEXTURE_MATERIAL, "Window");
-	test2->SetInitPos(camera_.GetPosition());
-	test2->SetOrientation(camera_.GetOrientation());
-	test2->SetSpeed(1.0);
-	test2->SetTimer(20.0);
-	test2->Translate(glm::vec3(0.0, 1.0, 0.0));
+	//Bomb *test2 = CreateBombInstance("Bomb1", "SphereMesh", SHINY_BLUE_MATERIAL, "Window");
+	//test2->SetOrientation(camera_.GetOrientation());
+	//test2->SetSpeed(0.25);
+	//test2->SetTimer(20.0);
+	//test2->Translate(glm::vec3(-1.0, 0.0, 0.0));
 
 	tower_control_->init();
 	tank_control_->init();
@@ -316,7 +327,7 @@ void Game::update(SceneNode* node, double delta_time) {
 
 void Game::input(SceneNode* node, double delta_time) {
 	float roll_factor = glm::radians(2000.0) * delta_time;
-	float trans_factor = 50.0 * delta_time;
+	float trans_factor = 25.0 * delta_time;
 	float camera_factor = 10.0;
 
 	//Move Forward
@@ -482,19 +493,21 @@ Game::~Game(){
 
 Player *Game::CreatePlayerInstance(std::string entity_name, std::string object_name, std::string material_name){
 
+	//CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
     // Get resources
-    Resource *geom = resman_->GetResource(object_name);
-    if (!geom){
-        throw(GameException(std::string("Could not find resource \"")+object_name+std::string("\"")));
-    }
+    Resource *geom = getResource(resman_, "PlayerMesh");
+    Resource *mat = getResource(resman_, SHINY_BLUE_MATERIAL);
 
-    Resource *mat = resman_->GetResource(material_name);
-    if (!mat){
-        throw(GameException(std::string("Could not find resource \"")+material_name+std::string("\"")));
-    }
+    // Create Player instance
+    Player *player = new Player("PlayerInstance", geom, mat);
 
-    // Create asteroid instance
-    Player *player = new Player(entity_name, geom, mat);
+    SceneNode *rotor = CreateInstance("PlayerRotor", "shipBlade", SHINY_TEXTURE_MATERIAL, "Window");
+    rotor->Scale(glm::vec3(0.20, 0.20, 0.20));
+	//upper_body->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(15.0, 0.0, 0.0)));
+    rotor->Translate(glm::vec3(0.0, -0.35, 0));
+
+
+	player->addChild(rotor);
     scene_->AddNode(player);
 	scene_->AddPlayer(player);
     return player;
@@ -534,6 +547,13 @@ SceneNode *Game::CreateInstance(std::string entity_name, std::string object_name
     return scn;
 }
 
+SceneNode *Game::CreateParticleInstanceV(std::string object_name, std::string material_name, std::string texture_name){
+	SceneNode* particle = createParticleInstance(resman_, object_name, material_name, texture_name);
+	scene_->AddParticle(particle);
+
+    return particle;
+}
+
 Laser *Game::CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
 
 	Resource *geom = resman_->GetResource(object_name);
@@ -569,7 +589,7 @@ Bomb *Game::CreateBombInstance(std::string entity_name, std::string object_name,
 	Resource *tex = resman_->GetResource(texture_name);
 
 	Bomb *bmb = new Bomb(entity_name, geom, mat, tex);
-	bmb->Scale(glm::vec3(0.15, 0.15, 1.0));
+	bmb->Scale(glm::vec3(0.15, 0.15, 0.15));
 	scene_->AddNode(bmb);
 	return bmb;
 }

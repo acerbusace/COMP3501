@@ -27,16 +27,14 @@ namespace game {
             // Update geometry configuration
             void Update(double);
 			void SetSpeed(float);
-			void SetInitPos(glm::vec3);
 			void SetTimer(float);
-			void Explode();
+			bool Explode();
             
         private:
 			bool explode_;
-			glm::mat4 getTransf();
-			glm::vec3 init_pos_;
 			float timer_;
 			float speed_;
+			float radius_;
     };
 
 } // namespace game

@@ -6,9 +6,7 @@
 #include <map>
 
 #include "scene_graph.h"
-#include "laser.h"
 #include "bin/path_config.h"
-#include "resource_manager.h"
 
 #include "misc.h"
 
@@ -24,10 +22,10 @@ namespace game {
 	Laser *createLaserInstance(ResourceManager *resman) {
 		Resource *geom = getResource(resman, "CubeMesh");
 		Resource *mat = getResource(resman, "ShinyTextureMaterial");
-		Resource *tex = resman->GetResource("window");
+		Resource *tex = resman->GetResource("Laser");
 
 		Laser *lsr = new Laser("Laser", geom, mat, tex);
-		lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
+		lsr->Scale(glm::vec3(0.10, 0.10, 1.0));
 		return lsr;
 	}
 
@@ -36,10 +34,19 @@ namespace game {
 		Resource *mat = getResource(resman, "ShinyBlueMaterial");
 		//Resource *tex = resman->GetResource("window");
 
-		//Laser *lsr = new Laser("Laser", geom, mat, tex);
 		Bomb *bmb = new Bomb("Bomb", geom, mat);
 		bmb->Scale(glm::vec3(0.35, 0.35, 0.35));
 		return bmb;
+	}
+
+	Missile *createMissileInstance(ResourceManager *resman) {
+		Resource *geom = getResource(resman, "MissileMesh");
+		Resource *mat = getResource(resman, "ShinyBlueMaterial");
+		//Resource *tex = resman->GetResource("window");
+
+		Missile *msl = new Missile("Missile", geom, mat);
+		msl->Scale(glm::vec3(0.05, 0.05, 0.05));
+		return msl;
 	}
 
 	SceneNode *createParticleInstance(ResourceManager *resman, std::string object_name, std::string material_name, std::string texture_name){

@@ -15,6 +15,7 @@
 #include "player.h"
 #include "laser.h"
 #include "bomb.h"
+#include "missile.h"
 #include "tower_control.h"
 #include "tank_control.h"
 #include "misc.h"
@@ -67,6 +68,7 @@ namespace game {
 
 			std::vector<Laser*> lasers_;
 			std::vector<Bomb*> bombs_;
+			std::vector<Missile*> missiles_;
 			std::vector<SceneNode*> bomb_particles_;
 
             // Flag to turn animation on/off

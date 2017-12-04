@@ -43,7 +43,7 @@ namespace game {
 			void CreateFlameParticles(std::string object_name, int num_particles = 20000);
 			void CreateTorusParticles(std::string object_name, int num_particles = 20000, float loop_radius = 0.6, float circle_radius = 0.2);
 
-			void CreateControlPoints(std::string object_name, int num_control_points);
+			void CreateControlPoints(std::string object_name, glm::vec3 cur_location);
 
         private:
             // List storing all resources

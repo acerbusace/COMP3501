@@ -1,6 +1,6 @@
 # Blender v2.79 (sub 0) OBJ File: 'SHIP.blend'
 # www.blender.org
-mtllib SHIP.mtl
+mtllib body.mtl
 o Sphere.002
 v 0.058190 0.166992 -0.577397
 v 0.033799 0.166992 -0.579886

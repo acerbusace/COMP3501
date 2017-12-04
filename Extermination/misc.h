@@ -3,6 +3,7 @@
 
 #include "laser.h"
 #include "bomb.h"
+#include "missile.h"
 #include "resource_manager.h"
 
 namespace game {
@@ -11,6 +12,7 @@ namespace game {
 
 	Laser *createLaserInstance(ResourceManager *resman);
 	Bomb *createBombInstance(ResourceManager *resman);
+	Missile *createMissileInstance(ResourceManager *resman);
 	SceneNode *createParticleInstance(ResourceManager *resman, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
 }
 

@@ -70,6 +70,8 @@ namespace game {
 			SceneNode *GetParent(void);
 			bool done();
 
+			//void AddShaderAttribute(std::string name, DataType type, int size, GLfloat *data);
+
         protected:
             std::string name_; // Name of the scene node
             GLuint array_buffer_; // References to geometry: vertex and array buffers

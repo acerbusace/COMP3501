@@ -1,5 +1,5 @@
-#ifndef BOMB_H_
-#define BOMB_H_
+#ifndef MISSILE_H_
+#define MISSILE_H_
 
 #include <string>
 #define GLEW_STATIC
@@ -9,31 +9,37 @@
 #define GLM_FORCE_RADIANS
 #include <glm/gtc/quaternion.hpp>
 
+#include "resource.h"
 #include "scene_node.h"
 
 namespace game {
 
     // Abstraction of an laser
-    class Bomb : public SceneNode {
+    class Missile : public SceneNode {
 
         public:
             // Create laser from given resources
-            Bomb(std::string name, Resource *geometry, Resource *material, Resource *texture = 0);
+            Missile(std::string name, Resource *geometry, Resource *material, Resource *texture = 0);
 
             // Destructor
-            ~Bomb();
+            ~Missile();
             
             // Update geometry configuration
             void Update(double);
 			void SetSpeed(float);
-			void SetTimer(float);
-			bool Explode();
+			void SetInitPos(glm::vec3);
             
         private:
-			bool explode_;
-			float timer_;
+			glm::mat4 getTransf();
+			glm::vec3 init_pos_;
+			glm::vec3 point1_;
+			glm::vec3 point2_;
+			glm::vec3 point3_;
+			glm::vec3 point4_;
+			glm::vec3 Bt;
+			glm::vec3 prevBt;
+			float t;
 			float speed_;
-			float radius_;
     };
 
 } // namespace game

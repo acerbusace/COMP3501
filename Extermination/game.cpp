@@ -127,29 +127,36 @@ void Game::SetupResources(void){
     resman_->CreateCylinder("CylinderMesh");
 
 	std::string filename;
-    // Load material to be applied to torus
-    filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_blue");
-    resman_->LoadResource(Material, SHINY_BLUE_MATERIAL, filename.c_str());
 
-	// Load material to be applied to sphere
+	// Load Shiny Blue Material
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_blue");
+	resman_->LoadResource(Material, SHINY_BLUE_MATERIAL, filename.c_str());
+
+	// Load Shiny Texture Material
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_texture");
 	resman_->LoadResource(Material, SHINY_TEXTURE_MATERIAL, filename.c_str());
 
-	// Load window texture
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/window.jpg");
-	resman_->LoadResource(Texture, "Window", filename.c_str());
+	// Load Spline Material
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/spline");
+	resman_->LoadResource(Material, "SplineMaterial", filename.c_str());
 
-	// Load metal texture
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/metal.jpg");
-	resman_->LoadResource(Texture, "Metal", filename.c_str());
+	// Load material to be applied to particles
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/particle");
+	resman_->LoadResource(Material, "ParticleMaterial", filename.c_str());
+
+
 
 	// Load a player model from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/SHIP.obj");
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/body.obj");
 	resman_->LoadResource(Mesh, "PlayerMesh", filename.c_str());
+
+	// Load ship blade for player model
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shipBlade.obj");
+	resman_->LoadResource(Mesh, "shipBlade", filename.c_str());
 
 	// Load a laser from a file
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/missile.obj");
-	resman_->LoadResource(Mesh, "LaserMesh", filename.c_str());
+	resman_->LoadResource(Mesh, "MissileMesh", filename.c_str());
 
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/groundTank.obj");
 	resman_->LoadResource(Mesh, "TankMesh", filename.c_str());
@@ -161,27 +168,23 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
 	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
 
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shipBlade.obj");
-	resman_->LoadResource(Mesh, "shipBlade", filename.c_str());
 
-	// Load spline material from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/spline");
-	resman_->LoadResource(Material, "SplineMaterial", filename.c_str());
 
-	// Load Sphere Particles
+	// Load window texture
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/window.jpg");
+	resman_->LoadResource(Texture, "Window", filename.c_str());
+
+	// Load metal texture
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/metal.jpg");
+	resman_->LoadResource(Texture, "Metal", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/laser.png");
+	resman_->LoadResource(Texture, "Laser", filename.c_str());
+
+
+	
 	resman_->CreateSphereParticles("SphereParticles");
-
-
-	// Create Control Points
-	//resman_->CreateControlPoints("ControlPoints1", 51);
-
-	// Load a cube from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/cube.obj");
-	resman_->LoadResource(Mesh, "OtherMesh", filename.c_str());
-
-	// Load material to be applied to particles
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/particle");
-	resman_->LoadResource(Material, "ParticleMaterial", filename.c_str());
+	//resman_->CreateControlPoints("ControlPoints", glm::vec3(0, 0, 0));
 }
 
 
@@ -190,78 +193,14 @@ void Game::SetupScene(void){
     // Set background color for the scene
     scene_->SetBackgroundColor(viewport_background_color_g);
 
-    // Create an instance of the torus mesh
-    game::SceneNode *torus = CreateInstance("TorusInstance1", "TorusMesh", SHINY_BLUE_MATERIAL);
-    // Scale the instance
-    torus->Scale(glm::vec3(0.75, 0.75, 0.75));
-    torus->Translate(glm::vec3(-1.0, 0, 0));
 
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
-	//game::SceneNode *particles = CreateInstance("ParticleInstance1", "SphereParticles", "SplineMaterial");
-	//->Translate(glm::vec3(0.0, 1.0, 0.0));
-
-	//Resource *cp = resman_->GetResource("ControlPoints1");
+	//Resource *cp = resman_->GetResource("ControlPoints");
 	//particles->AddShaderAttribute("control_point", Vec3Type, cp->GetSize(), cp->GetData());
 
-    // Create an helicopter instance
-
-	// upper body
-    game::SceneNode *upper_body = CreateInstance("CubeInstance1", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
-    upper_body->Scale(glm::vec3(0.35, 0.35, 1.25));
-	upper_body->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(15.0, 0.0, 0.0)));
-    upper_body->Translate(glm::vec3(1.0, 0, 0));
-
-	// lower body
-    game::SceneNode *lower_body = CreateInstance("CubeInstance2", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
-    lower_body->Scale(glm::vec3(0.35, 0.35, 1.5));
-    lower_body->Translate(glm::vec3(0.0, -0.35, 0.125));
-
-	// upper joint (cylinder connecting body and upper rotor)
-    game::SceneNode *upper_joint = CreateInstance("CylinderInstance1", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    upper_joint->Scale(glm::vec3(0.45, 0.10, 0.45));
-    upper_joint->Translate(glm::vec3(0.0, 0.225, 0));
-
-	// upper rotor
-    game::SceneNode *upper_rotor = CreateInstance("CylinderInstance2", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    upper_rotor->Scale(glm::vec3(0.05, 1.0, 0.05));
-	upper_rotor->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(0.0, 0.0, 115.0)));
-
-	// back joint (cylinder connecting body and back rotor)
-    game::SceneNode *back_joint = CreateInstance("CylinderInstance3", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    back_joint->Scale(glm::vec3(0.35, 0.75, 0.35));
-	back_joint->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(115.0, 0.0, 0.0)));
-    back_joint->Translate(glm::vec3(0.0, 0.0, -1.0));
-
-	// back rotor
-    game::SceneNode *back_rotor = CreateInstance("CylinderInstance4", "CylinderMesh", SHINY_TEXTURE_MATERIAL, "Metal");
-    back_rotor->Scale(glm::vec3(0.05, 0.75, 0.05));
-	back_rotor->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(90.0, 0.0, 0.0)));
-    back_rotor->Translate(glm::vec3(0.10, -0.25, 0.0));
-
-	// Create particles
-	game::SceneNode *particles = CreateParticleInstanceV("SphereParticles", "ParticleMaterial");
-	particles->SetColor(glm::vec3(1.0, 0, 0));
-
-	// creates helicopter hierarchy 
-	upper_body->addChild(lower_body);
-	upper_body->addChild(upper_joint);
-	upper_joint->addChild(upper_rotor);
-	upper_body->addChild(back_joint);
-	back_joint->addChild(back_rotor);
 
 	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
-
-	Laser *test = CreateLaserInstance("Laser1", "LaserMesh", SHINY_TEXTURE_MATERIAL, "Window");
-	test->SetInitPos(camera_.GetPosition());
-	test->SetOrientation(camera_.GetOrientation());
-	test->SetSpeed(10.0);
-
-	//Bomb *test2 = CreateBombInstance("Bomb1", "SphereMesh", SHINY_BLUE_MATERIAL, "Window");
-	//test2->SetOrientation(camera_.GetOrientation());
-	//test2->SetSpeed(0.25);
-	//test2->SetTimer(20.0);
-	//test2->Translate(glm::vec3(-1.0, 0.0, 0.0));
 
 	tower_control_->init();
 	tank_control_->init();
@@ -284,23 +223,6 @@ void Game::MainLoop(void){
 
 			update(node, delta_time);
 			glm::quat rotation;
-
-            // Animate the torus and helicopter
-			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(0.0, 1.0, 0.0));
-
-            node = scene_->GetNode("TorusInstance1");
-            node->Rotate(rotation);
-
-            node = scene_->GetNode("CubeInstance1");
-            node->Rotate(rotation);
-
-			// animate top and back rotor
-			rotation = glm::angleAxis((float) glm::radians(100.0) * (float) delta_time, glm::vec3(2.0, 0.0, 0.0));
-
-            node = scene_->GetNode("CylinderInstance2");
-            node->Rotate(rotation);
-            node = scene_->GetNode("CylinderInstance4");
-            node->Rotate(rotation);
         }
 
         // Draw the scene
@@ -317,6 +239,10 @@ void Game::MainLoop(void){
 
 		for each (Bomb *bmb in bombs_) {
 			bmb->Draw(&camera_);
+		}
+
+		for each (Missile *msl in missiles_) {
+			msl->Draw(&camera_);
 		}
 
         // Push buffer drawn in the background onto the display
@@ -342,6 +268,10 @@ void Game::update(SceneNode* node, double delta_time) {
 
 	for each (Laser *lsr in lasers_) {
 		lsr->Update(delta_time);
+	}
+
+	for each (Missile *msl in missiles_) {
+		msl->Update(delta_time);
 	}
 
 	//for each (Bomb *bmb in bombs_) {
@@ -494,7 +424,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	//Fire Laser
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
 		Laser *lsr = createLaserInstance(game->resman_);
-		lsr->Translate(game->scene_->GetPlayer()->GetPosition());
+		lsr->SetInitPos(game->scene_->GetPlayer()->getPos());
 		lsr->SetOrientation(game->camera_.GetOrientation());
 		lsr->SetSpeed(10.0);
 		game->lasers_.push_back(lsr);
@@ -503,10 +433,19 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	//Fire Bomb
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
 		Bomb *bmb = createBombInstance(game->resman_);
-		bmb->Translate(game->scene_->GetPlayer()->GetPosition());
+		bmb->Translate(game->scene_->GetPlayer()->getPos());
 		bmb->SetSpeed(-1.0);
 		bmb->SetTimer(5.0);
 		game->bombs_.push_back(bmb);
+	}
+
+	//Fire Missile
+	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
+		Missile *msl = createMissileInstance(game->resman_);
+		msl->SetInitPos(game->scene_->GetPlayer()->getPos());
+		msl->SetOrientation(game->camera_.GetOrientation());
+		msl->SetSpeed(10.0);
+		game->missiles_.push_back(msl);
 	}
 }
 

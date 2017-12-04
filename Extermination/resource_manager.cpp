@@ -901,10 +901,12 @@ void ResourceManager::CreateFlameParticles(std::string object_name, int num_part
 }
 
 
-void ResourceManager::CreateControlPoints(std::string object_name, int num_control_points) {
+void ResourceManager::CreateControlPoints(std::string object_name, glm::vec3 cur_location) {
 
 	// Adjust number of control points, if needed, so that we have
 	// groups of four control points
+	int num_control_points = 4;
+
 	if ((num_control_points % 4) != 0) {
 		num_control_points += (4 - (num_control_points % 4));
 	}
@@ -923,13 +925,13 @@ void ResourceManager::CreateControlPoints(std::string object_name, int num_contr
 
 	// Initialize the first two control points to fixed values
 	// First
-	control_point[0] = 0.0;
-	control_point[1] = 25.0;
-	control_point[2] = 0.0;
+	control_point[0] = cur_location.x;
+	control_point[1] = cur_location.y;
+	control_point[2] = cur_location.z;
 	// Second
-	control_point[3] = 0.0;
-	control_point[4] = 24.0;
-	control_point[5] = 0.0;
+	control_point[3] = cur_location.x;
+	control_point[4] = cur_location.y + 10;
+	control_point[5] = cur_location.z;
 
 	// Create remaining points
 	for (int i = 2; i < num_control_points; i++) {
@@ -953,19 +955,9 @@ void ResourceManager::CreateControlPoints(std::string object_name, int num_contr
 			}
 		}
 		else {
-			// Other points: we can freely assign random values to them
-			// Get 3 random numbers
-			float u, v, w;
-			u = ((double)rand() / (RAND_MAX));
-			v = ((double)rand() / (RAND_MAX));
-			w = ((double)rand() / (RAND_MAX));
-			// Define control points based on u, v, and w and scale by the control point index
-			control_point[i*num_att] = 0.0;
-			control_point[i*num_att * 2] = 0.0;
-			//control_point[i*num_att] = u*3.0*(i / 4 + 1);
-			control_point[i*num_att + 1] = control_point[i*num_att - 2] - 1.0;
-			//control_point[i*num_att + 2] = w*2.5*(i / 4 + 1);
-			//control_point[i*num_att + 2] = 0.0; // Easier to visualize with the control points on the screen
+				control_point[i*num_att] = control_point[i*num_att - 3];
+				control_point[i*num_att + 1] = control_point[i*num_att - 2] + 10.0;
+				control_point[i*num_att + 2] = control_point[i*num_att - 1];
 		}
 	}
 

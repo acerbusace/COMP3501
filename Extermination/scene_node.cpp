@@ -30,21 +30,6 @@ SceneNode::SceneNode(std::string name, Resource *geometry, Resource *material, R
 
     // Other attributes
     scale_ = glm::vec3(1.0, 1.0, 1.0);
-	reset_ = 4;
-    start_time_ = glfwGetTime();
-	curr_time_ = start_time_;
-	color_ = glm::vec3((float) rand() / RAND_MAX, (float) rand() / RAND_MAX, (float) rand() / RAND_MAX);
-}
-
-void SceneNode::SetReset(float reset) {
-	reset_ = reset;
-    start_time_ = glfwGetTime();
-	curr_time_ = start_time_;
-}
-
-void SceneNode::SetColor(glm::vec3 color){
-
-    color_ = color;
 }
 
 
@@ -226,13 +211,8 @@ glm::vec3 SceneNode::getPos() {
 }
 
 void SceneNode::Update(double delta_time){
-    // Do nothing for this generic type of scene node
-}
 
-bool SceneNode::done() {
-	if (curr_time_ > reset_)
-		return true;
-	return false;
+    // Do nothing for this generic type of scene node
 }
 
 glm::mat4 SceneNode::getTransf() {
@@ -295,16 +275,8 @@ void SceneNode::SetupShader(GLuint program){
 
     // Timer
     GLint timer_var = glGetUniformLocation(program, "timer");
-    curr_time_ = glfwGetTime() - start_time_;
-    glUniform1f(timer_var, curr_time_);
-
-    // Reset Timer
-    GLint reset_var = glGetUniformLocation(program, "reset");
-    glUniform1f(reset_var, reset_);
-
-	// Color
-    GLint color_var = glGetUniformLocation(program, "uniColor");
-    glUniform3f(color_var, color_.x, color_.y, color_.z);
+    double current_time = glfwGetTime();
+    glUniform1f(timer_var, (float) current_time);
 }
 
 void SceneNode::setParent(SceneNode *prt) {

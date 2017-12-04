@@ -44,10 +44,18 @@ SceneNode *SceneGraph::CreateNode(std::string node_name, Resource *geometry, Res
 
 }
 
-
 void SceneGraph::AddNode(SceneNode *node){
 
     node_.push_back(node);
+}
+
+void SceneGraph::AddParticle(SceneNode *node){
+    node_.insert(node_.begin(), node);
+}
+
+void SceneGraph::AddPlayer(Player * player)
+{
+	player_ = player;
 }
 
 
@@ -61,6 +69,11 @@ SceneNode *SceneGraph::GetNode(std::string node_name) const {
     }
     return NULL;
 
+}
+
+Player * SceneGraph::GetPlayer() const
+{
+	return player_;
 }
 
 
@@ -100,7 +113,7 @@ void SceneGraph::Update(double delta_time){
 
 void SceneGraph::SetMaterial(Resource* material) {
 	for each(SceneNode *node in node_)
-		node->SetMaterial(material);
+		node->setMaterial(material);
 }
 
 } // namespace game

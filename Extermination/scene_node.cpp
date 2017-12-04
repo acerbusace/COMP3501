@@ -4,19 +4,62 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <time.h>
+#include <algorithm>
 
 #include "scene_node.h"
 #include "camera.h"
+#include "misc.h"
 
 namespace game {
 
-SceneNode::SceneNode(const std::string name, const Resource *geometry, const Resource *material, const Resource *texture){
+SceneNode::SceneNode(std::string name, Resource *geometry, Resource *material, Resource *texture) {
 
     // Set name of scene node
-    name_ = name;
+	setName(name);
 	parent = NULL;
 
     // Set geometry
+	setGeometry(geometry);
+
+	// Set material
+	setMaterial(material);
+
+	// Set texture
+	if (texture)
+		texture_ = texture->GetResource();
+	else
+		texture_ = 0;
+
+    // Other attributes
+    scale_ = glm::vec3(1.0, 1.0, 1.0);
+	reset_ = 4;
+    start_time_ = glfwGetTime();
+	curr_time_ = start_time_;
+	color_ = glm::vec3((float) rand() / RAND_MAX, (float) rand() / RAND_MAX, (float) rand() / RAND_MAX);
+	rad_ = 0;
+}
+
+void SceneNode::SetReset(float reset) {
+	reset_ = reset;
+    start_time_ = glfwGetTime();
+	curr_time_ = start_time_;
+}
+
+float SceneNode::GetRad() {
+	return SPEHRE_PARTICLE_SPEED * curr_time_;
+}
+
+void SceneNode::SetColor(glm::vec3 color){
+
+    color_ = color;
+}
+
+
+SceneNode::~SceneNode(){
+}
+
+bool SceneNode::setGeometry(Resource *geometry) {
+	// Set geometry
 	if (geometry) {
 		geoType = geometry->GetType();
 		if (geoType == PointSet) {
@@ -32,38 +75,41 @@ SceneNode::SceneNode(const std::string name, const Resource *geometry, const Res
 		array_buffer_ = geometry->GetArrayBuffer();
 		element_array_buffer_ = geometry->GetElementArrayBuffer();
 		size_ = geometry->GetSize();
+		return true;
 	}
+	return false;
+}
 
+bool SceneNode::setMaterial(Resource *material) {
 	if (material) {
 		// Set material (shader program)
 		if (material->GetType() != Material) {
 			throw(std::invalid_argument(std::string("Invalid type of material")));
 		}
 		material_ = material->GetResource();
+		return true;
 	}
+	return false;
+}
 
+bool SceneNode::setTexture(Resource *texture) {
 	// Set texture
-	if (texture)
+	if (texture) {
 		texture_ = texture->GetResource();
-	else
-		texture_ = 0;
-
-    // Other attributes
-    scale_ = glm::vec3(1.0, 1.0, 1.0);
+		return true;
+	}
+	texture_ = 0;
+	return false;
 }
-
-
-SceneNode::~SceneNode(){
-}
-
-void SceneNode::SetMaterial(Resource *material) {
-    material_ = material->GetResource();
-}
-
 
 const std::string SceneNode::GetName(void) const {
 
     return name_;
+}
+
+void SceneNode::setName(std::string name) {
+
+	name_ = name;
 }
 
 
@@ -114,6 +160,14 @@ void SceneNode::Rotate(glm::quat rot){
     orientation_ *= rot;
 }
 
+void SceneNode::SetExpDamage(float damage) {
+	expDamage_ = damage;
+}
+
+float SceneNode::GetExpDamage() {
+	return expDamage_;
+}
+
 
 void SceneNode::Scale(glm::vec3 scale){
 
@@ -150,6 +204,11 @@ GLuint SceneNode::GetMaterial(void) const {
     return material_;
 }
 
+SceneNode * SceneNode::GetParent(void)
+{
+	return parent;
+}
+
 
 void SceneNode::Draw(Camera *camera){
 
@@ -171,12 +230,24 @@ void SceneNode::Draw(Camera *camera){
 		glDrawElements(mode_, size_, GL_UNSIGNED_INT, 0);
 	else
 		glDrawArrays(mode_, 0, size_);
+
+	for each (SceneNode *child in children) {
+		child->Draw(camera);
+	}
 }
 
+glm::vec3 SceneNode::getPos() {
+	return glm::vec3(getTransf() * glm::vec4(0.0, 0.0, 0.0, 1.0));
+}
 
 void SceneNode::Update(double delta_time){
-
     // Do nothing for this generic type of scene node
+}
+
+bool SceneNode::done() {
+	if (curr_time_ > reset_)
+		return true;
+	return false;
 }
 
 glm::mat4 SceneNode::getTransf() {
@@ -187,7 +258,7 @@ glm::mat4 SceneNode::getTransf() {
 
 	glm::mat4 transf = translation * rotation;
 
-	if (parent)
+	if (GetParent())
 		transf = parent->getTransf() * transf;
 
 	return transf;
@@ -239,8 +310,16 @@ void SceneNode::SetupShader(GLuint program){
 
     // Timer
     GLint timer_var = glGetUniformLocation(program, "timer");
-    double current_time = glfwGetTime();
-    glUniform1f(timer_var, (float) current_time);
+    curr_time_ = glfwGetTime() - start_time_;
+    glUniform1f(timer_var, curr_time_);
+
+    // Reset Timer
+    GLint reset_var = glGetUniformLocation(program, "reset");
+    glUniform1f(reset_var, reset_);
+
+	// Color
+    GLint color_var = glGetUniformLocation(program, "uniColor");
+    glUniform3f(color_var, color_.x, color_.y, color_.z);
 }
 
 void SceneNode::setParent(SceneNode *prt) {
@@ -250,6 +329,10 @@ void SceneNode::setParent(SceneNode *prt) {
 void SceneNode::addChild(SceneNode *child) {
 	child->setParent(this);
 	children.push_back(child);
+}
+
+float SceneNode::GetRadius() {
+	return fmax(fmax(scale_.x/2, scale_.y/2), scale_.z/2);
 }
 
 } // namespace game;

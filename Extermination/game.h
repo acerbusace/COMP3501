@@ -6,11 +6,19 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <map>
 
+#include "glm/ext.hpp"
 #include "scene_graph.h"
 #include "resource_manager.h"
 #include "camera.h"
-#include "asteroid.h"
+#include "player.h"
+#include "laser.h"
+#include "bomb.h"
+#include "missile.h"
+#include "tower_control.h"
+#include "tank_control.h"
+#include "misc.h"
 
 namespace game {
 
@@ -39,25 +47,38 @@ namespace game {
             // Set up initial scene
             void SetupScene(void);
             // Run the game: keep the application active
-            void MainLoop(void); 
+            void MainLoop(void);
 
         private:
             // GLFW window
-            GLFWwindow* window_;
+            GLFWwindow *window_;
 
             // Scene graph containing all nodes to render
-            SceneGraph scene_;
+            SceneGraph *scene_;
 
             // Resources available to the game
-            ResourceManager resman_;
+            ResourceManager *resman_;
 
             // Camera abstraction
             Camera camera_;
+
+			// Tower Control
+			TowerControl *tower_control_;
+			TankControl *tank_control_;
+
+			std::vector<Laser*> lasers_;
+			std::vector<Bomb*> bombs_;
+			std::vector<Missile*> missiles_;
+			std::vector<SceneNode*> bomb_particles_;
 
             // Flag to turn animation on/off
             bool animating_;
 
 			bool material_;
+
+
+
+			std::map<int, int> key_;
 
 			double last_time;
 
@@ -67,18 +88,30 @@ namespace game {
             void InitEventHandlers(void);
  
             // Methods to handle events
+			void input(SceneNode * node, double delta_time);
+			void update(SceneNode * node, double delta_time);
+			void updatePlayerWeapons(double delta_time);
             static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
             static void ResizeCallback(GLFWwindow* window, int width, int height);
 
-            // Asteroid field
-            // Create instance of one asteroid
-            Asteroid *CreateAsteroidInstance(std::string entity_name, std::string object_name, std::string material_name);
-            // Create entire random asteroid field
-            void CreateAsteroidField(int num_asteroids = 1500);
+            // Create player
+            Player *CreatePlayerInstance(std::string entity_name, std::string object_name, std::string material_name);
+
+			// Create land
 			void Game::CreateLand(glm::vec3 size, glm::vec3 pos = glm::vec3(0.0, -0.5, 0.0), glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0));
 
             // Create an instance of an object stored in the resource manager
             SceneNode *CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
+            // Create an instance of an object stored in the resource manager
+            SceneNode *CreateParticleInstanceV(std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
+			// Create an instance of a laser
+			Laser *CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
+			// Create an instance of a bomb
+			Bomb *CreateBombInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
 
     }; // class Game
 

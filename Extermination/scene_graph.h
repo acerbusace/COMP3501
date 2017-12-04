@@ -10,6 +10,7 @@
 #include "scene_node.h"
 #include "resource.h"
 #include "camera.h"
+#include "player.h"
 
 namespace game {
 
@@ -22,6 +23,8 @@ namespace game {
 
             // Scene nodes to render
             std::vector<SceneNode *> node_;
+
+			Player *player_;
 
         public:
             typedef std::vector<SceneNode *>::const_iterator const_iterator;
@@ -37,8 +40,11 @@ namespace game {
             SceneNode *CreateNode(std::string node_name, Resource *geometry, Resource *material, Resource *texture = NULL);
             // Add an already-created node
             void AddNode(SceneNode *node);
+			void AddParticle(SceneNode* node);
+			void AddPlayer(Player *player);
             // Find a scene node with a specific name
             SceneNode *GetNode(std::string node_name) const;
+			Player *GetPlayer() const;
             // Get node const iterator
             std::vector<SceneNode *>::const_iterator begin() const;
             std::vector<SceneNode *>::const_iterator end() const;

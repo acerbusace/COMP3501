@@ -12,6 +12,7 @@
 // Default extensions for different shader source files
 #define VERTEX_PROGRAM_EXTENSION "_vp.glsl"
 #define FRAGMENT_PROGRAM_EXTENSION "_fp.glsl"
+#define GEOMETRY_PROGRAM_EXTENSION "_gp.glsl"
 
 namespace game {
 
@@ -25,6 +26,7 @@ namespace game {
             // Add a resource that was already loaded and allocated to memory
             void AddResource(ResourceType type, const std::string name, GLuint resource, GLsizei size);
             void AddResource(ResourceType type, const std::string name, GLuint array_buffer, GLuint element_array_buffer, GLsizei size);
+			void AddResource(ResourceType type, const std::string name, GLfloat *data, GLsizei size);
             // Load a resource from a file, according to the specified type
             void LoadResource(ResourceType type, const std::string name, const char *filename);
             // Get the resource with the specified name
@@ -36,7 +38,12 @@ namespace game {
             void CreateSphere(std::string object_name, float radius = 0.6, int num_samples_theta = 90, int num_samples_phi = 45);
 			void CreateCube(std::string object_name);
             void CreateCylinder(std::string object_name, float radius = 0.25, int num_loop_samples = 30, float height = 1);
-			
+
+			void CreateSphereParticles(std::string object_name, int num_particles = 20000);
+			void CreateFlameParticles(std::string object_name, int num_particles = 20000);
+			void CreateTorusParticles(std::string object_name, int num_particles = 20000, float loop_radius = 0.6, float circle_radius = 0.2);
+
+			void CreateControlPoints(std::string object_name, int num_control_points);
 
         private:
             // List storing all resources

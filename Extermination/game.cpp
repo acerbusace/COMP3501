@@ -442,6 +442,16 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 			game->camera_.Translate(game->camera_.GetForward() * -camera_factor);
 		}
 	}
+
+	//Fire Bomb
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		Bomb *test2 = game->CreateBombInstance("Bomb1", "PlayerMesh", SHINY_TEXTURE_MATERIAL, "Window");
+		test2->SetInitPos(game->camera_.GetPosition());
+		test2->SetOrientation(game->camera_.GetOrientation());
+		test2->SetSpeed(1.0);
+		test2->SetTimer(20.0);
+		test2->Translate(glm::vec3(0.0, 1.0, 0.0));
+	}
 }
 
 

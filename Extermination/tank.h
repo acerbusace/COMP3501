@@ -26,24 +26,24 @@ namespace game {
             
             // Update geometry configuration
             void Update(double);
-			float fireError();
 			float moveError();
-			float getLaserSpeed();
+			float getBombSpeed();
 			float getFireSpeed();
 			float getMoveError();
+			float getBombTimer();
 			bool shoot();
 			void fireCoolDown();
-			void setLaserSpeed(float);
+			void setBombSpeed(float);
 			void setFireSpeed(float);
-			void setFireError(float);
+			void setBombTimer(float);
 			void setMoveError(float);
 			void setMove(bool);
 			bool move();
 			void setDestination(glm::vec2);
             
         private:
-			float fire_error_;
-			float laser_speed_;
+			float bomb_timer_;
+			float bomb_speed_;
 			float fire_speed_;
 			float fire_cooldown_;
 

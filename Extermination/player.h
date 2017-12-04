@@ -25,6 +25,7 @@ namespace game {
             ~Player();
             
 			void Draw(Camera *camera);
+			void Update(double delta_time);
 
 			bool get_first_person();
 			void toggle_first_person();

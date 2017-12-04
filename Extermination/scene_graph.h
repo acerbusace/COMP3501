@@ -40,6 +40,7 @@ namespace game {
             SceneNode *CreateNode(std::string node_name, Resource *geometry, Resource *material, Resource *texture = NULL);
             // Add an already-created node
             void AddNode(SceneNode *node);
+			void AddParticle(SceneNode* node);
 			void AddPlayer(Player *player);
             // Find a scene node with a specific name
             SceneNode *GetNode(std::string node_name) const;

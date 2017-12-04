@@ -307,6 +307,17 @@ void Game::MainLoop(void){
         scene_->Draw(&camera_);
 		tower_control_->draw(&camera_);
 		tank_control_->draw(&camera_);
+		for each (SceneNode *particle in bomb_particles_) {
+			particle->Draw(&camera_);
+		}
+
+		for each (Laser *lsr in lasers_) {
+			lsr->Draw(&camera_);
+		}
+
+		for each (Bomb *bmb in bombs_) {
+			bmb->Draw(&camera_);
+		}
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -322,6 +333,32 @@ void Game::update(SceneNode* node, double delta_time) {
 	scene_->Update(delta_time);
 	tower_control_->update(delta_time, camera_.GetPosition());
 	tank_control_->update(delta_time, camera_.GetPosition());
+
+	for (int i = 0; i < bomb_particles_.size(); ++i) {
+		bomb_particles_[i]->Update(delta_time);
+		if (bomb_particles_[i]->done())
+			bomb_particles_.erase(bomb_particles_.begin() + i);
+	}
+
+	for each (Laser *lsr in lasers_) {
+		lsr->Update(delta_time);
+	}
+
+	//for each (Bomb *bmb in bombs_) {
+	for (int i = 0; i < bombs_.size(); ++i) {
+		bombs_[i]->Update(delta_time);
+		//std::cout << "pos: " << bombs_[i]->GetPosition().x << ", " << bombs_[i]->GetPosition().y << ", " << bombs_[i]->GetPosition().z << std::endl;
+
+		if (bombs_[i]->Explode()) {
+			SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
+			particle->SetPosition(bombs_[i]->GetPosition());
+			particle->SetReset(5.0);
+
+			bomb_particles_.push_back(particle);
+			bombs_.erase(bombs_.begin() + i);
+			//std::cout << "exploding is true!!!" << std::endl;
+		}
+	}
 }
 
 
@@ -452,6 +489,24 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 		else {
 			game->camera_.Translate(game->camera_.GetForward() * -camera_factor);
 		}
+	}
+
+	//Fire Laser
+	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
+		Laser *lsr = createLaserInstance(game->resman_);
+		lsr->Translate(game->scene_->GetPlayer()->GetPosition());
+		lsr->SetOrientation(game->camera_.GetOrientation());
+		lsr->SetSpeed(10.0);
+		game->lasers_.push_back(lsr);
+	}
+
+	//Fire Bomb
+	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
+		Bomb *bmb = createBombInstance(game->resman_);
+		bmb->Translate(game->scene_->GetPlayer()->GetPosition());
+		bmb->SetSpeed(-1.0);
+		bmb->SetTimer(5.0);
+		game->bombs_.push_back(bmb);
 	}
 }
 

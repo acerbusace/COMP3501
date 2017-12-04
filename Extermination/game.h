@@ -17,6 +17,7 @@
 #include "bomb.h"
 #include "tower_control.h"
 #include "tank_control.h"
+#include "misc.h"
 
 namespace game {
 
@@ -64,10 +65,16 @@ namespace game {
 			TowerControl *tower_control_;
 			TankControl *tank_control_;
 
+			std::vector<Laser*> lasers_;
+			std::vector<Bomb*> bombs_;
+			std::vector<SceneNode*> bomb_particles_;
+
             // Flag to turn animation on/off
             bool animating_;
 
 			bool material_;
+
+
 
 			std::map<int, int> key_;
 

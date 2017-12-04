@@ -4,7 +4,6 @@
 
 #include "tank_control.h"
 #include "misc.h"
-#include "player.h"
 
 namespace game {
 
@@ -13,19 +12,12 @@ TankControl::TankControl(ResourceManager *rm) : resman_(rm) { }
 TankControl::~TankControl(){
 }
 
-void TankControl::update(double delta_time, Player* player){
-	glm::vec3 player_pos = player->getPos();
-
+void TankControl::update(double delta_time, glm::vec3 player_pos){
+	//player_pos = glm::vec3(10.0, 0.0, 11.0);
 	for (int i = 0; i < bomb_particles_.size(); ++i) {
 		bomb_particles_[i]->Update(delta_time);
 		if (bomb_particles_[i]->done())
 			bomb_particles_.erase(bomb_particles_.begin() + i);
-		else {
-			if (collision(bomb_particles_[i], player)) {
-				player->takeDamage(bomb_particles_[i]->GetExpDamage() * delta_time);
-				//std::cout << "its working!!!" << std::endl;
-			}
-		}
 	}
 
 	for each (Tank *tank in tanks_) {
@@ -44,19 +36,16 @@ void TankControl::update(double delta_time, Player* player){
 	//for each (Bomb *bmb in bombs_) {
 	for (int i = 0; i < bombs_.size(); ++i) {
 		bombs_[i]->Update(delta_time);
-		//std::cout << "pos: " << bombs_[i]->GetPosition().x << ", " << bombs_[i]->GetPosition().y << ", " << bombs_[i]->GetPosition().z << std::endl;
+		std::cout << "pos: " << bombs_[i]->GetPosition().x << ", " << bombs_[i]->GetPosition().y << ", " << bombs_[i]->GetPosition().z << std::endl;
 
-		if (bombs_[i]->Explode() || collision(bombs_[i], player)) {
+		if (bombs_[i]->Explode()) {
 			SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
 			particle->SetPosition(bombs_[i]->GetPosition());
-			float rad = bombs_[i]->GetExpRadius()/SPEHRE_PARTICLE_SPEED;
-			std::cout << "\t\trad: " << rad << std::endl;
-			particle->SetReset(bombs_[i]->GetExpRadius()/SPEHRE_PARTICLE_SPEED);
-			particle->SetExpDamage(bombs_[i]->GetDamage());
+			particle->SetReset(5.0);
 
 			bomb_particles_.push_back(particle);
 			bombs_.erase(bombs_.begin() + i);
-			//std::cout << "exploding is true!!!" << std::endl;
+			std::cout << "exploding is true!!!" << std::endl;
 		}
 	}
 }
@@ -83,8 +72,6 @@ void TankControl::shoot(Tank *tank, glm::vec3 player_pos) {
 	bmb->SetPosition(tank->getPos() + glm::vec3(0, 3.0, 0));
 	bmb->SetTimer(tank->getBombTimer());
 	bmb->SetSpeed(tank->getBombSpeed());
-	bmb->SetDamage(tank->GetBombDamage());
-	bmb->SetExpRadius(1.0);
 	//std::cout << "bombing is shooting::: " << tank->getBombSpeed() << std::endl;
 	bombs_.push_back(bmb);
 }
@@ -121,8 +108,6 @@ Tank *TankControl::createTankInstance(glm::vec3 pos) {
 	//tank->setBombSpeed(rand() % 5 + 5);
 	//tank->setFireError(25);
 	tank->setFireSpeed(10);
-	tank->SetBombDamage(rand() % 5 + 5);
-	tank->SetExpDamage(5);
 
 	tanks_.push_back(tank);
 	return tank;

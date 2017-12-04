@@ -16,7 +16,6 @@
 #include "tower.h"
 #include "camera.h"
 #include "laser.h"
-#include "player.h"
 
 namespace game {
 
@@ -31,7 +30,7 @@ namespace game {
             ~TowerControl();
 
             // Update geometry configuration
-            void update(double, Player*);
+            void update(double, glm::vec3 player_pos);
 			// Update geometry configuration
 			void draw(Camera*);
             

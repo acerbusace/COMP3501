@@ -12,8 +12,8 @@ TowerControl::TowerControl(ResourceManager *rm) : resman_(rm) { }
 TowerControl::~TowerControl(){
 }
 
-void TowerControl::update(double delta_time, Player* player){
-	glm::vec3 player_pos = player->getPos();
+void TowerControl::update(double delta_time, glm::vec3 player_pos){
+	//player_pos = glm::vec3(10.0, 0.0, 11.0);
 
 	for each (Orb *orb in orbs_) {
 		orb->Update(delta_time);
@@ -22,17 +22,8 @@ void TowerControl::update(double delta_time, Player* player){
 			shoot(orb, player_pos);
 	}
 
-	//for each (Laser *lsr in lasers_) {
-	for (int i = 0; i < lasers_.size(); ++i) {
-		lasers_[i]->Update(delta_time);
-
-		if (collision(lasers_[i], player)) {
-			player->takeDamage(lasers_[i]->GetDamage());
-			lasers_.erase(lasers_.begin() + i);
-		} else if (lasers_[i]->done()) {
-			lasers_.erase(lasers_.begin() + i);
-			//std::cout << "deleting laser" << std::endl;
-		}
+	for each (Laser *lsr in lasers_) {
+		lsr->Update(delta_time);
 	}
 }
 
@@ -48,7 +39,6 @@ void TowerControl::shoot(Orb *orb, glm::vec3 player_pos) {
 	lsr->SetOrientation(glm::conjugate(glm::toQuat(glm::lookAt(orb->getPos(), player_pos, glm::vec3(0.0, 1.0, 0.0)))));
 	lsr->SetInitPos(orb->getPos());
 	lsr->SetSpeed(orb->getLaserSpeed());
-	lsr->SetDamage(orb->GetLaserDamage());
 	lasers_.push_back(lsr);
 }
 
@@ -87,7 +77,6 @@ Tower *TowerControl::createTowerInstance(glm::vec3 pos) {
 	orb->setLaserSpeed(rand() % 5 + 5);
 	orb->setFireError(25);
 	orb->setFireSpeed(10);
-	orb->SetLaserDamage(25);
 
 	twr->addChild(orb);
 

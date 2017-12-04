@@ -193,7 +193,6 @@ void Game::SetupScene(void){
     // Set background color for the scene
     scene_->SetBackgroundColor(viewport_background_color_g);
 
-<<<<<<< HEAD
 
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
@@ -203,17 +202,6 @@ void Game::SetupScene(void){
 
 	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
 
-=======
-	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
-
-	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
-
-	Laser *test = CreateLaserInstance("Laser1", "LaserMesh", SHINY_TEXTURE_MATERIAL, "Window");
-	test->SetInitPos(camera_.GetPosition());
-	test->SetOrientation(camera_.GetOrientation());
-	test->SetSpeed(10.0);
-
->>>>>>> dev-v4
 	tower_control_->init();
 	tank_control_->init();
 }
@@ -234,10 +222,7 @@ void Game::MainLoop(void){
 			node = scene_->GetNode("PlayerInstance");
 
 			update(node, delta_time);
-<<<<<<< HEAD
 			glm::quat rotation;
-=======
->>>>>>> dev-v4
         }
 
         // Draw the scene
@@ -272,16 +257,11 @@ void Game::update(SceneNode* node, double delta_time) {
 	input(node, delta_time);
 
 	scene_->Update(delta_time);
-<<<<<<< HEAD
 	tower_control_->update(delta_time, camera_.GetPosition());
 	tank_control_->update(delta_time, camera_.GetPosition());
 	updatePlayerWeapons(delta_time);
 }
 
-=======
-	tower_control_->update(delta_time, scene_->GetPlayer());
-	tank_control_->update(delta_time, scene_->GetPlayer());
->>>>>>> dev-v4
 
 void Game::updatePlayerWeapons(double delta_time) {
 	for (int i = 0; i < bomb_particles_.size(); ++i) {

@@ -8,7 +8,6 @@
 
 #include "resource_manager.h"
 #include "model_loader.h"
-#include "misc.h"
 
 namespace game {
 
@@ -715,9 +714,6 @@ void ResourceManager::CreateSphereParticles(std::string object_name, int num_par
 	float maxspray = 0.5; // This is how much we allow the points to deviate from the sphere
 	float u, v, w, theta, phi, spray; // Work variables
 
-	glm::vec3 maxN;
-	glm::vec3 maxP;
-
 	for (int i = 0; i < num_particles; i++) {
 
 		// Get three random numbers
@@ -734,11 +730,7 @@ void ResourceManager::CreateSphereParticles(std::string object_name, int num_par
 
 															// Define the normal and point based on theta, phi and the spray
 		glm::vec3 normal(spray*cos(theta)*sin(phi), spray*sin(theta)*sin(phi), spray*cos(phi));
-		if (glm::length(maxN) < glm::length(normal))
-			maxN = normal;
 		glm::vec3 position(normal.x*trad, normal.y*trad, normal.z*trad);
-		if (glm::length(maxP) < glm::length(position))
-			maxP = position;
 		glm::vec3 color(i / (float)num_particles, 0.0, 1.0 - (i / (float)num_particles)); // We can use the color for debug, if needed
 
 																						  // Add vectors to the data buffer
@@ -748,11 +740,6 @@ void ResourceManager::CreateSphereParticles(std::string object_name, int num_par
 			particle[i*particle_att + k + 6] = color[k];
 		}
 	}
-
-	std::cout << "Normal: ";
-	printVec3(maxN);
-	std::cout << "Position: ";
-	printVec3(maxP);
 
 	// Create OpenGL buffers and copy data
 	GLuint vbo;

@@ -68,11 +68,7 @@ namespace game {
             GLsizei GetSize(void) const;
             GLuint GetMaterial(void) const;
 			SceneNode *GetParent(void);
-			virtual bool done();
-			float GetRadius();
-			float GetExpDamage();
-			void SetExpDamage(float);
-			float GetRad();
+			bool done();
 
 			//void AddShaderAttribute(std::string name, DataType type, int size, GLfloat *data);
 
@@ -92,8 +88,6 @@ namespace game {
 			float start_time_;
 			float curr_time_;
 			glm::vec3 color_;
-			float expDamage_;
-			float rad_;
 
             // Set matrices that transform the node in a shader program
             void SetupShader(GLuint program);

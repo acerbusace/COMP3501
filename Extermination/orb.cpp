@@ -16,7 +16,6 @@ Orb::Orb(std::string name, Resource *geometry, Resource *material, Resource *tex
 	fire_error_ = 25.0;
 	laser_speed_ = 5.0;
 	fire_speed_ = 10.0;
-	laser_damage_ = 25;
 }
 
 
@@ -25,14 +24,6 @@ Orb::~Orb(){
 
 void Orb::Update(double delta_time){
 	fire_cooldown_ -= delta_time;
-}
-
-void Orb::SetLaserDamage(float damage) {
-	laser_damage_ = damage;
-}
-
-float Orb::GetLaserDamage() {
-	return laser_damage_;
 }
 
 float Orb::fireError() {

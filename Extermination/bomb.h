@@ -28,12 +28,13 @@ namespace game {
             void Update(double);
 			void SetSpeed(float);
 			void SetTimer(float);
-			void Explode();
+			bool Explode();
             
         private:
 			bool explode_;
 			float timer_;
 			float speed_;
+			float radius_;
     };
 
 } // namespace game

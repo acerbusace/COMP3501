@@ -30,4 +30,25 @@ namespace game {
 		lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
 		return lsr;
 	}
+
+	Bomb *createBombInstance(ResourceManager *resman) {
+		Resource *geom = getResource(resman, "SphereMesh");
+		Resource *mat = getResource(resman, "ShinyBlueMaterial");
+		//Resource *tex = resman->GetResource("window");
+
+		//Laser *lsr = new Laser("Laser", geom, mat, tex);
+		Bomb *bmb = new Bomb("Bomb", geom, mat);
+		bmb->Scale(glm::vec3(0.35, 0.35, 0.35));
+		return bmb;
+	}
+
+	SceneNode *createParticleInstance(ResourceManager *resman, std::string object_name, std::string material_name, std::string texture_name){
+		Resource *geom = getResource(resman, object_name);
+		Resource *mat = getResource(resman, material_name);
+		Resource *tex = resman->GetResource(texture_name);
+
+		SceneNode *scn = new SceneNode("Particle", geom, mat, tex);
+		return scn;
+	}
+
 } // namespace game

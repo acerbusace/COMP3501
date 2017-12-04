@@ -44,10 +44,13 @@ SceneNode *SceneGraph::CreateNode(std::string node_name, Resource *geometry, Res
 
 }
 
-
 void SceneGraph::AddNode(SceneNode *node){
 
     node_.push_back(node);
+}
+
+void SceneGraph::AddParticle(SceneNode *node){
+    node_.insert(node_.begin(), node);
 }
 
 void SceneGraph::AddPlayer(Player * player)

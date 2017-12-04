@@ -13,8 +13,8 @@ namespace game {
 	//extern ResourceManager resman;
 
 Tank::Tank(std::string name, Resource *geometry, Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
-	fire_error_ = 25.0;
-	laser_speed_ = 5.0;
+	bomb_timer_ = 15;
+	bomb_speed_ = 1.0;
 	fire_speed_ = 10.0;
 
 	move_speed_ = 10;
@@ -34,9 +34,9 @@ Tank::~Tank(){
 void Tank::Update(double delta_time){
 	fire_cooldown_ -= delta_time;
 
-	std::cout << "pos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
+	//std::cout << "pos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
 	position_ += velocity * (float) delta_time;
-	std::cout << "\tpos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
+	//std::cout << "\tpos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
 	//position_ += velocity;
 
 	float turning_speed = turning_speed_ * delta_time;
@@ -54,7 +54,7 @@ void Tank::Update(double delta_time){
 
 	if (!move_) {
 		if (glm::length(dest_ - position_) < move_speed_*2) {
-			std::cout << "have reached position!!!" << std::endl;
+			//std::cout << "have reached position!!!" << std::endl;
 			velocity = glm::vec3(0, 0, 0);
 			move_ = true;
 		}
@@ -77,10 +77,10 @@ void Tank::setDestination(glm::vec2 destination) {
 	if ((direction.z < 0 && velocity.z > 0) || (direction.z > 0 && velocity.z < 0))
 		velocity.z *= -1;
 
-	std::cout << "x: " << position_.x << " y: " << position_.y << " z: " << position_.z << std::endl;
-	std::cout << "\tx: " << direction.x << " y: " << direction.y << " z: " << direction.z << std::endl;
-	std::cout << "\t\tx: " << velocity.x << " y: " << velocity.y << " z: " << velocity.z << std::endl;
-	std::cout << "\t\tangle: " << dest_angle_ << std::endl;
+	//std::cout << "x: " << position_.x << " y: " << position_.y << " z: " << position_.z << std::endl;
+	//std::cout << "\tx: " << direction.x << " y: " << direction.y << " z: " << direction.z << std::endl;
+	//std::cout << "\t\tx: " << velocity.x << " y: " << velocity.y << " z: " << velocity.z << std::endl;
+	//std::cout << "\t\tangle: " << dest_angle_ << std::endl;
 	move_ = false;
 }
 
@@ -92,16 +92,16 @@ void Tank::setMove(bool move) {
 	move_ = move;
 }
 
-float Tank::fireError() {
-	return fire_error_*((float) rand()/RAND_MAX) - fire_error_ / 2.0;
+float Tank::getBombTimer() {
+	return bomb_timer_;
 }
 
 float Tank::moveError() {
 	return move_error_*((float) rand()/RAND_MAX) - move_error_ / 2.0;
 }
 
-float Tank::getLaserSpeed() {
-	return laser_speed_;
+float Tank::getBombSpeed() {
+	return bomb_speed_;
 }
 
 float Tank::getFireSpeed() {
@@ -120,16 +120,16 @@ bool Tank::shoot() {
 	return false;
 }
 
-void Tank::setLaserSpeed(float speed) {
-	laser_speed_ = speed;
+void Tank::setBombSpeed(float speed) {
+	bomb_speed_ = speed;
 }
 
 void Tank::setFireSpeed(float speed) {
 	fire_speed_ = speed;
 }
 
-void Tank::setFireError(float error) {
-	fire_error_ = error;
+void Tank::setBombTimer(float timer) {
+	bomb_timer_ = timer;
 }
 
 void Tank::setMoveError(float error) {

@@ -93,6 +93,9 @@ namespace game {
             // Create an instance of an object stored in the resource manager
             SceneNode *CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
 
+            // Create an instance of an object stored in the resource manager
+            SceneNode *CreateParticleInstanceV(std::string object_name, std::string material_name, std::string texture_name = std::string(""));
+
 			// Create an instance of a laser
 			Laser *CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));
 

@@ -50,6 +50,8 @@ namespace game {
 			bool setMaterial(Resource*);
 			bool setTexture(Resource*);
 			glm::vec3 getPos();
+			void SetReset(float);
+            void SetColor(glm::vec3 color);
 
             // Draw the node according to scene parameters in 'camera'
             // variable
@@ -66,6 +68,7 @@ namespace game {
             GLsizei GetSize(void) const;
             GLuint GetMaterial(void) const;
 			SceneNode *GetParent(void);
+			bool done();
 
         protected:
             std::string name_; // Name of the scene node
@@ -79,6 +82,10 @@ namespace game {
             glm::quat orientation_; // Orientation of node
             glm::vec3 scale_; // Scale of node
 			ResourceType geoType;
+			float reset_;
+			float start_time_;
+			float curr_time_;
+			glm::vec3 color_;
 
             // Set matrices that transform the node in a shader program
             void SetupShader(GLuint program);

@@ -259,7 +259,11 @@ void Game::update(SceneNode* node, double delta_time) {
 	scene_->Update(delta_time);
 	tower_control_->update(delta_time, camera_.GetPosition());
 	tank_control_->update(delta_time, camera_.GetPosition());
+	updatePlayerWeapons(delta_time);
+}
 
+
+void Game::updatePlayerWeapons(double delta_time) {
 	for (int i = 0; i < bomb_particles_.size(); ++i) {
 		bomb_particles_[i]->Update(delta_time);
 		if (bomb_particles_[i]->done())

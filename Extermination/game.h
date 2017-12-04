@@ -90,6 +90,7 @@ namespace game {
             // Methods to handle events
 			void input(SceneNode * node, double delta_time);
 			void update(SceneNode * node, double delta_time);
+			void updatePlayerWeapons(double delta_time);
             static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
             static void ResizeCallback(GLFWwindow* window, int width, int height);
 

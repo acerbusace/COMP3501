@@ -25,7 +25,7 @@ namespace game {
         public:
             // Create asteroid from given resources
 			TowerControl(ResourceManager*);
-			void init();
+			void init(glm::vec3);
 
             // Destructor
             ~TowerControl();

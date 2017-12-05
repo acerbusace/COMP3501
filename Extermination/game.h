@@ -75,6 +75,7 @@ namespace game {
             bool animating_;
 
 			bool material_;
+			glm::vec3 enemies_pos_;
 
 
 
@@ -90,7 +91,6 @@ namespace game {
             // Methods to handle events
 			void input(SceneNode * node, double delta_time);
 			void update(SceneNode * node, double delta_time);
-			void updatePlayerWeapons(double delta_time);
             static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
             static void ResizeCallback(GLFWwindow* window, int width, int height);
 
@@ -98,7 +98,7 @@ namespace game {
             Player *CreatePlayerInstance(std::string entity_name, std::string object_name, std::string material_name);
 
 			// Create land
-			void Game::CreateLand(glm::vec3 size, glm::vec3 pos = glm::vec3(0.0, -0.5, 0.0), glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0));
+			void Game::CreateLand(glm::vec3 size, glm::vec3 pos = glm::vec3(0.0, -0.5, 0.0), glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0), std::string texture_name = std::string(""));
 
             // Create an instance of an object stored in the resource manager
             SceneNode *CreateInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name = std::string(""));

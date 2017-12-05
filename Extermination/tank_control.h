@@ -24,7 +24,7 @@ namespace game {
         public:
             // Create asteroid from given resources
 			TankControl(ResourceManager*);
-			void init();
+			void init(glm::vec3);
 
             // Destructor
             ~TankControl();
@@ -42,8 +42,12 @@ namespace game {
 			//std::vector<Laser*> lasers_;
 			std::vector<Bomb*> bombs_;
 			std::vector<SceneNode*> bomb_particles_;
+			std::vector<SceneNode*> mines_;
+			std::vector<float> mines_reset_;
+			std::vector<float> mines_timer_;
 
 			Tank *createTankInstance(glm::vec3);
+			SceneNode *createMineInstance(glm::vec3);
 			void shoot(Tank*, glm::vec3);
 			void move(Tank*, glm::vec3);
 

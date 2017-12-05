@@ -91,15 +91,8 @@ namespace game {
 
 	bool collision(Missile* missile, SceneNode* node) {
 		std::vector<glm::vec3> points = missile->GetMissilePoints();
-		std::cout << "missile: ";
-		printVec3(missile->getPos());
-		std::cout << "tank: ";
-		printVec3(node->getPos());
-		std::cout << "\tradius: ";
-		std::cout << node->GetRadius() << std::endl;
 		for each (glm::vec3 point in points) {
 			float dist = glm::length(point - node->getPos());
-			std::cout << "\t\tdist: " << dist << std::endl;
 			if (dist < node->GetRadius()) {
 				std::cout << "collision!!!" << std::endl;
 				return true;

@@ -28,6 +28,21 @@ void TankControl::update(double delta_time, Player* player){
 		}
 	}
 
+	//for each (SceneNode* mine in mines_) {
+	for(int i = 0; i < mines_.size(); ++i) {
+		mines_timer_[i] -= delta_time;
+
+		if (glm::length(player_pos - mines_[i]->getPos()) < 20 && mines_timer_[i] < 0) {
+			SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
+			particle->SetPosition(mines_[i]->getPos());
+			particle->SetReset(25.0);
+			particle->SetExpDamage(25);
+
+			mines_timer_[i] = mines_reset_[i];
+			bomb_particles_.push_back(particle);
+		}
+	}
+
 	//for each (Tank *tank in tanks_) {
 	for (int i = 0; i < tanks_.size(); ++i) {
 		tanks_[i]->Update(delta_time);
@@ -44,7 +59,6 @@ void TankControl::update(double delta_time, Player* player){
 		std::vector<Laser*> *lasers = player->getLasers();
 		for (int j = 0; j < lasers->size(); ++j) {
 			if (collision(lasers->at(j), tanks_[i])) {
-				std::cout << "tank collision" << std::endl;
 				if (tanks_[i]->takeDamage(25)) {
 					SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
 					particle->SetPosition(tanks_[i]->GetPosition());
@@ -63,7 +77,6 @@ void TankControl::update(double delta_time, Player* player){
 		std::vector<Missile*> *missiles = player->getMissiles();
 		for (int j = 0; j < missiles->size(); ++j) {
 			if (collision(missiles->at(j), tanks_[i])) {
-				std::cout << "tank collision" << std::endl;
 				if (tanks_[i]->takeDamage(50)) {
 					SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
 					particle->SetPosition(tanks_[i]->GetPosition());
@@ -82,7 +95,6 @@ void TankControl::update(double delta_time, Player* player){
 		std::vector<Bomb*> *bombs = player->getBombs();
 		for (int j = 0; j < bombs->size(); ++j) {
 			if (collision(bombs->at(j), tanks_[i])) {
-				std::cout << "tank collision" << std::endl;
 				player->addBombParticle(bombs->at(j)->GetPosition());
 
 				bombs->erase(bombs->begin() + j);
@@ -155,10 +167,14 @@ void TankControl::shoot(Tank *tank, glm::vec3 player_pos) {
 	bombs_.push_back(bmb);
 }
 
-void TankControl::init() {
+void TankControl::init(glm::vec3 pos) {
 	//for (int i = 0; i < 25; ++i) {
 	for (int i = 0; i < 1; ++i) {
-		createTankInstance(glm::vec3(rand() % 1000 - 500, 0, rand() % 1000 - 500));
+		createTankInstance(pos + glm::vec3(rand() % 900 - 450, 0, rand() % 900 - 450));
+	}
+
+	for (int i = 0; i < 25; ++i) {
+		createMineInstance(pos + glm::vec3(rand() % 900 - 450, rand() % 100, rand() % 900 - 450));
 	}
 }
 
@@ -173,6 +189,10 @@ void TankControl::draw(Camera *camera) {
 
 	for each (Bomb *bmb in bombs_) {
 		bmb->Draw(camera);
+	}
+
+	for each (SceneNode *mine in mines_) {
+		mine->Draw(camera);
 	}
 }
 
@@ -192,6 +212,21 @@ Tank *TankControl::createTankInstance(glm::vec3 pos) {
 
 	tanks_.push_back(tank);
 	return tank;
+}
+
+SceneNode *TankControl::createMineInstance(glm::vec3 pos) {
+	Resource *geom = getResource(resman_, "PlayerMesh");
+	Resource *mat = getResource(resman_, "ShinyTextureMaterial");
+	Resource *tex = resman_->GetResource("TankTexture");
+
+	SceneNode *mine = new SceneNode("Mine", geom, mat, tex);
+	mine->Scale(glm::vec3(1.0, 1.0, 1.0));
+	mine->Translate(pos);
+
+	mines_.push_back(mine);
+	mines_reset_.push_back(15);
+	mines_timer_.push_back(0);
+	return mine;
 }
             
 } // namespace game

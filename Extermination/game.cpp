@@ -199,6 +199,9 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/floor.png");
 	resman_->LoadResource(Texture, "Floor", filename.c_str());
 
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/welcome.png");
+	resman_->LoadResource(Texture, "WelcomeTexture", filename.c_str());
+
 
 	resman_->CreateSphereParticles("SphereParticles");
 	resman_->CreateFlameParticles("FlameParticles");
@@ -209,16 +212,18 @@ void Game::SetupScene(void){
 
 	// Set background color for the scene
 	scene_->SetBackgroundColor(viewport_background_color_g);
+	enemies_pos_ = glm::vec3(0, -250, -1250);
 
 
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
-	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -5.0, -500.0), glm::vec3(100.0, 10.0, 100.0));
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -25.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture");
+	CreateLand(glm::vec3(10, 1, 10), enemies_pos_ + glm::vec3(-500.0, -50.0, -500.0), glm::vec3(100.0, 100.0, 100.0), "Floor");
 
 	//scene_->AddParticle(particle);
 
-	tower_control_->init();
-	tank_control_->init();
+	tower_control_->init(enemies_pos_);
+	tank_control_->init(enemies_pos_);
 }
 
 
@@ -271,43 +276,16 @@ void Game::update(SceneNode* node, double delta_time) {
 	input(node, delta_time);
 
 	scene_->Update(delta_time);
-	tower_control_->update(delta_time, scene_->GetPlayer());
-	tank_control_->update(delta_time, scene_->GetPlayer());
-	updatePlayerWeapons(delta_time);
-}
-
-void Game::updatePlayerWeapons(double delta_time) {
-	for (int i = 0; i < bomb_particles_.size(); ++i) {
-		bomb_particles_[i]->Update(delta_time);
-		if (bomb_particles_[i]->done())
-			bomb_particles_.erase(bomb_particles_.begin() + i);
+	glm::vec3 pos = scene_->GetPlayer()->getPos();
+	if (pos.x > enemies_pos_.x - 550 && pos.x < enemies_pos_.x + 450 && pos.z < enemies_pos_.z + 450 && pos.z > enemies_pos_.z - 550) {
+		std::cout << "animate" << std::endl;
+		tower_control_->update(delta_time, scene_->GetPlayer());
+		tank_control_->update(delta_time, scene_->GetPlayer());
 	}
-
-	for each (Laser *lsr in lasers_) {
-		lsr->Update(delta_time);
-	}
-
-	for each (Missile *msl in missiles_) {
-		msl->Update(delta_time);
-	}
-
-	//for each (Bomb *bmb in bombs_) {
-	for (int i = 0; i < bombs_.size(); ++i) {
-		bombs_[i]->Update(delta_time);
-		//std::cout << "pos: " << bombs_[i]->GetPosition().x << ", " << bombs_[i]->GetPosition().y << ", " << bombs_[i]->GetPosition().z << std::endl;
-
-		if (bombs_[i]->Explode()) {
-			SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
-			particle->SetPosition(bombs_[i]->GetPosition());
-			particle->SetReset(5.0);
-
-			bomb_particles_.push_back(particle);
-			bombs_.erase(bombs_.begin() + i);
-			//std::cout << "exploding is true!!!" << std::endl;
-		}
+	else {
+		std::cout << "not animeate" << std::endl;
 	}
 }
-
 
 void Game::input(SceneNode* node, double delta_time) {
 	float roll_factor = glm::radians(2000.0) * delta_time;
@@ -517,13 +495,13 @@ Player *Game::CreatePlayerInstance(std::string entity_name, std::string object_n
 }
 
 
-void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale){
+void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale, std::string texture_name){
 	game::SceneNode *node;
     // Create a number of asteroid instances
 	for (int x = 0; x < size.x; ++x) {
 		for (int y = 0; y < size.y; ++y) {
 			for (int z = 0; z < size.z; ++z) {
-				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Floor");
+				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, texture_name);
 				node->Scale(scale);
 				node->Translate(pos + glm::vec3(scale.x*x, scale.y*y, scale.z*z));
 			}

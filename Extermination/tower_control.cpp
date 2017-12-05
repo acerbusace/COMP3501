@@ -15,24 +15,75 @@ TowerControl::~TowerControl(){
 void TowerControl::update(double delta_time, Player* player){
 	glm::vec3 player_pos = player->getPos();
 
-	for each (Orb *orb in orbs_) {
-		orb->Update(delta_time);
+	//for each (Orb *orb in orbs_) {
+	for (int i = 0; i < orbs_.size(); ++i) {
+		bool fallen = false;
+		if (!orbs_[i]->done()) {
+			orbs_[i]->Update(delta_time);
 
-		if (orb->shoot())
-			shoot(orb, player_pos);
+			if (orbs_[i]->shoot())
+				shoot(orbs_[i], player_pos);
+
+			std::vector<Laser*> *lasers = player->getLasers();
+			for (int j = 0; j < lasers->size(); ++j) {
+				if (collision(lasers->at(j), orbs_[i])) {
+					std::cout << "orb collision" << std::endl;
+					if (orbs_[i]->takeDamage(25)) {
+						fallen = true;
+						break;
+					}
+					lasers->erase(lasers->begin() + j);
+				}
+			}
+			if (fallen) continue;
+
+			std::vector<Missile*> *missiles = player->getMissiles();
+			for (int j = 0; j < missiles->size(); ++j) {
+				if (collision(missiles->at(j), orbs_[i])) {
+					std::cout << "orb collision" << std::endl;
+					if (orbs_[i]->takeDamage(50)) {
+						fallen = true;
+						break;
+					}
+					missiles->erase(missiles->begin() + j);
+				}
+			}
+			if (fallen) continue;
+
+			std::vector<Bomb*> *bombs = player->getBombs();
+			for (int j = 0; j < bombs->size(); ++j) {
+				if (collision(bombs->at(j), orbs_[i])) {
+					std::cout << "orb collision" << std::endl;
+					player->addBombParticle(bombs->at(j)->GetPosition());
+
+					bombs->erase(bombs->begin() + j);
+				}
+			}
+
+			std::vector<SceneNode*> *bomb_particles = player->getBombParticles();
+			for (int j = 0; j < bomb_particles->size(); ++j) {
+				if (collision(bomb_particles->at(j), orbs_[i])) {
+					if (orbs_[i]->takeDamage(bomb_particles->at(j)->GetExpDamage() * delta_time)) {
+						fallen = true;
+						break;
+					}
+				}
+			}
+			if (fallen) continue;
+
+		}
 	}
 
 	//for each (Laser *lsr in lasers_) {
 	for (int i = 0; i < lasers_.size(); ++i) {
 		lasers_[i]->Update(delta_time);
 
-		if (collision(lasers_[i], player)) {
-			player->takeDamage(lasers_[i]->GetDamage());
-			lasers_.erase(lasers_.begin() + i);
-		} else if (lasers_[i]->done()) {
-			lasers_.erase(lasers_.begin() + i);
-			//std::cout << "deleting laser" << std::endl;
-		}
+		//if (collision(lasers_[i], player)) {
+		//	player->takeDamage(lasers_[i]->GetDamage());
+		//	lasers_.erase(lasers_.begin() + i);
+		//} else if (lasers_[i]->done()) {
+		//	lasers_.erase(lasers_.begin() + i);
+		//}
 	}
 }
 
@@ -70,8 +121,9 @@ void TowerControl::draw(Camera *camera) {
 
 Tower *TowerControl::createTowerInstance(glm::vec3 pos) {
 	Resource *geom = getResource(resman_, "TowerMesh");
-	Resource *mat = getResource(resman_, "ShinyBlueMaterial");
-	Resource *tex = resman_->GetResource("");
+	Resource *mat = getResource(resman_, "ShinyTextureMaterial");
+	Resource *tex = resman_->GetResource("TowerTexture");
+	//Resource *tex = resman_->GetResource("Window");
 
 	Tower *twr = new Tower("Tower", geom, mat, tex);
 	twr->Scale(glm::vec3(1.5, 3.0, 1.5));
@@ -79,9 +131,11 @@ Tower *TowerControl::createTowerInstance(glm::vec3 pos) {
 
 	geom = getResource(resman_, "SphereMesh");
 	mat = getResource(resman_, "ShinyTextureMaterial");
-	tex = resman_->GetResource("");
+	tex = resman_->GetResource("OrbTextureAct");
+	Resource *tex2 = resman_->GetResource("OrbTextureAlt");
 
 	Orb *orb = new Orb("Orb", geom, mat, tex);
+	orb->SetTextureAlt(tex2);
 	orb->Scale(glm::vec3(1.75, 1.75, 1.75));
 	orb->Translate(glm::vec3(0.0, 8.5, 0.0));
 	orb->setLaserSpeed(rand() % 5 + 5);

@@ -34,7 +34,7 @@ SceneNode::SceneNode(std::string name, Resource *geometry, Resource *material, R
     scale_ = glm::vec3(1.0, 1.0, 1.0);
 	reset_ = 4;
     start_time_ = glfwGetTime();
-	curr_time_ = start_time_;
+	curr_time_ = 0;
 	color_ = glm::vec3((float) rand() / RAND_MAX, (float) rand() / RAND_MAX, (float) rand() / RAND_MAX);
 	rad_ = 0;
 }
@@ -42,7 +42,7 @@ SceneNode::SceneNode(std::string name, Resource *geometry, Resource *material, R
 void SceneNode::SetReset(float reset) {
 	reset_ = reset;
     start_time_ = glfwGetTime();
-	curr_time_ = start_time_;
+	curr_time_ = 0;
 }
 
 float SceneNode::GetRad() {
@@ -211,6 +211,9 @@ SceneNode * SceneNode::GetParent(void)
 
 
 void SceneNode::Draw(Camera *camera){
+	if (name_ == "Wall") {
+		std::cout << "it should be drawing!!!" << std::endl;
+	}
 
     // Select proper material (shader program)
     glUseProgram(material_);
@@ -248,6 +251,10 @@ bool SceneNode::done() {
 	if (curr_time_ > reset_)
 		return true;
 	return false;
+}
+
+void SceneNode::RemoveChildren() {
+	children.clear();
 }
 
 glm::mat4 SceneNode::getTransf() {

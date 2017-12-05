@@ -28,15 +28,81 @@ void TankControl::update(double delta_time, Player* player){
 		}
 	}
 
-	for each (Tank *tank in tanks_) {
-		tank->Update(delta_time);
+	//for each (Tank *tank in tanks_) {
+	for (int i = 0; i < tanks_.size(); ++i) {
+		tanks_[i]->Update(delta_time);
 
-		if (tank->move()) {
-			if (glm::length(glm::vec3(tank->GetPosition().x, 0, tank->GetPosition().z) - glm::vec3(player_pos.x, 0, player_pos.z)) > tank->getMoveError()*2)
-				move(tank, player_pos);
+		if (tanks_[i]->move()) {
+			if (glm::length(glm::vec3(tanks_[i]->GetPosition().x, 0, tanks_[i]->GetPosition().z) - glm::vec3(player_pos.x, 0, player_pos.z)) > tanks_[i]->getMoveError()*2)
+				move(tanks_[i], player_pos);
 			else {
-				if (tank->shoot())
-					shoot(tank, player_pos);
+				if (tanks_[i]->shoot())
+					shoot(tanks_[i], player_pos);
+			}
+		}
+
+		std::vector<Laser*> *lasers = player->getLasers();
+		for (int j = 0; j < lasers->size(); ++j) {
+			if (collision(lasers->at(j), tanks_[i])) {
+				std::cout << "tank collision" << std::endl;
+				if (tanks_[i]->takeDamage(25)) {
+					SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
+					particle->SetPosition(tanks_[i]->GetPosition());
+					particle->SetReset(5.0);
+					particle->SetExpDamage(tanks_[i]->GetBodyDamage());
+
+					bomb_particles_.push_back(particle);
+
+					tanks_.erase(tanks_.begin() + i);
+					break;
+				}
+				lasers->erase(lasers->begin() + j);
+			}
+		}
+
+		std::vector<Missile*> *missiles = player->getMissiles();
+		for (int j = 0; j < missiles->size(); ++j) {
+			if (collision(missiles->at(j), tanks_[i])) {
+				std::cout << "tank collision" << std::endl;
+				if (tanks_[i]->takeDamage(50)) {
+					SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
+					particle->SetPosition(tanks_[i]->GetPosition());
+					particle->SetReset(5.0);
+					particle->SetExpDamage(tanks_[i]->GetBodyDamage());
+
+					bomb_particles_.push_back(particle);
+
+					tanks_.erase(tanks_.begin() + i);
+					break;
+				}
+				missiles->erase(missiles->begin() + j);
+			}
+		}
+
+		std::vector<Bomb*> *bombs = player->getBombs();
+		for (int j = 0; j < bombs->size(); ++j) {
+			if (collision(bombs->at(j), tanks_[i])) {
+				std::cout << "tank collision" << std::endl;
+				player->addBombParticle(bombs->at(j)->GetPosition());
+
+				bombs->erase(bombs->begin() + j);
+			}
+		}
+
+		std::vector<SceneNode*> *bomb_particles = player->getBombParticles();
+		for (int j = 0; j < bomb_particles->size(); ++j) {
+			if (collision(bomb_particles->at(j), tanks_[i])) {
+				if (tanks_[i]->takeDamage(bomb_particles->at(j)->GetExpDamage() * delta_time)) {
+					SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
+					particle->SetPosition(tanks_[i]->GetPosition());
+					particle->SetReset(5.0);
+					particle->SetExpDamage(tanks_[i]->GetBodyDamage());
+
+					bomb_particles_.push_back(particle);
+
+					tanks_.erase(tanks_.begin() + i);
+					break;
+				}
 			}
 		}
 	}
@@ -80,7 +146,7 @@ void TankControl::shoot(Tank *tank, glm::vec3 player_pos) {
 	//player_pos
 	Bomb *bmb = createBombInstance(resman_);
 	//bmb->SetOrientation(glm::conjugate(glm::toQuat(glm::lookAt(tank->getPos(), player_pos, glm::vec3(0.0, 1.0, 0.0)))));
-	bmb->SetPosition(tank->getPos() + glm::vec3(0, 3.0, 0));
+	bmb->SetPosition(tank->getPos() + glm::vec3(0, 3.25, 0));
 	bmb->SetTimer(tank->getBombTimer());
 	bmb->SetSpeed(tank->getBombSpeed());
 	bmb->SetDamage(tank->GetBombDamage());
@@ -112,12 +178,12 @@ void TankControl::draw(Camera *camera) {
 
 Tank *TankControl::createTankInstance(glm::vec3 pos) {
 	Resource *geom = getResource(resman_, "TankMesh");
-	Resource *mat = getResource(resman_, "ShinyBlueMaterial");
-	Resource *tex = resman_->GetResource("");
+	Resource *mat = getResource(resman_, "ShinyTextureMaterial");
+	Resource *tex = resman_->GetResource("TankTexture");
 
 	Tank *tank = new Tank("Tank", geom, mat, tex);
 	tank->Scale(glm::vec3(1.0, 1.0, 1.0));
-	tank->Translate(pos + glm::vec3(0.0, 1.68, 0.0));
+	tank->Translate(pos + glm::vec3(0.0, 2.15, 0.0));
 	//tank->setBombSpeed(rand() % 5 + 5);
 	//tank->setFireError(25);
 	tank->setFireSpeed(10);

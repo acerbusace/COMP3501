@@ -48,7 +48,7 @@ namespace game {
 		//Resource *tex = resman->GetResource("window");
 
 		Missile *msl = new Missile("Missile", geom, mat);
-		msl->Scale(glm::vec3(0.05, 0.05, 0.05));
+		msl->Scale(glm::vec3(0.20, 0.20, 0.20));
 		return msl;
 	}
 
@@ -83,8 +83,25 @@ namespace game {
 		std::vector<glm::vec3> points = laser->GetLaserPoints();
 		for each (glm::vec3 point in points) {
 			float dist = glm::length(point - node->getPos());
+			if (dist < node->GetRadius())
+				return true;
+		}
+		return false;
+	}
+
+	bool collision(Missile* missile, SceneNode* node) {
+		std::vector<glm::vec3> points = missile->GetMissilePoints();
+		std::cout << "missile: ";
+		printVec3(missile->getPos());
+		std::cout << "tank: ";
+		printVec3(node->getPos());
+		std::cout << "\tradius: ";
+		std::cout << node->GetRadius() << std::endl;
+		for each (glm::vec3 point in points) {
+			float dist = glm::length(point - node->getPos());
+			std::cout << "\t\tdist: " << dist << std::endl;
 			if (dist < node->GetRadius()) {
-				//std::cout << "collision!!!" << std::endl;
+				std::cout << "collision!!!" << std::endl;
 				return true;
 			}
 		}
@@ -92,7 +109,7 @@ namespace game {
 	}
 
 	void printVec3(glm::vec3 v) {
-		std::cout << "x: " << v.x << ", " << v.y << ", " << v.z << std::endl;
+		std::cout << v.x << ", " << v.y << ", " << v.z << std::endl;
 	}
 
 } // namespace game

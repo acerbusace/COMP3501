@@ -17,6 +17,20 @@ Orb::Orb(std::string name, Resource *geometry, Resource *material, Resource *tex
 	laser_speed_ = 5.0;
 	fire_speed_ = 10.0;
 	laser_damage_ = 25;
+	health_ = 200;
+	textureAct_ = texture_;
+}
+
+bool Orb::takeDamage(float damage) {
+	health_ -= damage;
+
+	std::cout << "orb health: " << health_ << std::endl;
+
+	if (health_ <= 0) {
+		texture_ = textureAlt_;
+		return true;
+	}
+	return false;
 }
 
 
@@ -27,12 +41,22 @@ void Orb::Update(double delta_time){
 	fire_cooldown_ -= delta_time;
 }
 
+bool Orb::done() {
+	if (health_ <= 0)
+		return true;
+	return false;
+}
+
 void Orb::SetLaserDamage(float damage) {
 	laser_damage_ = damage;
 }
 
 float Orb::GetLaserDamage() {
 	return laser_damage_;
+}
+
+void Orb::SetTextureAlt(Resource* texture) {
+	textureAlt_ = texture->GetResource();
 }
 
 float Orb::fireError() {

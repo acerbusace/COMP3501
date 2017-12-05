@@ -43,6 +43,8 @@ namespace game {
 			float GetBombDamage();
 			float GetBodyDamage();
 			void SetBombDamage(float);
+			bool takeDamage(float);
+			float GetRadius();
             
         private:
 			float bomb_timer_;
@@ -59,6 +61,7 @@ namespace game {
 			float move_speed_;
 			float bomb_damage_;
 			float body_damage_;
+			float health_;
 
 			glm::vec3 dest_;
 			glm::vec3 velocity;

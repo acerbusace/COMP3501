@@ -29,6 +29,8 @@ namespace game {
 			void SetSpeed(float);
 	 		void SetInitPos(glm::vec3);
 			void setPoints(glm::vec3 forward, glm::vec3 up);
+			std::vector<glm::vec3> GetMissilePoints();
+			bool done();
             
         private:
 			glm::mat4 getTransf();

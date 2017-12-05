@@ -158,10 +158,10 @@ void Game::SetupResources(void){
 	resman_->LoadResource(Mesh, "shipBlade", filename.c_str());
 
 	// Load a laser from a file
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/missile.obj");
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/missilev2.obj");
 	resman_->LoadResource(Mesh, "MissileMesh", filename.c_str());
 
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/groundTank.obj");
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/tankv2.obj");
 	resman_->LoadResource(Mesh, "TankMesh", filename.c_str());
 
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/towerBase.obj");
@@ -177,13 +177,27 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/window.jpg");
 	resman_->LoadResource(Texture, "Window", filename.c_str());
 
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/tower.png");
+	resman_->LoadResource(Texture, "TowerTexture", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/tank.jpg");
+	resman_->LoadResource(Texture, "TankTexture", filename.c_str());
+
 	// Load metal texture
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/metal.jpg");
 	resman_->LoadResource(Texture, "Metal", filename.c_str());
 
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/orbact.jpg");
+	resman_->LoadResource(Texture, "OrbTextureAct", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/orbalt.jpg");
+	resman_->LoadResource(Texture, "OrbTextureAlt", filename.c_str());
+
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/laser.png");
 	resman_->LoadResource(Texture, "Laser", filename.c_str());
 
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/floor.png");
+	resman_->LoadResource(Texture, "Floor", filename.c_str());
 
 
 	resman_->CreateSphereParticles("SphereParticles");
@@ -199,12 +213,8 @@ void Game::SetupScene(void){
 
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
-	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
+	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -5.0, -500.0), glm::vec3(100.0, 10.0, 100.0));
 
-	SceneNode *particle = createParticleInstance(resman_, "FlameParticles", "FlameMaterial");
-	particle->SetOrientation(glm::angleAxis((float)glm::radians(90.0f), glm::vec3(1, 0, 0)));
-	particle->SetReset(1.0);
-	scene_->GetPlayer()->addChild(particle);
 	//scene_->AddParticle(particle);
 
 	tower_control_->init();
@@ -430,30 +440,33 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 	//Fire Laser
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		Laser *lsr = createLaserInstance(game->resman_);
-		lsr->SetInitPos(game->scene_->GetPlayer()->getPos());
-		lsr->SetOrientation(game->camera_.GetOrientation());
-		lsr->SetSpeed(10.0);
-		game->lasers_.push_back(lsr);
+		//Laser *lsr = createLaserInstance(game->resman_);
+		//lsr->SetInitPos(game->scene_->GetPlayer()->getPos());
+		//lsr->SetOrientation(game->camera_.GetOrientation());
+		//lsr->SetSpeed(10.0);
+		//game->lasers_.push_back(lsr);
+		game->scene_->GetPlayer()->addLaser(&game->camera_);
 	}
 
 	//Fire Bomb
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		Bomb *bmb = createBombInstance(game->resman_);
-		bmb->Translate(game->scene_->GetPlayer()->getPos());
-		bmb->SetSpeed(-1.0);
-		bmb->SetTimer(5.0);
-		game->bombs_.push_back(bmb);
+		//Bomb *bmb = createBombInstance(game->resman_);
+		//bmb->Translate(game->scene_->GetPlayer()->getPos());
+		//bmb->SetSpeed(-1.0);
+		//bmb->SetTimer(5.0);
+		//game->bombs_.push_back(bmb);
+		game->scene_->GetPlayer()->addBomb();
 	}
 
 	//Fire Missile
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		Missile *msl = createMissileInstance(game->resman_);
-		msl->SetInitPos(game->scene_->GetPlayer()->getPos());
-		msl->SetOrientation(game->camera_.GetOrientation());
-		msl->SetSpeed(10.0);
-		msl->setPoints(game->camera_.GetForward(), game->camera_.GetUp());
-		game->missiles_.push_back(msl);
+		//Missile *msl = createMissileInstance(game->resman_);
+		//msl->SetInitPos(game->scene_->GetPlayer()->getPos());
+		//msl->SetOrientation(game->camera_.GetOrientation());
+		//msl->SetSpeed(10.0);
+		//msl->setPoints(game->camera_.GetForward(), game->camera_.GetUp());
+		//game->missiles_.push_back(msl);
+		game->scene_->GetPlayer()->addMissile(&game->camera_);
 	}
 }
 
@@ -479,18 +492,25 @@ Player *Game::CreatePlayerInstance(std::string entity_name, std::string object_n
 	//CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
     // Get resources
     Resource *geom = getResource(resman_, "PlayerMesh");
-    Resource *mat = getResource(resman_, SHINY_BLUE_MATERIAL);
+    Resource *mat = getResource(resman_, SHINY_TEXTURE_MATERIAL);
+	Resource *tex = resman_->GetResource("Window");
 
     // Create Player instance
-    Player *player = new Player("PlayerInstance", geom, mat);
+    Player *player = new Player("PlayerInstance", geom, mat, tex);
+	player->setResman(resman_);
 
     SceneNode *rotor = CreateInstance("PlayerRotor", "shipBlade", SHINY_TEXTURE_MATERIAL, "Window");
     rotor->Scale(glm::vec3(0.20, 0.20, 0.20));
 	//upper_body->Rotate(glm::angleAxis((float) glm::radians(1.0), glm::vec3(15.0, 0.0, 0.0)));
     rotor->Translate(glm::vec3(0.0, -0.35, 0));
 
+	SceneNode *particle = createParticleInstance(resman_, "FlameParticles", "FlameMaterial");
+	particle->SetOrientation(glm::angleAxis((float)glm::radians(90.0f), glm::vec3(1, 0, 0)));
+	particle->SetScale(glm::vec3(1.0, 1.0, 4.0));
+	particle->SetReset(1.0);
 
 	player->addChild(rotor);
+	player->addChild(particle);
     scene_->AddNode(player);
 	scene_->AddPlayer(player);
     return player;
@@ -503,7 +523,7 @@ void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale){
 	for (int x = 0; x < size.x; ++x) {
 		for (int y = 0; y < size.y; ++y) {
 			for (int z = 0; z < size.z; ++z) {
-				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Window");
+				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, "Floor");
 				node->Scale(scale);
 				node->Translate(pos + glm::vec3(scale.x*x, scale.y*y, scale.z*z));
 			}

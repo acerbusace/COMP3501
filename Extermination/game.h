@@ -66,11 +66,11 @@ namespace game {
 			TowerControl *tower_control_;
 			TankControl *tank_control_;
 
+
 			std::vector<Laser*> lasers_;
 			std::vector<Bomb*> bombs_;
 			std::vector<Missile*> missiles_;
 			std::vector<SceneNode*> bomb_particles_;
-
             // Flag to turn animation on/off
             bool animating_;
 

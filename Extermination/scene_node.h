@@ -69,10 +69,11 @@ namespace game {
             GLuint GetMaterial(void) const;
 			SceneNode *GetParent(void);
 			virtual bool done();
-			float GetRadius();
+			virtual float GetRadius();
 			float GetExpDamage();
 			void SetExpDamage(float);
 			float GetRad();
+			void RemoveChildren();
 
         protected:
             std::string name_; // Name of the scene node

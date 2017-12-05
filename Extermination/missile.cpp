@@ -39,6 +39,12 @@ void Missile::Update(double delta_time){
 
 }
 
+bool Missile::done() {
+	if (t < 1)
+		return false;
+	return true;
+}
+
 void Missile::SetSpeed(float speed) {
 	speed_ = speed;
 }
@@ -50,12 +56,31 @@ void Missile::SetInitPos(glm::vec3 pos) {
 }
 
 void Missile::setPoints(glm::vec3 forward, glm::vec3 up) {
-	float up_factor = 2;
-	float forward_factor = 10;
+	float up_factor = 4;
+	float forward_factor = 100;
 	point1_ = init_pos_;
 	point2_ = init_pos_ + up * up_factor;
-	point3_ = point2_ + forward * forward_factor;
+	point3_ = point2_ + forward * (forward_factor / 2);
 	point4_ = point3_ - up * up_factor;
+}
+
+std::vector<glm::vec3> Missile::GetMissilePoints() {
+	std::vector<glm::vec3> points;
+	points.push_back(glm::vec3(-0.5, 0.0, -0.5));
+	points.push_back(glm::vec3(0.5, 0.0, -0.5));
+	points.push_back(glm::vec3(0.5, 5.0, -0.5));
+	points.push_back(glm::vec3(-0.5, 5.0, -0.5));
+	points.push_back(glm::vec3(-0.5, 0.0, 0.5));
+	points.push_back(glm::vec3(0.5, 0.0, 0.5));
+	points.push_back(glm::vec3(0.5, 5.0, 0.5));
+	points.push_back(glm::vec3(-0.5, 5.0, 0.5));
+
+    glm::mat4 scaling = glm::scale(glm::mat4(1.0), scale_);
+	for (int i = 0; i < points.size(); ++i) {
+		points[i] = (glm::vec3) (getTransf() * scaling * glm::vec4(points[i], 1.0));
+	}
+
+	return points;
 }
 
 glm::mat4 Missile::getTransf() {

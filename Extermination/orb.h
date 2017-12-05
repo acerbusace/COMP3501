@@ -36,6 +36,9 @@ namespace game {
 			void setFireError(float);
 			float GetLaserDamage();
 			void SetLaserDamage(float);
+			bool takeDamage(float);
+			void SetTextureAlt(Resource*);
+			bool done();
             
         private:
 			float fire_error_;
@@ -43,6 +46,9 @@ namespace game {
 			float fire_speed_;
 			float fire_cooldown_;
 			float laser_damage_;
+			float health_;
+            GLuint textureAct_; 
+            GLuint textureAlt_; 
     };
 
 } // namespace game

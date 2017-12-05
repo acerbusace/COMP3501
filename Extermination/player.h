@@ -14,6 +14,12 @@
 
 namespace game {
 
+class Laser;
+class Bomb;
+class Missile;
+class Camera;
+class ResourceManager;
+
     // Abstraction of an asteroid
     class Player : public SceneNode {
 
@@ -31,9 +37,27 @@ namespace game {
 			void toggle_first_person();
 			bool takeDamage(float);
 
+			void addMissile(Camera*);
+			void addBomb();
+			void addLaser(Camera*);
+			void addBombParticle(glm::vec3);
+			void setResman(ResourceManager*);
+
+			std::vector<Laser*>* getLasers();
+			std::vector<Bomb*>* getBombs();
+			std::vector<Missile*>* getMissiles();
+			std::vector<SceneNode*>* getBombParticles();
+
         private:
 			bool first_person_;
 			float health_;
+
+			ResourceManager* resman_;
+
+			std::vector<Laser*> lasers_;
+			std::vector<Bomb*> bombs_;
+			std::vector<Missile*> missiles_;
+			std::vector<SceneNode*> bomb_particles_;
     }; // class Player
 
 } // namespace game

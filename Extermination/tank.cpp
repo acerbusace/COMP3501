@@ -25,8 +25,23 @@ Tank::Tank(std::string name, Resource *geometry, Resource *material, Resource *t
 	turning_speed_ = 0.1;
 	bomb_damage_ = 5;
 	body_damage_ = 25;
+	health_ = 100;
 
 	move_ = true;
+}
+
+float Tank::GetRadius() {
+	return 4.0 * fmax(fmax(scale_.x, scale_.y), scale_.z);
+}
+
+bool Tank::takeDamage(float damage) {
+	health_ -= damage;
+
+	std::cout << "tank health: " << health_ << std::endl;
+
+	if (health_ <= 0)
+		return true;
+	return false;
 }
 
 

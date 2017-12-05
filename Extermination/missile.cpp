@@ -47,13 +47,15 @@ void Missile::SetInitPos(glm::vec3 pos) {
 	init_pos_ = pos;
 	prevBt = init_pos_;
 	Bt = init_pos_;
-	point1_ = pos;
-	point2_ = pos;
-	point2_.y += 2;
-	point3_ = point2_;
-	point3_.z -= 10;
-	point4_ = point3_;
-	point4_.y -= 2;
+}
+
+void Missile::setPoints(glm::vec3 forward, glm::vec3 up) {
+	float up_factor = 2;
+	float forward_factor = 10;
+	point1_ = init_pos_;
+	point2_ = init_pos_ + up * up_factor;
+	point3_ = point2_ + forward * forward_factor;
+	point4_ = point3_ - up * up_factor;
 }
 
 glm::mat4 Missile::getTransf() {

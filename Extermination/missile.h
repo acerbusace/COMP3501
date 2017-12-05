@@ -27,7 +27,8 @@ namespace game {
             // Update geometry configuration
             void Update(double);
 			void SetSpeed(float);
-			void SetInitPos(glm::vec3);
+	 		void SetInitPos(glm::vec3);
+			void setPoints(glm::vec3 forward, glm::vec3 up);
             
         private:
 			glm::mat4 getTransf();

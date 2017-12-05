@@ -883,7 +883,7 @@ void ResourceManager::CreateFlameParticles(std::string object_name, int num_part
 		theta = u * 2.0*glm::pi<float>();
 		// Use v to define the angle phi along the other direction of the sphere
 		//phi = acos(2.0*v - 1.0);
-		phi = 0.05f;
+		phi = 0.15f;
 		// Use w to define how much we can deviate from the surface of the sphere (change of radius)
 		spray = maxspray*pow((float)w, (float)(1.0 / 3.0)); // Cubic root of w
 

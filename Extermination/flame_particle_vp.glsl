@@ -71,7 +71,7 @@ void main()
 	//float tt = t / time_to_dist;
 	float tt = t / r_time;
 	//tt = (tt > 0.95) ? (tt - 0.95) / 0.05 : 0;
-	//tt = 0;
+	tt = 0;
     position.x += norm.x*t*speed + grav*speed*up_vec.x*tt*tt;
     position.y += norm.y*t*speed + grav*speed*up_vec.y*tt*tt;
     position.z += norm.z*t*speed + grav*speed*up_vec.z*tt*tt;

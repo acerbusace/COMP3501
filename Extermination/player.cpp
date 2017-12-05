@@ -44,7 +44,7 @@ void Player::toggle_first_person()
 void Player::Update(double delta_time){
 	SceneNode *rotor = children[0];
 
-	rotor->Rotate(glm::angleAxis((float) glm::radians(10.0), glm::vec3(0.0, 1.0, 0.0)));
+	rotor->Rotate(glm::angleAxis((float) (glm::radians(90.0) * delta_time), glm::vec3(0.0, 1.0, 0.0)));
 	//std::cout << "hello world!!!" << std::endl;
 }
 

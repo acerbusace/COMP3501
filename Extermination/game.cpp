@@ -144,6 +144,9 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/particle");
 	resman_->LoadResource(Material, "ParticleMaterial", filename.c_str());
 
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/flame_particle");
+	resman_->LoadResource(Material, "FlameMaterial", filename.c_str());
+
 
 
 	// Load a player model from a file
@@ -184,6 +187,7 @@ void Game::SetupResources(void){
 
 
 	resman_->CreateSphereParticles("SphereParticles");
+	resman_->CreateFlameParticles("FlameParticles");
 }
 
 
@@ -196,6 +200,12 @@ void Game::SetupScene(void){
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
 	CreateLand(glm::vec3(10, 1, 10), glm::vec3(-500.0, -0.05, -500.0), glm::vec3(100.0, 0.10, 100.0));
+
+	SceneNode *particle = createParticleInstance(resman_, "FlameParticles", "FlameMaterial");
+	particle->SetOrientation(glm::angleAxis((float)glm::radians(90.0f), glm::vec3(1, 0, 0)));
+	particle->SetReset(1.0);
+	scene_->GetPlayer()->addChild(particle);
+	//scene_->AddParticle(particle);
 
 	tower_control_->init();
 	tank_control_->init();
@@ -442,6 +452,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 		msl->SetInitPos(game->scene_->GetPlayer()->getPos());
 		msl->SetOrientation(game->camera_.GetOrientation());
 		msl->SetSpeed(10.0);
+		msl->setPoints(game->camera_.GetForward(), game->camera_.GetUp());
 		game->missiles_.push_back(msl);
 	}
 }

@@ -16,6 +16,7 @@ vec4 diffuse_color = vec4(0.5, 0.5, 0.5, 1.0);
 vec4 specular_color = vec4(0.8, 0.5, 0.9, 1.0);
 float phong_exponent = 128.0;
 float ambient_amount = 0.1;
+//float ambient_amount = 1.0;
 
 
 void main() 
@@ -49,7 +50,8 @@ void main()
     vec4 pixel = texture(texture_map, uv_interp);
 
     // Use texture in determining fragment colour
-    gl_FragColor = pixel;
-    //gl_FragColor = (ambient_amount + lambertian_amount)*pixel + specular_amount*specular_color;
+    //gl_FragColor = pixel;
+    gl_FragColor = (ambient_amount + lambertian_amount)*pixel + specular_amount*specular_color;
+    //gl_FragColor = (ambient_amount + lambertian_amount)*pixel;
     //gl_FragColor = lambertian_amount*pixel + specular_amount*specular_color;
 }

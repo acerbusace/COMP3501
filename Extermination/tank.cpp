@@ -20,9 +20,6 @@ Tank::Tank(std::string name, Resource *geometry, Resource *material, Resource *t
 	move_speed_ = 10;
 	move_error_ = 20;
 
-	curr_angle_ = 0;
-	dest_angle_ = curr_angle_;
-	turning_speed_ = 0.1;
 	bomb_damage_ = 5;
 	body_damage_ = 25;
 	health_ = 100;
@@ -68,19 +65,6 @@ void Tank::Update(double delta_time){
 	//std::cout << "\tpos: " << position_.x << ", " << position_.y << ", " << position_.z << std::endl;
 	//position_ += velocity;
 
-	float turning_speed = turning_speed_ * delta_time;
-	if (curr_angle_ + turning_speed < dest_angle_)
-		curr_angle_ += turning_speed;
-	else if (curr_angle_ - turning_speed > dest_angle_)
-		curr_angle_ -= turning_speed;
-	else {
-		curr_angle_ = dest_angle_;
-		//std::cout << "have set angle!!!" << std::endl;
-	}
-
-	SetOrientation(glm::angleAxis(curr_angle_, glm::vec3(0, 1, 0)));
-
-
 	if (!move_) {
 		if (glm::length(dest_ - position_) < move_speed_*2) {
 			//std::cout << "have reached position!!!" << std::endl;
@@ -94,7 +78,7 @@ void Tank::setDestination(glm::vec2 destination) {
 	dest_ = glm::vec3(destination.x, position_.y, destination.y);
 
 	glm::vec3 direction = dest_ - position_;
-	dest_angle_ = glm::atan(direction.z / direction.x);
+	float dest_angle_ = glm::atan(direction.z / direction.x);
 
 	//velocity.x = direction.x / (direction.x + direction.z) * move_speed_;
 	//velocity.z = direction.z / (direction.x + direction.z) * move_speed_;

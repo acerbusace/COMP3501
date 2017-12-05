@@ -18,26 +18,26 @@ Player::Player(std::string name, Resource *geometry, Resource *material, Resourc
 Player::~Player(){
 }
 
-void Player::Draw(Camera *camera)
+void Player::Draw(Camera *camera, glm::vec3 light_pos)
 {
 	if (first_person_ == false) {
-		SceneNode::Draw(camera);
+		SceneNode::Draw(camera, light_pos);
 	}
 	else {
 		
 	}
 
 	for each (Bomb *bmb in bombs_) {
-		bmb->Draw(camera);
+		bmb->Draw(camera, light_pos);
 	}
 	for each (Laser *lsr in lasers_) {
-		lsr->Draw(camera);
+		lsr->Draw(camera, light_pos);
 	}
 	for each (Missile *msl in missiles_) {
-		msl->Draw(camera);
+		msl->Draw(camera, light_pos);
 	}
 	for each (SceneNode *particle in bomb_particles_) {
-		particle->Draw(camera);
+		particle->Draw(camera, light_pos);
 	}
 }
 

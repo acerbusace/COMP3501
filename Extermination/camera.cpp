@@ -123,7 +123,7 @@ void Camera::SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GL
 }
 
 
-void Camera::SetupShader(GLuint program){
+void Camera::SetupShader(GLuint program, glm::vec3 light_pos){
 
     // Update view matrix
     SetupViewMatrix();
@@ -175,7 +175,7 @@ void Camera::SetupViewMatrix(void){
     view_matrix_ *= trans;
 }
 
-void Camera::Draw(Camera* camera) {
+void Camera::Draw(Camera* camera, glm::vec3 light_pos) {
 
 }
 

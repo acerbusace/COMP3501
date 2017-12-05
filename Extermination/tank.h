@@ -52,10 +52,6 @@ namespace game {
 			float fire_speed_;
 			float fire_cooldown_;
 
-			float curr_angle_;
-			float dest_angle_;
-			float turning_speed_;
-
 			float move_error_;
 
 			float move_speed_;

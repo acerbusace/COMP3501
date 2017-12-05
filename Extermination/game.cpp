@@ -136,6 +136,9 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/shiny_texture");
 	resman_->LoadResource(Material, SHINY_TEXTURE_MATERIAL, filename.c_str());
 
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/texture");
+	resman_->LoadResource(Material, "BrightTexMat", filename.c_str());
+
 	// Load Spline Material
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/spline");
 	resman_->LoadResource(Material, "SplineMaterial", filename.c_str());
@@ -245,24 +248,9 @@ void Game::MainLoop(void){
         }
 
         // Draw the scene
-        scene_->Draw(&camera_);
-		tower_control_->draw(&camera_);
-		tank_control_->draw(&camera_);
-		for each (SceneNode *particle in bomb_particles_) {
-			particle->Draw(&camera_);
-		}
-
-		for each (Laser *lsr in lasers_) {
-			lsr->Draw(&camera_);
-		}
-
-		for each (Bomb *bmb in bombs_) {
-			bmb->Draw(&camera_);
-		}
-
-		for each (Missile *msl in missiles_) {
-			msl->Draw(&camera_);
-		}
+        scene_->Draw(&camera_, scene_->GetPlayer()->getPos());
+		tower_control_->draw(&camera_, scene_->GetPlayer()->getPos());
+		tank_control_->draw(&camera_, scene_->GetPlayer()->getPos());
 
         // Push buffer drawn in the background onto the display
         glfwSwapBuffers(window_);
@@ -278,12 +266,8 @@ void Game::update(SceneNode* node, double delta_time) {
 	scene_->Update(delta_time);
 	glm::vec3 pos = scene_->GetPlayer()->getPos();
 	if (pos.x > enemies_pos_.x - 550 && pos.x < enemies_pos_.x + 450 && pos.z < enemies_pos_.z + 450 && pos.z > enemies_pos_.z - 550) {
-		std::cout << "animate" << std::endl;
 		tower_control_->update(delta_time, scene_->GetPlayer());
 		tank_control_->update(delta_time, scene_->GetPlayer());
-	}
-	else {
-		std::cout << "not animeate" << std::endl;
 	}
 }
 
@@ -501,7 +485,7 @@ void Game::CreateLand(glm::vec3 size, glm::vec3 pos, glm::vec3 scale, std::strin
 	for (int x = 0; x < size.x; ++x) {
 		for (int y = 0; y < size.y; ++y) {
 			for (int z = 0; z < size.z; ++z) {
-				node = CreateInstance("Land", "CubeMesh", SHINY_TEXTURE_MATERIAL, texture_name);
+				node = CreateInstance("Land", "CubeMesh", "BrightTexMat", texture_name);
 				node->Scale(scale);
 				node->Translate(pos + glm::vec3(scale.x*x, scale.y*y, scale.z*z));
 			}

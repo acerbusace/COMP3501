@@ -50,7 +50,7 @@ namespace game {
             std::vector<SceneNode *>::const_iterator end() const;
 
             // Draw the entire scene
-            void Draw(Camera *camera);
+            void Draw(Camera *camera, glm::vec3);
 
             // Update entire scene
             void Update(double delta_time);

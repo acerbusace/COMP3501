@@ -211,7 +211,7 @@ SceneNode * SceneNode::GetParent(void)
 }
 
 
-void SceneNode::Draw(Camera *camera){
+void SceneNode::Draw(Camera *camera, glm::vec3 light_pos){
 	if (name_ == "Wall") {
 		std::cout << "it should be drawing!!!" << std::endl;
 	}
@@ -224,10 +224,10 @@ void SceneNode::Draw(Camera *camera){
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, element_array_buffer_);
 
     // Set globals for camera
-    camera->SetupShader(material_);
+    camera->SetupShader(material_, light_pos);
 
     // Set world matrix and other shader input variables
-    SetupShader(material_);
+    SetupShader(material_, light_pos);
 
     // Draw geometry
 	if (geoType == Mesh)
@@ -236,7 +236,7 @@ void SceneNode::Draw(Camera *camera){
 		glDrawArrays(mode_, 0, size_);
 
 	for each (SceneNode *child in children) {
-		child->Draw(camera);
+		child->Draw(camera, light_pos);
 	}
 }
 
@@ -272,7 +272,7 @@ glm::mat4 SceneNode::getTransf() {
 	return transf;
 }
 
-void SceneNode::SetupShader(GLuint program){
+void SceneNode::SetupShader(GLuint program, glm::vec3 light_pos){
 
     // Set attributes for shaders
 
@@ -328,6 +328,9 @@ void SceneNode::SetupShader(GLuint program){
 	// Color
     GLint color_var = glGetUniformLocation(program, "uniColor");
     glUniform3f(color_var, color_.x, color_.y, color_.z);
+
+    GLint light_pos_var = glGetUniformLocation(program, "uni_light_pos");
+    glUniform3f(light_pos_var, light_pos.x, light_pos.y, light_pos.z);
 }
 
 void SceneNode::setParent(SceneNode *prt) {

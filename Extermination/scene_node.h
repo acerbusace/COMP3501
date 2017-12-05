@@ -55,7 +55,7 @@ namespace game {
 
             // Draw the node according to scene parameters in 'camera'
             // variable
-            virtual void Draw(Camera *camera);
+            virtual void Draw(Camera *camera, glm::vec3);
 
             // Update the node
             virtual void Update(double delta_time);
@@ -95,7 +95,7 @@ namespace game {
 			float rad_;
 
             // Set matrices that transform the node in a shader program
-            void SetupShader(GLuint program);
+            void SetupShader(GLuint program, glm::vec3);
 
 			SceneNode *parent;
 			std::vector<SceneNode*> children;

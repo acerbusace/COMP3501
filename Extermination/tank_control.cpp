@@ -169,7 +169,7 @@ void TankControl::shoot(Tank *tank, glm::vec3 player_pos) {
 
 void TankControl::init(glm::vec3 pos) {
 	//for (int i = 0; i < 25; ++i) {
-	for (int i = 0; i < 1; ++i) {
+	for (int i = 0; i < 25; ++i) {
 		createTankInstance(pos + glm::vec3(rand() % 900 - 450, 0, rand() % 900 - 450));
 	}
 
@@ -178,21 +178,21 @@ void TankControl::init(glm::vec3 pos) {
 	}
 }
 
-void TankControl::draw(Camera *camera) {
+void TankControl::draw(Camera *camera, glm::vec3 light_pos) {
 	for each (SceneNode *particle in bomb_particles_) {
-		particle->Draw(camera);
+		particle->Draw(camera, light_pos);
 	}
 
 	for each (Tank *tank in tanks_) {
-		tank->Draw(camera);
+		tank->Draw(camera, light_pos);
 	}
 
 	for each (Bomb *bmb in bombs_) {
-		bmb->Draw(camera);
+		bmb->Draw(camera, light_pos);
 	}
 
 	for each (SceneNode *mine in mines_) {
-		mine->Draw(camera);
+		mine->Draw(camera, light_pos);
 	}
 }
 

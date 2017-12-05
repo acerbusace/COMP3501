@@ -48,9 +48,9 @@ namespace game {
             // near and far planes, and width and height of viewport
             void SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GLfloat h);
             // Set all camera-related variables in shader program
-            void SetupShader(GLuint program);
+            void SetupShader(GLuint program, glm::vec3);
 
-			void Draw(Camera *camera);
+			void Draw(Camera *camera, glm::vec3);
 
         private:
             glm::vec3 position_; // Position of camera

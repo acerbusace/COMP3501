@@ -30,7 +30,7 @@ class ResourceManager;
             // Destructor
             ~Player();
             
-			void Draw(Camera *camera);
+			void Draw(Camera *camera, glm::vec3);
 			void Update(double delta_time);
 
 			bool get_first_person();

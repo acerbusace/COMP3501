@@ -109,13 +109,13 @@ void TowerControl::init(glm::vec3 pos) {
 	}
 }
 
-void TowerControl::draw(Camera *camera) {
+void TowerControl::draw(Camera *camera, glm::vec3 light_pos) {
 	for each (Tower *twr in towers_) {
-		twr->Draw(camera);
+		twr->Draw(camera, light_pos);
 	}
 
 	for each (Laser *lsr in lasers_) {
-		lsr->Draw(camera);
+		lsr->Draw(camera, light_pos);
 	}
 }
 

@@ -33,7 +33,7 @@ namespace game {
             // Update geometry configuration
             void update(double, Player*);
 			// Update geometry configuration
-			void draw(Camera*);
+			void draw(Camera*, glm::vec3);
             
         private:
 			ResourceManager *resman_;

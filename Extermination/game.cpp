@@ -288,7 +288,7 @@ void Game::update(SceneNode* node, double delta_time) {
 }
 
 void Game::input(SceneNode* node, double delta_time) {
-	float roll_factor = glm::radians(2000.0) * delta_time;
+	float roll_factor = glm::radians(3000.0) * delta_time;
 	float trans_factor = 15.0 * delta_time;
 	float camera_factor = 10.0;
 

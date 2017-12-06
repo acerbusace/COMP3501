@@ -285,6 +285,13 @@ void Game::update(SceneNode* node, double delta_time) {
 		tower_control_->update(delta_time, scene_->GetPlayer());
 		tank_control_->update(delta_time, scene_->GetPlayer());
 	}
+
+	if (pos.y < -240) {
+		node->Translate(glm::vec3(0, -pos.y - 240, 0));
+		camera_.Translate(glm::vec3(0, -pos.y - 240, 0));
+	}
+
+
 }
 
 void Game::input(SceneNode* node, double delta_time) {

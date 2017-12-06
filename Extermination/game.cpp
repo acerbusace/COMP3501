@@ -202,8 +202,20 @@ void Game::SetupResources(void){
 	filename = std::string(MATERIAL_DIRECTORY) + std::string("/floor.png");
 	resman_->LoadResource(Texture, "Floor", filename.c_str());
 
-	filename = std::string(MATERIAL_DIRECTORY) + std::string("/welcome.png");
-	resman_->LoadResource(Texture, "WelcomeTexture", filename.c_str());
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/welcome1.png");
+	resman_->LoadResource(Texture, "WelcomeTexture1", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/welcome2.png");
+	resman_->LoadResource(Texture, "WelcomeTexture2", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/welcome3.png");
+	resman_->LoadResource(Texture, "WelcomeTexture3", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/welcome4.png");
+	resman_->LoadResource(Texture, "WelcomeTexture4", filename.c_str());
+
+	filename = std::string(MATERIAL_DIRECTORY) + std::string("/welcome5.png");
+	resman_->LoadResource(Texture, "WelcomeTexture5", filename.c_str());
 
 
 	resman_->CreateSphereParticles("SphereParticles");
@@ -220,7 +232,11 @@ void Game::SetupScene(void){
 
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
-	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -25.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -25.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture1");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -100.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture2");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -175.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture3");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -250.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture4");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -325.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture5");
 	CreateLand(glm::vec3(10, 1, 10), enemies_pos_ + glm::vec3(-500.0, -50.0, -500.0), glm::vec3(100.0, 100.0, 100.0), "Floor");
 
 	//scene_->AddParticle(particle);
@@ -273,7 +289,7 @@ void Game::update(SceneNode* node, double delta_time) {
 
 void Game::input(SceneNode* node, double delta_time) {
 	float roll_factor = glm::radians(2000.0) * delta_time;
-	float trans_factor = 25.0 * delta_time;
+	float trans_factor = 10.0 * delta_time;
 	float camera_factor = 10.0;
 
 	//Move Forward
@@ -375,7 +391,7 @@ void Game::input(SceneNode* node, double delta_time) {
 }
 
 
-void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
+void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
 
 	// Get user data with a pointer to the game class
 	void* ptr = glfwGetWindowUserPointer(window);
@@ -389,7 +405,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
-	
+
 	if (key == GLFW_KEY_V && action == GLFW_PRESS) {
 		game->scene_->GetPlayer()->toggle_first_person();
 		if (game->scene_->GetPlayer()->get_first_person() == true) {

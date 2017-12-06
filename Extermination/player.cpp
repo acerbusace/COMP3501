@@ -73,7 +73,7 @@ void Player::addLaser(Camera *camera) {
 	Laser *lsr = createLaserInstance(resman_);
 	lsr->SetInitPos(getPos());
 	lsr->SetOrientation(camera->GetOrientation());
-	lsr->SetSpeed(10.0);
+	lsr->SetSpeed(20.0);
 	lasers_.push_back(lsr);
 }
 

@@ -233,10 +233,10 @@ void Game::SetupScene(void){
 	CreatePlayerInstance("PlayerInstance", "PlayerMesh", SHINY_BLUE_MATERIAL);
 
 	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -25.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture1");
-	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -100.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture2");
-	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -175.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture3");
-	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -250.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture4");
-	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, 0.0, -325.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture5");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, -25.0, -100.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture2");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, -50.0, -175.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture3");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, -75.0, -250.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture4");
+	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, -100.0, -325.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture5");
 	CreateLand(glm::vec3(10, 1, 10), enemies_pos_ + glm::vec3(-500.0, -50.0, -500.0), glm::vec3(100.0, 100.0, 100.0), "Floor");
 
 	//scene_->AddParticle(particle);
@@ -289,7 +289,7 @@ void Game::update(SceneNode* node, double delta_time) {
 
 void Game::input(SceneNode* node, double delta_time) {
 	float roll_factor = glm::radians(2000.0) * delta_time;
-	float trans_factor = 10.0 * delta_time;
+	float trans_factor = 15.0 * delta_time;
 	float camera_factor = 10.0;
 
 	//Move Forward

@@ -49,6 +49,7 @@ void Game::Init(void){
     animating_ = true;
 	material_ = true;
 	last_time = 0;
+	fast_ = false;
 
 	resman_ = new ResourceManager();
 	scene_ = new SceneGraph();
@@ -290,13 +291,14 @@ void Game::update(SceneNode* node, double delta_time) {
 		node->Translate(glm::vec3(0, -pos.y - 240, 0));
 		camera_.Translate(glm::vec3(0, -pos.y - 240, 0));
 	}
-
-
 }
 
 void Game::input(SceneNode* node, double delta_time) {
 	float roll_factor = glm::radians(3000.0) * delta_time;
-	float trans_factor = 15.0 * delta_time;
+	float trans_factor = 20.0 * delta_time;
+	if (fast_ == true) {
+		trans_factor = trans_factor * 2;
+	}
 	float camera_factor = 10.0;
 
 	//Move Forward
@@ -420,6 +422,15 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 		}
 		else {
 			game->camera_.Translate(game->camera_.GetForward() * -camera_factor);
+		}
+	}
+
+	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
+		if (game->fast_ == true) {
+			game->fast_ = false;
+		}
+		else {
+			game->fast_ = true;
 		}
 	}
 

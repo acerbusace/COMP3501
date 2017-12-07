@@ -75,6 +75,7 @@ namespace game {
             bool animating_;
 
 			bool material_;
+			bool fast_;
 			glm::vec3 enemies_pos_;
 
 

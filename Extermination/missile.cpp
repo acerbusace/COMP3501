@@ -57,7 +57,7 @@ void Missile::SetInitPos(glm::vec3 pos) {
 
 void Missile::setPoints(glm::vec3 forward, glm::vec3 up) {
 	float up_factor = 4;
-	float forward_factor = 100;
+	float forward_factor = 500;
 	point1_ = init_pos_;
 	point2_ = init_pos_ + up * up_factor;
 	point3_ = point2_ + forward * (forward_factor / 2);

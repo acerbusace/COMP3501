@@ -104,7 +104,7 @@ void TowerControl::shoot(Orb *orb, glm::vec3 player_pos) {
 }
 
 void TowerControl::init(glm::vec3 pos) {
-	for (int i = 0; i < 25; ++i) {
+	for (int i = 0; i < 15; ++i) {
 		createTowerInstance(pos + glm::vec3(rand() % 900 - 450, 0, rand() % 900 - 450));
 	}
 }

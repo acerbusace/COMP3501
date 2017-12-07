@@ -169,11 +169,11 @@ void TankControl::shoot(Tank *tank, glm::vec3 player_pos) {
 
 void TankControl::init(glm::vec3 pos) {
 	//for (int i = 0; i < 25; ++i) {
-	for (int i = 0; i < 25; ++i) {
+	for (int i = 0; i < 10; ++i) {
 		createTankInstance(pos + glm::vec3(rand() % 900 - 450, 0, rand() % 900 - 450));
 	}
 
-	for (int i = 0; i < 25; ++i) {
+	for (int i = 0; i < 10; ++i) {
 		createMineInstance(pos + glm::vec3(rand() % 900 - 450, rand() % 100, rand() % 900 - 450));
 	}
 }

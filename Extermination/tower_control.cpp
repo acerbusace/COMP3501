@@ -99,7 +99,7 @@ void TowerControl::shoot(Orb *orb, glm::vec3 player_pos) {
 	lsr->SetOrientation(glm::conjugate(glm::toQuat(glm::lookAt(orb->getPos(), player_pos, glm::vec3(0.0, 1.0, 0.0)))));
 	lsr->SetInitPos(orb->getPos());
 	lsr->SetSpeed(orb->getLaserSpeed());
-	lsr->SetDamage(orb->GetLaserDamage());
+	lsr->SetDamage(orb->getLaserDamage());
 	lasers_.push_back(lsr);
 }
 
@@ -135,13 +135,13 @@ Tower *TowerControl::createTowerInstance(glm::vec3 pos) {
 	Resource *tex2 = resman_->GetResource("OrbTextureAlt");
 
 	Orb *orb = new Orb("Orb", geom, mat, tex);
-	orb->SetTextureAlt(tex2);
+	orb->setTextureAlt(tex2);
 	orb->Scale(glm::vec3(1.75, 1.75, 1.75));
 	orb->Translate(glm::vec3(0.0, 8.5, 0.0));
 	orb->setLaserSpeed(rand() % 5 + 5);
 	orb->setFireError(25);
 	orb->setFireSpeed(10);
-	orb->SetLaserDamage(25);
+	orb->setLaserDamage(25);
 
 	twr->addChild(orb);
 

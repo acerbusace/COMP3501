@@ -14,31 +14,34 @@
 
 namespace game {
 
-    // Abstraction of an laser
+    // Abstraction of the Orb enemy
     class Orb : public SceneNode {
 
         public:
-            // Create laser from given resources
+            // Create Orb from given resources
 			Orb(std::string name, Resource *geometry, Resource *material, Resource *texture = 0);
 
             // Destructor
             ~Orb();
             
-            // Update geometry configuration
+            // Update geometry 
             void Update(double);
-			float fireError();
-			float getLaserSpeed();
+
 			float getFireSpeed();
+			float getLaserSpeed();
+			float getLaserDamage();
+
+			bool done();
 			bool shoot();
 			void fireCoolDown();
-			void setLaserSpeed(float);
+			float fireError();
+			bool takeDamage(float);
+
 			void setFireSpeed(float);
 			void setFireError(float);
-			float GetLaserDamage();
-			void SetLaserDamage(float);
-			bool takeDamage(float);
-			void SetTextureAlt(Resource*);
-			bool done();
+			void setLaserSpeed(float);
+			void setLaserDamage(float);
+			void setTextureAlt(Resource*);
             
         private:
 			float fire_error_;

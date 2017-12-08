@@ -12,7 +12,7 @@
 namespace game {
 
     // Abstraction of a camera
-    class Camera: public SceneNode{
+    class Camera: public SceneNode {
 
         public:
             Camera(void);
@@ -40,14 +40,8 @@ namespace game {
             void Yaw(float angle);
             void Roll(float angle);
 
-            // Set the view from camera parameters: initial position of camera,
-            // point looking at, and up vector
-            // Resets the current orientation and position of the camera
             void SetView(glm::vec3 position, glm::vec3 look_at, glm::vec3 up);
-            // Set projection from frustum parameters: field-of-view,
-            // near and far planes, and width and height of viewport
             void SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GLfloat h);
-            // Set all camera-related variables in shader program
             void SetupShader(GLuint program, glm::vec3);
 
 			void Draw(Camera *camera, glm::vec3);

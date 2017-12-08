@@ -9,67 +9,58 @@
 
 namespace game {
 
-Camera::Camera(void): SceneNode("camera"){
+Camera::Camera(void): SceneNode("camera") {
 }
 
 
-Camera::~Camera(){
+Camera::~Camera() {
 }
 
 
 glm::vec3 Camera::GetPosition(void) const {
-
     return position_;
 }
 
 
 glm::quat Camera::GetOrientation(void) const {
-
     return orientation_;
 }
 
 
-void Camera::SetPosition(glm::vec3 position){
-
+void Camera::SetPosition(glm::vec3 position) {
     position_ = position;
 }
 
 
-void Camera::SetOrientation(glm::quat orientation){
-
+void Camera::SetOrientation(glm::quat orientation) {
     orientation_ = orientation;
 }
 
 
-void Camera::Translate(glm::vec3 trans){
-
+void Camera::Translate(glm::vec3 trans) {
     position_ += trans;
 }
 
 
-void Camera::Rotate(glm::quat rot){
-
+void Camera::Rotate(glm::quat rot) {
 	orientation_ *= rot;
 	orientation_ = glm::normalize(orientation_);
 }
 
 
 glm::vec3 Camera::GetForward(void) const {
-
     glm::vec3 current_forward = orientation_ * forward_;
     return -current_forward; // Return -forward since the camera coordinate system points in the opposite direction
 }
 
 
 glm::vec3 Camera::GetSide(void) const {
-
     glm::vec3 current_side = orientation_ * side_;
     return current_side;
 }
 
 
 glm::vec3 Camera::GetUp(void) const {
-
     glm::vec3 current_forward = orientation_ * forward_;
     glm::vec3 current_side = orientation_ * side_;
     glm::vec3 current_up = glm::cross(current_forward, current_side);
@@ -78,29 +69,25 @@ glm::vec3 Camera::GetUp(void) const {
 }
 
 
-void Camera::Pitch(float angle){
-
+void Camera::Pitch(float angle) {
     glm::quat rotation = glm::angleAxis(angle, GetSide());
     orientation_ = rotation * orientation_;
 }
 
 
-void Camera::Yaw(float angle){
-
+void Camera::Yaw(float angle) {
     glm::quat rotation = glm::angleAxis(angle, GetUp());
     orientation_ = rotation * orientation_;
 }
 
 
-void Camera::Roll(float angle){
-
+void Camera::Roll(float angle) {
     glm::quat rotation = glm::angleAxis(angle, GetForward());
     orientation_ = rotation * orientation_;
 }
 
 
-void Camera::SetView(glm::vec3 position, glm::vec3 look_at, glm::vec3 up){
-
+void Camera::SetView(glm::vec3 position, glm::vec3 look_at, glm::vec3 up) {
     // Store initial forward and side vectors
     // See slide in "Camera control" for details
     forward_ = look_at - position;
@@ -114,8 +101,7 @@ void Camera::SetView(glm::vec3 position, glm::vec3 look_at, glm::vec3 up){
 }
 
 
-void Camera::SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GLfloat h){
-
+void Camera::SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GLfloat h) {
     // Set projection based on field-of-view
     float top = tan((fov/2.0)*(glm::pi<float>()/180.0))*near;
     float right = top * w/h;
@@ -123,8 +109,7 @@ void Camera::SetProjection(GLfloat fov, GLfloat near, GLfloat far, GLfloat w, GL
 }
 
 
-void Camera::SetupShader(GLuint program, glm::vec3 light_pos){
-
+void Camera::SetupShader(GLuint program, glm::vec3 light_pos) {
     // Update view matrix
     SetupViewMatrix();
 
@@ -138,8 +123,7 @@ void Camera::SetupShader(GLuint program, glm::vec3 light_pos){
 }
 
 
-void Camera::SetupViewMatrix(void){
-
+void Camera::SetupViewMatrix(void) {
     //view_matrix_ = glm::lookAt(position, look_at, up);
 
     // Get current vectors of coordinate system

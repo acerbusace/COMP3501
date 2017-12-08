@@ -18,20 +18,20 @@ namespace game {
     class Bomb : public SceneNode {
 
         public:
-            // Create laser from given resources
+            // Create bomb from given resources
             Bomb(std::string name, Resource *geometry, Resource *material, Resource *texture = 0);
 
             // Destructor
             ~Bomb();
             
-            // Update geometry configuration
             void Update(double);
-			void SetSpeed(float);
-			void SetTimer(float);
-			bool Explode();
-			void SetDamage(float);
 			float GetDamage();
 			float GetExpRadius();
+			bool Explode();
+
+			void SetSpeed(float);
+			void SetTimer(float);
+			void SetDamage(float);
 			void SetExpRadius(float);
             
         private:

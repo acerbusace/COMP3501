@@ -16,48 +16,53 @@ Bomb::Bomb(std::string name, Resource *geometry, Resource *material, Resource *t
 }
 
 
-Bomb::~Bomb(){
+Bomb::~Bomb() {
 }
 
-void Bomb::Update(double delta_time){
+
+void Bomb::Update(double delta_time) {
 	if (explode_ == false) {
 		Translate(glm::vec3(0.0, speed_ * delta_time, 0));
 		timer_ -= delta_time;
 		if (timer_ < 0) {
 			explode_ = true;
 		}
-		//Rotate(angm_);
 	}
 }
 
-void Bomb::SetSpeed(float speed) {
-	speed_ = speed;
-}
-
-void Bomb::SetDamage(float damage) {
-	damage_ = damage;
-}
 
 float Bomb::GetDamage() {
 	return damage_;
 }
 
-void Bomb::SetTimer(float timer)
-{
+
+float Bomb::GetExpRadius() {
+	return radius_;
+}
+
+
+void Bomb::SetSpeed(float speed) {
+	speed_ = speed;
+}
+
+
+void Bomb::SetTimer(float timer) {
 	timer_ = timer;
 }
 
-bool Bomb::Explode()
-{
-	return explode_;
+
+void Bomb::SetDamage(float damage) {
+	damage_ = damage;
 }
+
 
 void Bomb::SetExpRadius(float radius) {
 	radius_ = radius;
 }
 
-float Bomb::GetExpRadius() {
-	return radius_;
+
+bool Bomb::Explode() {
+	return explode_;
 }
             
 } // namespace game

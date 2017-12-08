@@ -15,14 +15,20 @@ Laser::Laser(std::string name, Resource *geometry, Resource *material, Resource 
 }
 
 
-Laser::~Laser(){
+Laser::~Laser() {
 }
 
-void Laser::Update(double delta_time){
+
+void Laser::Update(double delta_time) {
 	Translate(glm::vec3(0.0, 0.0, -speed_ * delta_time));
 	dist_ -= speed_ * delta_time;
-    //Rotate(angm_);
 }
+
+
+float Laser::GetDamage() {
+	return damage_;
+}
+
 
 bool Laser::done() {
 	if (dist_ < 0)
@@ -30,21 +36,21 @@ bool Laser::done() {
 	return false;
 }
 
+
+void Laser::SetInitPos(glm::vec3 pos) {
+	init_pos_ = pos;
+}
+
+
 void Laser::SetSpeed(float speed) {
 	speed_ = speed;
 }
+
 
 void Laser::SetDamage(float damage) {
 	damage_ = damage;
 }
 
-float Laser::GetDamage() {
-	return damage_;
-}
-
-void Laser::SetInitPos(glm::vec3 pos) {
-	init_pos_ = pos;
-}
 
 std::vector<glm::vec3> Laser::GetLaserPoints() {
 	std::vector<glm::vec3> points;
@@ -64,6 +70,7 @@ std::vector<glm::vec3> Laser::GetLaserPoints() {
 
 	return points;
 }
+
 
 glm::mat4 Laser::getTransf() {
     // World transformation

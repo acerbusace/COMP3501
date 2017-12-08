@@ -18,19 +18,19 @@ namespace game {
     class Missile : public SceneNode {
 
         public:
-            // Create laser from given resources
+            // Create missile from given resources
             Missile(std::string name, Resource *geometry, Resource *material, Resource *texture = 0);
 
             // Destructor
             ~Missile();
             
-            // Update geometry configuration
             void Update(double);
+			bool done();
+
 			void SetSpeed(float);
-	 		void SetInitPos(glm::vec3);
+			void SetInitPos(glm::vec3);
 			void setPoints(glm::vec3 forward, glm::vec3 up);
 			std::vector<glm::vec3> GetMissilePoints();
-			bool done();
             
         private:
 			glm::mat4 getTransf();

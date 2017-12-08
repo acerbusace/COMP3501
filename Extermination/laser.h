@@ -25,14 +25,14 @@ namespace game {
             // Destructor
             ~Laser();
             
-            // Update geometry configuration
             void Update(double);
-			void SetSpeed(float);
-			void SetInitPos(glm::vec3);
-			bool done();
-			std::vector<glm::vec3> GetLaserPoints();
-			void SetDamage(float);
 			float GetDamage();
+			bool done();
+
+			void SetInitPos(glm::vec3);
+			void SetSpeed(float);
+			void SetDamage(float);
+			std::vector<glm::vec3> GetLaserPoints();
             
         private:
 			glm::mat4 getTransf();

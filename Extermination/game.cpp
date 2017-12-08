@@ -426,12 +426,7 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 	}
 
 	if (key == GLFW_KEY_LEFT_SHIFT && action == GLFW_PRESS) {
-		if (game->fast_ == true) {
-			game->fast_ = false;
-		}
-		else {
-			game->fast_ = true;
-		}
+		game->fast_ = (game->fast_ == true) ? false : true;
 	}
 
 	//Fire Laser

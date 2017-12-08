@@ -16,10 +16,11 @@ Missile::Missile(std::string name, Resource *geometry, Resource *material, Resou
 }
 
 
-Missile::~Missile(){
+Missile::~Missile() {
 }
 
-void Missile::Update(double delta_time){
+
+void Missile::Update(double delta_time) {
 	t += delta_time / 2;
 
 	if (t < 1) {
@@ -34,10 +35,8 @@ void Missile::Update(double delta_time){
 		SetOrientation(glm::conjugate(glm::toQuat(glm::lookAt(prevBt, Bt, glm::vec3(0.0, 1.0, 0.0)))));
 		Rotate(glm::angleAxis((float)glm::radians(90.0f), glm::vec3(-1, 0, 0)));
 	}
-	//Translate(glm::vec3(0.0, 0.0, -speed_ * delta_time));
-    //Rotate(angm_);
-
 }
+
 
 bool Missile::done() {
 	if (t < 1)
@@ -45,15 +44,18 @@ bool Missile::done() {
 	return true;
 }
 
+
 void Missile::SetSpeed(float speed) {
 	speed_ = speed;
 }
+
 
 void Missile::SetInitPos(glm::vec3 pos) {
 	init_pos_ = pos;
 	prevBt = init_pos_;
 	Bt = init_pos_;
 }
+
 
 void Missile::setPoints(glm::vec3 forward, glm::vec3 up) {
 	float up_factor = 4;
@@ -63,6 +65,7 @@ void Missile::setPoints(glm::vec3 forward, glm::vec3 up) {
 	point3_ = point2_ + forward * (forward_factor / 2);
 	point4_ = point3_ - up * up_factor;
 }
+
 
 std::vector<glm::vec3> Missile::GetMissilePoints() {
 	std::vector<glm::vec3> points;
@@ -82,6 +85,7 @@ std::vector<glm::vec3> Missile::GetMissilePoints() {
 
 	return points;
 }
+
 
 glm::mat4 Missile::getTransf() {
     // World transformation

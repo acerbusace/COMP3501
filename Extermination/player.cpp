@@ -15,12 +15,11 @@ Player::Player(std::string name, Resource *geometry, Resource *material, Resourc
 }
 
 
-Player::~Player(){
+Player::~Player() {
 }
 
 
-void Player::Draw(Camera *camera, glm::vec3 light_pos)
-{
+void Player::Draw(Camera *camera, glm::vec3 light_pos) {
 	if (first_person_ == false) {
 		SceneNode::Draw(camera, light_pos);
 	}
@@ -142,14 +141,12 @@ std::vector<SceneNode*>* Player::getBombParticles() {
 }
 
 
-bool Player::get_first_person()
-{
+bool Player::get_first_person() {
 	return first_person_;
 }
 
 
-void Player::toggle_first_person()
-{
+void Player::toggle_first_person() {
 	first_person_ = (first_person_ == true) ? false : true;
 }
 

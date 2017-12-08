@@ -23,7 +23,7 @@ namespace game {
 
 	void printVec3(glm::vec3);
 
-	static const float SPEHRE_PARTICLE_SPEED = 0.283197;
+	static const float SPHERE_PARTICLE_SPEED = 0.283197;
 }
 
 #endif

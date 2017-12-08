@@ -46,7 +46,6 @@ void SceneNode::SetReset(float reset) {
 }
 
 float SceneNode::GetRad() {
-	//return SPEHRE_PARTICLE_SPEED * curr_time_;
 	return 1.0 * curr_time_;
 }
 

@@ -127,9 +127,9 @@ void TankControl::update(double delta_time, Player* player){
 		if (bombs_[i]->Explode() || collision(bombs_[i], player)) {
 			SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
 			particle->SetPosition(bombs_[i]->GetPosition());
-			float rad = bombs_[i]->GetExpRadius()/SPEHRE_PARTICLE_SPEED;
+			float rad = bombs_[i]->GetExpRadius()/SPHERE_PARTICLE_SPEED;
 			std::cout << "\t\trad: " << rad << std::endl;
-			particle->SetReset(bombs_[i]->GetExpRadius()/SPEHRE_PARTICLE_SPEED);
+			particle->SetReset(bombs_[i]->GetExpRadius()/SPHERE_PARTICLE_SPEED);
 			particle->SetExpDamage(bombs_[i]->GetDamage());
 
 			bomb_particles_.push_back(particle);

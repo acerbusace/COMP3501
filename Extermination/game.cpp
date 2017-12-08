@@ -240,8 +240,6 @@ void Game::SetupScene(void){
 	CreateLand(glm::vec3(1, 1, 1), glm::vec3(0.0, -100.0, -325.0), glm::vec3(10.0, 10.0, 10.0), "WelcomeTexture5");
 	CreateLand(glm::vec3(10, 1, 10), enemies_pos_ + glm::vec3(-500.0, -50.0, -500.0), glm::vec3(100.0, 100.0, 100.0), "Floor");
 
-	//scene_->AddParticle(particle);
-
 	tower_control_->init(enemies_pos_);
 	tank_control_->init(enemies_pos_);
 }
@@ -431,32 +429,16 @@ void Game::KeyCallback(GLFWwindow* window, int key, int scancode, int action, in
 
 	//Fire Laser
 	if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
-		//Laser *lsr = createLaserInstance(game->resman_);
-		//lsr->SetInitPos(game->scene_->GetPlayer()->getPos());
-		//lsr->SetOrientation(game->camera_.GetOrientation());
-		//lsr->SetSpeed(10.0);
-		//game->lasers_.push_back(lsr);
 		game->scene_->GetPlayer()->addLaser(&game->camera_);
 	}
 
 	//Fire Bomb
 	if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
-		//Bomb *bmb = createBombInstance(game->resman_);
-		//bmb->Translate(game->scene_->GetPlayer()->getPos());
-		//bmb->SetSpeed(-1.0);
-		//bmb->SetTimer(5.0);
-		//game->bombs_.push_back(bmb);
 		game->scene_->GetPlayer()->addBomb();
 	}
 
 	//Fire Missile
 	if (key == GLFW_KEY_3 && action == GLFW_PRESS) {
-		//Missile *msl = createMissileInstance(game->resman_);
-		//msl->SetInitPos(game->scene_->GetPlayer()->getPos());
-		//msl->SetOrientation(game->camera_.GetOrientation());
-		//msl->SetSpeed(10.0);
-		//msl->setPoints(game->camera_.GetForward(), game->camera_.GetUp());
-		//game->missiles_.push_back(msl);
 		game->scene_->GetPlayer()->addMissile(&game->camera_);
 	}
 }
@@ -539,53 +521,6 @@ SceneNode *Game::CreateInstance(std::string entity_name, std::string object_name
 
     SceneNode *scn = scene_->CreateNode(entity_name, geom, mat, tex);
     return scn;
-}
-
-SceneNode *Game::CreateParticleInstanceV(std::string object_name, std::string material_name, std::string texture_name){
-	SceneNode* particle = createParticleInstance(resman_, object_name, material_name, texture_name);
-	scene_->AddParticle(particle);
-
-    return particle;
-}
-
-Laser *Game::CreateLaserInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
-
-	Resource *geom = resman_->GetResource(object_name);
-	if (!geom) {
-		throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
-	}
-
-	Resource *mat = resman_->GetResource(material_name);
-	if (!mat) {
-		throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-	}
-
-	Resource *tex = resman_->GetResource(texture_name);
-
-	Laser *lsr = new Laser(entity_name, geom, mat, tex);
-	lsr->Scale(glm::vec3(0.15, 0.15, 1.0));
-	scene_->AddNode(lsr);
-	return lsr;
-}
-
-Bomb *Game::CreateBombInstance(std::string entity_name, std::string object_name, std::string material_name, std::string texture_name) {
-
-	Resource *geom = resman_->GetResource(object_name);
-	if (!geom) {
-		throw(GameException(std::string("Could not find resource \"") + object_name + std::string("\"")));
-	}
-
-	Resource *mat = resman_->GetResource(material_name);
-	if (!mat) {
-		throw(GameException(std::string("Could not find resource \"") + material_name + std::string("\"")));
-	}
-
-	Resource *tex = resman_->GetResource(texture_name);
-
-	Bomb *bmb = new Bomb(entity_name, geom, mat, tex);
-	bmb->Scale(glm::vec3(0.15, 0.15, 0.15));
-	scene_->AddNode(bmb);
-	return bmb;
 }
 
 } // namespace game

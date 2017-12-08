@@ -14,7 +14,7 @@
 
 namespace game {
 
-    // Abstraction of an laser
+    // Abstraction of a missile
     class Missile : public SceneNode {
 
         public:

@@ -8,16 +8,16 @@
 
 namespace game {
 
+
 Tower::Tower(std::string name, Resource *geometry, Resource *material, Resource *texture) : SceneNode(name, geometry, material, texture) {
-	
 }
 
 
-Tower::~Tower(){
+Tower::~Tower() {
 }
 
-void Tower::Update(double delta_time){
 
+void Tower::Update(double delta_time) {
 }
             
 } // namespace game

@@ -14,11 +14,11 @@
 
 namespace game {
 
-    // Abstraction of an laser
+    // Abstraction of the Tower enemy
     class Tower : public SceneNode {
 
         public:
-            // Create laser from given resources
+            // Create Tower from given resources
 			Tower(std::string name, Resource *geometry, Resource *material, Resource *texture = 0);
 
             // Destructor

@@ -18,13 +18,11 @@ Player::Player(std::string name, Resource *geometry, Resource *material, Resourc
 Player::~Player(){
 }
 
+
 void Player::Draw(Camera *camera, glm::vec3 light_pos)
 {
 	if (first_person_ == false) {
 		SceneNode::Draw(camera, light_pos);
-	}
-	else {
-		
 	}
 
 	for each (Bomb *bmb in bombs_) {
@@ -41,6 +39,53 @@ void Player::Draw(Camera *camera, glm::vec3 light_pos)
 	}
 }
 
+
+void Player::Update(double delta_time) {
+	SceneNode *rotor = children[0];
+
+	rotor->Rotate(glm::angleAxis((float)(glm::radians(90.0) * delta_time), glm::vec3(0.0, 1.0, 0.0)));
+
+	for (int i = 0; i < bombs_.size(); ++i) {
+		bombs_[i]->Update(delta_time);
+
+		if (bombs_[i]->Explode()) {
+			addBombParticle(bombs_[i]->GetPosition());
+			bombs_.erase(bombs_.begin() + i);
+		}
+	}
+
+	for (int i = 0; i < lasers_.size(); ++i) {
+		lasers_[i]->Update(delta_time);
+		if (lasers_[i]->done()) {
+			lasers_.erase(lasers_.begin() + i);
+		}
+	}
+
+	for (int i = 0; i < missiles_.size(); ++i) {
+		missiles_[i]->Update(delta_time);
+		if (missiles_[i]->done()) {
+			missiles_.erase(missiles_.begin() + i);
+		}
+	}
+
+	for (int i = 0; i < bomb_particles_.size(); ++i) {
+		bomb_particles_[i]->Update(delta_time);
+		if (bomb_particles_[i]->done()) {
+			bomb_particles_.erase(bomb_particles_.begin() + i);
+		}
+	}
+}
+
+
+void Player::addLaser(Camera *camera) {
+	Laser *lsr = createLaserInstance(resman_);
+	lsr->SetInitPos(getPos());
+	lsr->SetOrientation(camera->GetOrientation());
+	lsr->SetSpeed(50.0);
+	lasers_.push_back(lsr);
+}
+
+
 void Player::addBomb() {
 	Bomb *bmb = createBombInstance(resman_);
 	bmb->Translate(getPos());
@@ -48,6 +93,7 @@ void Player::addBomb() {
 	bmb->SetTimer(5.0);
 	bombs_.push_back(bmb);
 }
+
 
 void Player::addMissile(Camera *camera) {
 	Missile *msl = createMissileInstance(resman_);
@@ -65,49 +111,6 @@ void Player::addMissile(Camera *camera) {
 	missiles_.push_back(msl);
 }
 
-void Player::setResman(ResourceManager *resman) {
-	resman_ = resman;
-}
-
-void Player::addLaser(Camera *camera) {
-	Laser *lsr = createLaserInstance(resman_);
-	lsr->SetInitPos(getPos());
-	lsr->SetOrientation(camera->GetOrientation());
-	lsr->SetSpeed(50.0);
-	lasers_.push_back(lsr);
-}
-
-bool Player::takeDamage(float damage) {
-	health_ -= damage;
-	std::cout << "Player Health: " << health_ << std::endl;
-
-	if (health_ <= 0)
-		return true;
-	return false;
-}
-
-std::vector<Laser*>* Player::getLasers() {
-	return &lasers_;
-}
-std::vector<Bomb*>* Player::getBombs() {
-	return &bombs_;
-}
-std::vector<Missile*>* Player::getMissiles() {
-	return &missiles_;
-}
-std::vector<SceneNode*>* Player::getBombParticles() {
-	return &bomb_particles_;
-}
-
-bool Player::get_first_person()
-{
-	return first_person_;
-}
-
-void Player::toggle_first_person()
-{
-	first_person_ = (first_person_ == true) ? false : true;
-}
 
 void Player::addBombParticle(glm::vec3 pos) {
 	SceneNode* particle = createParticleInstance(resman_, "SphereParticles", "ParticleMaterial");
@@ -118,44 +121,51 @@ void Player::addBombParticle(glm::vec3 pos) {
 	bomb_particles_.push_back(particle);
 }
 
-void Player::Update(double delta_time){
-	SceneNode *rotor = children[0];
 
-	rotor->Rotate(glm::angleAxis((float) (glm::radians(90.0) * delta_time), glm::vec3(0.0, 1.0, 0.0)));
-	//std::cout << "hello world!!!" << std::endl;
-
-	for (int i = 0; i < bombs_.size(); ++i) {
-		bombs_[i]->Update(delta_time);
-
-		if (bombs_[i]->Explode()) {
-			addBombParticle(bombs_[i]->GetPosition());
-			bombs_.erase(bombs_.begin() + i);
-			//std::cout << "exploding is true!!!" << std::endl;
-		}
-	}
-
-	for(int i = 0; i < lasers_.size(); ++i) {
-		lasers_[i]->Update(delta_time);
-		if (lasers_[i]->done()) {
-			lasers_.erase(lasers_.begin() + i);
-		}
-	}
-
-	for(int i = 0; i < missiles_.size(); ++i) {
-		missiles_[i]->Update(delta_time);
-		if (missiles_[i]->done()) {
-			missiles_.erase(missiles_.begin() + i);
-		}
-	}
-
-	for (int i = 0; i < bomb_particles_.size(); ++i) {
-		bomb_particles_[i]->Update(delta_time);
-		if (bomb_particles_[i]->done()) {
-			bomb_particles_.erase(bomb_particles_.begin() + i);
-		}
-	}
+std::vector<Laser*>* Player::getLasers() {
+	return &lasers_;
 }
 
 
-            
+std::vector<Bomb*>* Player::getBombs() {
+	return &bombs_;
+}
+
+
+std::vector<Missile*>* Player::getMissiles() {
+	return &missiles_;
+}
+
+
+std::vector<SceneNode*>* Player::getBombParticles() {
+	return &bomb_particles_;
+}
+
+
+bool Player::get_first_person()
+{
+	return first_person_;
+}
+
+
+void Player::toggle_first_person()
+{
+	first_person_ = (first_person_ == true) ? false : true;
+}
+
+
+bool Player::takeDamage(float damage) {
+	health_ -= damage;
+	std::cout << "Player Health: " << health_ << std::endl;
+
+	if (health_ <= 0)
+		return true;
+	return false;
+}
+
+
+void Player::setResman(ResourceManager *resman) {
+	resman_ = resman;
+}
+
 } // namespace game

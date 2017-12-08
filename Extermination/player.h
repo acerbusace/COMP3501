@@ -32,21 +32,21 @@ class ResourceManager;
             
 			void Draw(Camera *camera, glm::vec3);
 			void Update(double delta_time);
-
-			bool get_first_person();
-			void toggle_first_person();
-			bool takeDamage(float);
-
+			
 			void addMissile(Camera*);
 			void addBomb();
 			void addLaser(Camera*);
 			void addBombParticle(glm::vec3);
-			void setResman(ResourceManager*);
 
 			std::vector<Laser*>* getLasers();
 			std::vector<Bomb*>* getBombs();
 			std::vector<Missile*>* getMissiles();
 			std::vector<SceneNode*>* getBombParticles();
+
+			bool get_first_person();
+			void toggle_first_person();
+			bool takeDamage(float);
+			void setResman(ResourceManager*);
 
         private:
 			bool first_person_;

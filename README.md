@@ -1,2 +1,2 @@
-# COMP3501_Empire_Shooter
-Final group project for COMP3501
+# COMP3501_Extermination
+Final game project for COMP3501
